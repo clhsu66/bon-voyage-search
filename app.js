@@ -73,6 +73,29 @@ async function resolveAirportHub(userInput) {
   const cleanInput = userInput.trim();
   const lowerInput = cleanInput.toLowerCase();
 
+  const regionalAliases = {
+    "taiwan": { code: "TPE", name: "Taiwan Taoyuan International", city: "Taipei", country: "Taiwan", airportLat: 25.0797, airportLon: 121.2342, cityLat: 25.0330, cityLon: 121.5654 },
+    "taipei": { code: "TPE", name: "Taiwan Taoyuan International", city: "Taipei", country: "Taiwan", airportLat: 25.0797, airportLon: 121.2342, cityLat: 25.0330, cityLon: 121.5654 },
+    "japan": { code: "HND", name: "Tokyo Haneda Airport", city: "Tokyo", country: "Japan", airportLat: 35.5494, airportLon: 139.7798, cityLat: 35.6895, cityLon: 139.6917 },
+    "tokyo": { code: "HND", name: "Tokyo Haneda Airport", city: "Tokyo", country: "Japan", airportLat: 35.5494, airportLon: 139.7798, cityLat: 35.6895, cityLon: 139.6917 },
+    "italy": { code: "FCO", name: "Rome Fiumicino Airport", city: "Rome", country: "Italy", airportLat: 41.8003, airportLon: 12.2389, cityLat: 41.9028, cityLon: 12.4964 },
+    "rome": { code: "FCO", name: "Rome Fiumicino Airport", city: "Rome", country: "Italy", airportLat: 41.8003, airportLon: 12.2389, cityLat: 41.9028, cityLon: 12.4964 },
+    "france": { code: "CDG", name: "Paris Charles de Gaulle", city: "Paris", country: "France", airportLat: 49.0097, airportLon: 2.5479, cityLat: 48.8566, cityLon: 2.3522 },
+    "paris": { code: "CDG", name: "Paris Charles de Gaulle", city: "Paris", country: "France", airportLat: 49.0097, airportLon: 2.5479, cityLat: 48.8566, cityLon: 2.3522 },
+    "spain": { code: "BCN", name: "Barcelona-El Prat Airport", city: "Barcelona", country: "Spain", airportLat: 41.2974, airportLon: 2.0833, cityLat: 41.3874, cityLon: 2.1686 },
+    "barcelona": { code: "BCN", name: "Barcelona-El Prat Airport", city: "Barcelona", country: "Spain", airportLat: 41.2974, airportLon: 2.0833, cityLat: 41.3874, cityLon: 2.1686 },
+    "uk": { code: "LHR", name: "London Heathrow", city: "London", country: "United Kingdom", airportLat: 51.4700, airportLon: -0.4543, cityLat: 51.5074, cityLon: -0.1278 },
+    "london": { code: "LHR", name: "London Heathrow", city: "London", country: "United Kingdom", airportLat: 51.4700, airportLon: -0.4543, cityLat: 51.5074, cityLon: -0.1278 },
+    "canada": { code: "YVR", name: "Vancouver International", city: "Vancouver", country: "Canada", airportLat: 49.1967, airportLon: -123.1815, cityLat: 49.2827, cityLon: -123.1207 },
+    "new york": { code: "JFK", name: "John F. Kennedy International", city: "New York", country: "United States", airportLat: 40.6413, airportLon: -73.7781, cityLat: 40.7580, cityLon: -73.9855 },
+    "chicago": { code: "ORD", name: "Chicago O'Hare International", city: "Chicago", country: "United States", airportLat: 41.9742, airportLon: -87.9073, cityLat: 41.8781, cityLon: -87.6298 },
+    "san francisco": { code: "SFO", name: "San Francisco International", city: "San Francisco", country: "United States", airportLat: 37.6213, airportLon: -122.3790, cityLat: 37.7749, cityLon: -122.4194 }
+  };
+
+  if (regionalAliases[lowerInput]) {
+    return regionalAliases[lowerInput];
+  }
+
   const explicitCodeMatch = cleanInput.match(/\(([A-Za-z]{3})\)/);
   if (explicitCodeMatch) {
     const codeFromParen = explicitCodeMatch[1].toUpperCase();
@@ -92,49 +115,16 @@ async function resolveAirportHub(userInput) {
   );
   if (partialMatches.length > 0) return partialMatches[0];
 
-  try {
-    const res = await fetchWithTimeout(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cleanInput + " airport")}&format=json&addressdetails=1&limit=1`, {}, 2500);
-    if (res && res.ok) {
-      const data = await res.json();
-      if (data && data.length > 0) {
-        const item = data[0];
-        const targetLat = parseFloat(item.lat);
-        const targetLon = parseFloat(item.lon);
-        const cityName = item.address.city || item.address.town || item.address.county || cleanInput;
-
-        let closestAirport = majorAirportCatalog[0];
-        let minDistance = Infinity;
-        majorAirportCatalog.forEach(ap => {
-          const dist = haversineDistance(targetLat, targetLon, ap.airportLat, ap.airportLon);
-          if (dist < minDistance) {
-            minDistance = dist;
-            closestAirport = ap;
-          }
-        });
-
-        return {
-          code: minDistance < 150 ? closestAirport.code : cityName.substring(0, 3).toUpperCase(),
-          name: minDistance < 150 ? closestAirport.name : `${cityName} Airport`,
-          city: cityName,
-          country: item.address.country || "",
-          airportLat: minDistance < 150 ? closestAirport.airportLat : targetLat,
-          airportLon: minDistance < 150 ? closestAirport.airportLon : targetLon,
-          cityLat: targetLat,
-          cityLon: targetLon
-        };
-      }
-    }
-  } catch (e) {}
-
+  let closestAirport = majorAirportCatalog[0];
   return {
     code: cleanInput.substring(0, 3).toUpperCase(),
     name: `${cleanInput} Airport`,
     city: cleanInput,
     country: "",
-    airportLat: 37.7749,
-    airportLon: -122.4194,
-    cityLat: 37.7749,
-    cityLon: -122.4194
+    airportLat: closestAirport.airportLat,
+    airportLon: closestAirport.airportLon,
+    cityLat: closestAirport.cityLat,
+    cityLon: closestAirport.cityLon
   };
 }
 
@@ -319,7 +309,7 @@ function formatCurrency(amountInUSD) {
 }
 
 // ========================================================
-// 3. PUBLIC TRANSIT & HIGH-SPEED RAIL GUIDES
+// 3. PUBLIC TRANSIT GUIDES
 // ========================================================
 const cityTransitGuidesMaster = {
   VANCOUVER: [
@@ -395,135 +385,7 @@ function renderTransitGuide(airportCode, cityName) {
 }
 
 // ========================================================
-// 4. MASTER CURATED CATALOG (20+ VERIFIED ITEMS PER CITY)
-// ========================================================
-const MASTER_CURATED_CATALOG = {
-  // 1. CHICAGO (22 Verified Items)
-  CHI: [
-    { id: "chi_1", type: "sight", name: "Millennium Park & Cloud Gate ('The Bean')", category: "Iconic Landmark", location: "Downtown Loop", lat: 41.8826, lon: -87.6226, desc: "World-famous polished steel sculpture reflecting Chicago's skyline, Lurie Garden, and Crown Fountain.", query: "Cloud Gate Millennium Park Chicago" },
-    { id: "chi_2", type: "sight", name: "The Art Institute of Chicago", category: "World-Class Museum", location: "Michigan Avenue", lat: 41.8796, lon: -87.6237, desc: "Over 300,000 works of art featuring Seurat's Grand Jatte, Edward Hopper's Nighthawks, and Impressionist galleries.", query: "Art Institute of Chicago" },
-    { id: "chi_3", type: "sight", name: "Chicago Architecture Center River Cruise", category: "Architecture Cruise", location: "Chicago Riverwalk", lat: 41.8887, lon: -87.6244, desc: "90-minute docent-led boat cruise through the canyon of skyscrapers along the Chicago River.", query: "Chicago Architecture Center River Cruise" },
-    { id: "chi_4", type: "sight", name: "Willis Tower Skydeck & 'The Ledge'", category: "Observation Deck", location: "Financial District", lat: 41.8789, lon: -87.6359, desc: "103rd-floor glass boxes extending 4.3 feet out over the street with sweeping 4-state views.", query: "Skydeck Chicago Willis Tower" },
-    { id: "chi_5", type: "sight", name: "360 CHICAGO Observation Deck & TILT", category: "Panoramic Viewpoint", location: "Magnificent Mile", lat: 41.8988, lon: -87.6229, desc: "94th-floor observation deck with moving glass platform tilting visitors 30 degrees over Michigan Avenue.", query: "360 CHICAGO Observation Deck" },
-    { id: "chi_6", type: "sight", name: "The Field Museum of Natural History", category: "Natural History Museum", location: "Museum Campus", lat: 41.8663, lon: -87.6170, desc: "Home to 'Sue' the T. rex, ancient Egyptian tombs, and gemstone halls on the lakefront.", query: "Field Museum Chicago" },
-    { id: "chi_7", type: "sight", name: "Shedd Aquarium & Oceanarium", category: "Marine Sanctuary", location: "Museum Campus", lat: 41.8676, lon: -87.6140, desc: "Historic 1930 lakefront aquarium housing beluga whales, Caribbean coral reefs, and sea otters.", query: "Shedd Aquarium Chicago" },
-    { id: "chi_8", type: "sight", name: "Adler Planetarium & Skyline View", category: "Astronomy & Lakefront", location: "Museum Campus", lat: 41.8663, lon: -87.6068, desc: "America's first planetarium situated on Northerly Island offering the iconic postcard skyline view.", query: "Adler Planetarium Chicago" },
-    { id: "chi_9", type: "sight", name: "Navy Pier & Centennial Wheel", category: "Waterfront Destination", location: "Streeterville", lat: 41.8917, lon: -87.6086, desc: "Lakefront pier featuring a 200-foot Ferris wheel, Shakespeare Theater, and boat tours.", query: "Navy Pier Chicago" },
-    { id: "chi_10", type: "sight", name: "Wrigley Field Historic Ballpark", category: "Sports Heritage", location: "Wrigleyville", lat: 41.9484, lon: -87.6553, desc: "Legendary 1914 home of the Chicago Cubs with ivy-covered brick walls and rooftop bleachers.", query: "Wrigley Field Chicago" },
-    { id: "chi_11", type: "sight", name: "Chicago Cultural Center (Tiffany Dome)", category: "Architectural Marvel", location: "Loop", lat: 41.8837, lon: -87.6248, desc: "Magnificent 1897 public palace featuring the world's largest stained glass Tiffany dome.", query: "Chicago Cultural Center Tiffany Dome" },
-    { id: "chi_12", type: "sight", name: "Garfield Park Conservatory", category: "Botanical Oasis", location: "Garfield Park", lat: 41.8863, lon: -87.7171, desc: "One of the largest botanical conservatories in the country with tropical flora under glass.", query: "Garfield Park Conservatory Chicago" },
-    { id: "chi_13", type: "sight", name: "Frank Lloyd Wright Home & Studio", category: "Historic Architecture", location: "Oak Park", lat: 41.8940, lon: -87.7983, desc: "Birthplace of the American Prairie School architectural style in historic Oak Park.", query: "Frank Lloyd Wright Home Oak Park" },
-    { id: "chi_14", type: "sight", name: "Museum of Science and Industry", category: "Interactive Museum", location: "Hyde Park", lat: 41.7906, lon: -87.5830, desc: "Housed in the 1893 World's Fair palace, featuring a German U-505 submarine and coal mine.", query: "Museum of Science and Industry Chicago" },
-    { id: "chi_15", type: "food", name: "Pequod's Pizza (Caramelized Crust Deep Dish)", category: "Legendary Deep Dish", location: "Lincoln Park", lat: 41.9219, lon: -87.6644, desc: "World-famous deep-dish pan pizza with a halo of dark caramelized crispy cheddar cheese crust.", query: "Pequods Pizza Chicago" },
-    { id: "chi_16", type: "food", name: "Lou Malnati's Pizzeria (Buttercrust Deep Dish)", category: "Classic Deep Dish", location: "River North", lat: 41.8903, lon: -87.6338, desc: "Iconic Chicago buttercrust deep-dish loaded with vine-ripened tomatoes and mozzarella.", query: "Lou Malnatis Pizzeria River North" },
-    { id: "chi_17", type: "food", name: "Portillo's (Chicago Hot Dogs & Cake Shake)", category: "Iconic Street Food", location: "River North", lat: 41.8935, lon: -87.6318, desc: "All-beef frankfurter dragged through the garden, Italian beef, and chocolate cake shakes.", query: "Portillos Hot Dogs Ontario Chicago" },
-    { id: "chi_18", type: "food", name: "Al's #1 Italian Beef (Since 1938)", category: "Historic Italian Beef", location: "Little Italy (Taylor St)", lat: 41.8698, lon: -87.6540, desc: "Thinly sliced roast beef soaked in au jus on French bread with spicy giardiniera.", query: "Als Italian Beef Taylor Street" },
-    { id: "chi_19", type: "food", name: "Garrett Popcorn Shops (Garrett Mix)", category: "Iconic Snack", location: "Michigan Avenue", lat: 41.8966, lon: -87.6241, desc: "Batch-cooked blend of sweet CaramelCrisp and savory sharp CheddarCraft popcorn.", query: "Garrett Popcorn Michigan Ave Chicago" },
-    { id: "chi_20", type: "food", name: "The Original Rainbow Cone (Since 1926)", category: "Historic Dessert", location: "Navy Pier / Beverly", lat: 41.8915, lon: -87.6080, desc: "Five sliced layers of chocolate, strawberry, Palmer House, pistachio, and orange sherbet.", query: "Original Rainbow Cone Navy Pier" },
-    { id: "chi_21", type: "food", name: "MingHin Cuisine & Chinatown Square", category: "Cantonese Dim Sum", location: "Chinatown", lat: 41.8533, lon: -87.6329, desc: "Michelin Bib Gourmand dim sum palace serving steamed dumplings and barbecue pork buns.", query: "MingHin Cuisine Chinatown Chicago" },
-    { id: "chi_22", type: "food", name: "Green Mill Cocktail Lounge (Historic Jazz)", category: "Historic Jazz Lounge", location: "Uptown", lat: 41.9691, lon: -87.6599, desc: "Historic 1907 cocktail lounge once patronized by Al Capone, hosting live jazz nightly.", query: "Green Mill Jazz Lounge Chicago" }
-  ],
-
-  // 2. TAIPEI (21 Verified Items)
-  TPE: [
-    { id: "tpe_1", type: "sight", name: "Taipei 101 & Skyline Observatory", category: "Iconic Skyscraper", location: "Xinyi District", lat: 25.0339, lon: 121.5645, desc: "508-meter engineering marvel featuring the world's fastest elevators and 360-degree views.", query: "Taipei 101 Observatory" },
-    { id: "tpe_2", type: "sight", name: "National Palace Museum (Imperial Treasures)", category: "World-Class Museum", location: "Shilin District", lat: 25.1024, lon: 121.5485, desc: "Houses nearly 700,000 ancient Chinese imperial artifacts, including the Jadeite Cabbage.", query: "National Palace Museum Taipei" },
-    { id: "tpe_3", type: "sight", name: "Chiang Kai-shek Memorial Hall", category: "Monumental Architecture", location: "Zhongzheng District", lat: 25.0347, lon: 121.5218, desc: "Grand white-marble hall with blue-tiled octagonal roof and hourly ceremonial guard change.", query: "Chiang Kai-shek Memorial Hall" },
-    { id: "tpe_4", type: "sight", name: "Longshan Temple & Bopiliao Block", category: "Historic Temple Heritage", location: "Wanhua District", lat: 25.0370, lon: 121.4999, desc: "Historic 1738 Buddhist-Taoist sanctuary with intricate dragon carvings and Qing-era alleys.", query: "Longshan Temple Taipei" },
-    { id: "tpe_5", type: "sight", name: "Xiangshan (Elephant Mountain) Trail", category: "Scenic Viewpoint Hike", location: "Xinyi District", lat: 25.0274, lon: 121.5706, desc: "Steep 20-minute stone staircase hike leading to iconic photo boulders overlooking Taipei 101.", query: "Elephant Mountain Hiking Trail" },
-    { id: "tpe_6", type: "sight", name: "Beitou Thermal Valley & Hot Springs", category: "Thermal Spring Oasis", location: "Beitou District", lat: 25.1378, lon: 121.5074, desc: "Steaming geothermal emerald-sulfur pool and historic 1913 Japanese bathhouse museum.", query: "Beitou Thermal Valley" },
-    { id: "tpe_7", type: "sight", name: "Tamsui Old Street & Fisherman's Wharf", category: "Waterfront Sunset", location: "Tamsui Waterfront", lat: 25.1764, lon: 121.4326, desc: "Coastal boardwalk famous for golden sunsets over the Taiwan Strait and Lovers Bridge.", query: "Tamsui Fisherman's Wharf" },
-    { id: "tpe_8", type: "sight", name: "Jiufen Mountain Village & Tea Houses", category: "Historic Mountain Village", location: "Ruifang District", lat: 25.1099, lon: 121.8452, desc: "Misty mountain gold-mining village with lantern-lit narrow staircases and tea houses.", query: "Jiufen Old Street Taiwan" },
-    { id: "tpe_9", type: "sight", name: "Shifen Waterfall & Sky Lantern Street", category: "Scenic Waterfall", location: "Pingxi District", lat: 25.0494, lon: 121.7876, desc: "The 'Little Niagara of Taiwan' paired with railway tracks where visitors launch sky lanterns.", query: "Shifen Waterfall Pingxi" },
-    { id: "tpe_10", type: "sight", name: "Yehliu Geopark & Queen's Head Rock", category: "Geological Marvel", location: "Wanli / North Coast", lat: 25.2064, lon: 121.6905, desc: "Coastal promontory eroded into otherworldly hoodoo rock formations resembling Queen's Head.", query: "Yehliu Geopark" },
-    { id: "tpe_11", type: "sight", name: "Songshan Cultural & Creative Park", category: "Creative Arts Hub", location: "Xinyi / Songshan", lat: 25.0440, lon: 121.5607, desc: "Former 1937 Japanese tobacco factory transformed into open green design studios and craft cafes.", query: "Songshan Cultural Park" },
-    { id: "tpe_12", type: "sight", name: "Maokong Gondola & Tea Plantations", category: "Scenic Cable Car", location: "Wenshan District", lat: 24.9680, lon: 121.5880, desc: "Glass-bottom crystal cabin gondola ride to hillside Tieguanyin tea houses.", query: "Maokong Gondola Taipei" },
-    { id: "tpe_13", type: "food", name: "Din Tai Fung Flagship (Xiao Long Bao)", category: "World-Famous Dumplings", location: "Xinyi / Dongmen", lat: 25.0338, lon: 121.5300, desc: "Michelin-recognized 18-fold steamed pork soup dumplings, truffle dumplings, and fried rice.", query: "Din Tai Fung Xinyi Flagship" },
-    { id: "tpe_14", type: "food", name: "Raohe Street Night Market (Pepper Buns)", category: "Legendary Night Market", location: "Songshan District", lat: 25.0509, lon: 121.5775, desc: "Vibrant market renowned for wood-fired crispy black pepper pork buns and herbal pork ribs.", query: "Raohe Street Night Market" },
-    { id: "tpe_15", type: "food", name: "Shilin Night Market (Giant Fried Chicken)", category: "Mega Food Market", location: "Shilin District", lat: 25.0879, lon: 121.5241, desc: "Taipei's largest night market packed with sizzling hot star chicken cutlets and oyster omelets.", query: "Shilin Night Market Taipei" },
-    { id: "tpe_16", type: "food", name: "Ningxia Night Market (Taro Balls)", category: "Artisan Night Market", location: "Datong District", lat: 25.0558, lon: 121.5152, desc: "Foodies' favorite night market famous for crispy deep-fried taro balls and braised pork rice.", query: "Ningxia Night Market Taipei" },
-    { id: "tpe_17", type: "food", name: "Fu Hang Soy Milk (Michelin Bib Gourmand)", category: "Historic Breakfast", location: "Huashan Market", lat: 25.0442, lon: 121.5248, desc: "Beloved breakfast spot baking fresh thick flatbreads with eggs, You Tiao, and savory soy milk.", query: "Fu Hang Soy Milk Taipei" },
-    { id: "tpe_18", type: "food", name: "Yongkang Beef Noodles (Sichuan Broth)", category: "Signature Beef Noodle", location: "Dongmen", lat: 25.0329, lon: 121.5298, desc: "Tender beef shank and tendon simmered in rich spicy chili-bean broth with springy noodles.", query: "Yongkang Beef Noodles Taipei" },
-    { id: "tpe_19", type: "food", name: "Ay-Chung Flour-Rice Noodle", category: "Iconic Street Food", location: "Ximending", lat: 25.0433, lon: 121.5076, desc: "Standing-room-only stall serving silky thin noodles in bonito broth with braised intestine.", query: "Ay-Chung Flour-Rice Noodle Ximending" },
-    { id: "tpe_20", type: "food", name: "Addiction Aquatic Development", category: "Gourmet Seafood Market", location: "Zhongshan District", lat: 25.0667, lon: 121.5369, desc: "Upscale fish market with live king crab tanks, standing sushi counters, and charcoal grills.", query: "Addiction Aquatic Development Taipei" },
-    { id: "tpe_21", type: "food", name: "Smoothie House (Mango Shaved Ice)", category: "Summer Dessert", location: "Yongkang Street", lat: 25.0331, lon: 121.5295, desc: "Fluffy snowflake shaved ice loaded with fresh sweet Irwin mangoes and condensed milk.", query: "Smoothie House Yongkang Taipei" }
-  ],
-
-  // 3. ROME (20 Verified Items)
-  ROME: [
-    { id: "rom_1", type: "sight", name: "The Colosseum & Roman Forum", category: "Ancient World Wonder", location: "Piazza del Colosseo", lat: 41.8902, lon: 12.4922, desc: "Nearly 2,000-year-old stone amphitheater where gladiators fought, paired with the ancient civic center.", query: "Colosseum Rome" },
-    { id: "rom_2", type: "sight", name: "Pantheon & Piazza della Rotonda", category: "Ancient Architectural Wonder", location: "Central Historic District", lat: 41.8986, lon: 12.4769, desc: "Best-preserved Roman monument featuring an open oculus dome of unreinforced concrete.", query: "Pantheon Rome" },
-    { id: "rom_3", type: "sight", name: "Trevi Fountain & Spanish Steps", category: "Baroque Monument", location: "Piazza di Trevi", lat: 41.9009, lon: 12.4833, desc: "Monumental Baroque fountain fed by ancient aqueducts where tossing a coin ensures your return.", query: "Trevi Fountain Rome" },
-    { id: "rom_4", type: "sight", name: "Vatican Museums & St. Peter's Basilica", category: "Papal Art & Basilica", location: "Vatican City", lat: 41.9065, lon: 12.4536, desc: "Michelangelo's Sistine Chapel ceiling, Raphael Rooms, and the grandest Renaissance basilica.", query: "Vatican Museums Sistine Chapel" },
-    { id: "rom_5", type: "sight", name: "Castel Sant'Angelo & Bridge", category: "Historic Castle", location: "Parco Adriano", lat: 41.9031, lon: 12.4663, desc: "Hadrian's cylindrical mausoleum connected to the Vatican by a fortified passage.", query: "Castel Sant Angelo Rome" },
-    { id: "rom_6", type: "sight", name: "Piazza Navona & Fountains", category: "Baroque Piazza", location: "Navona District", lat: 41.8992, lon: 12.4731, desc: "Lively elongated piazza built over Roman stadium grounds, famous for Bernini's fountains.", query: "Piazza Navona Rome" },
-    { id: "rom_7", type: "sight", name: "Borghese Gallery and Gardens", category: "Art Museum & Villa Park", location: "Villa Borghese", lat: 41.9142, lon: 12.4922, desc: "Exquisite art gallery housing masterworks by Caravaggio, Bernini, and Raphael.", query: "Borghese Gallery Rome" },
-    { id: "rom_8", type: "sight", name: "Trastevere Historic Quarter", category: "Historic Neighborhood", location: "Trastevere", lat: 41.8894, lon: 12.4692, desc: "Charming ivy-draped cobblestone alleys filled with artisan trattorias and medieval churches.", query: "Trastevere Rome" },
-    { id: "rom_9", type: "sight", name: "Campo de' Fiori Market", category: "Historic Street Market", location: "Campo de' Fiori", lat: 41.8955, lon: 12.4722, desc: "Bustling daytime market square selling flowers, produce, and spices.", query: "Campo de Fiori Rome" },
-    { id: "rom_10", type: "sight", name: "Piazza del Popolo & Terrazza Pincio", category: "Panoramic Viewpoint", location: "Flaminio", lat: 41.9119, lon: 12.4764, desc: "Neoclassical square with obelisk and hilltop terrace overlooking Rome's rooftops.", query: "Piazza del Popolo Rome" },
-    { id: "rom_11", type: "sight", name: "Palatine Hill & Imperial Palaces", category: "Archaeological Ruin", location: "Roman Forum", lat: 41.8881, lon: 12.4878, desc: "The centermost hill of Rome with majestic ruins of ancient imperial palaces.", query: "Palatine Hill Rome" },
-    { id: "rom_12", type: "sight", name: "Circus Maximus & Aventine Keyhole", category: "Ancient Stadium & Viewpoint", location: "Aventine Hill", lat: 41.8864, lon: 12.4850, desc: "Ancient chariot racing stadium paired with the famous keyhole framing St. Peter's dome.", query: "Aventine Keyhole Rome" },
-    { id: "rom_13", type: "sight", name: "Bocca della Verità (Mouth of Truth)", category: "Historic Marble Mask", location: "Piazza Bocca della Verità", lat: 41.8881, lon: 12.4819, desc: "Ancient marble mask carved in the likeness of the ocean god.", query: "Mouth of Truth Rome" },
-    { id: "rom_14", type: "food", name: "Roscioli Salumeria (Carbonara)", category: "Iconic Roman Pasta", location: "Campo de' Fiori", lat: 41.8941, lon: 12.4735, desc: "Legendary deli-restaurant renowned across Italy for silky Spaghetti alla Carbonara.", query: "Roscioli Rome" },
-    { id: "rom_15", type: "food", name: "Da Enzo al 29 (Cacio e Pepe)", category: "Traditional Trattoria", location: "Trastevere", lat: 41.8876, lon: 12.4784, desc: "Beloved trattoria serving crispy fried artichokes, cacio e pepe, and tiramisu.", query: "Da Enzo al 29 Trastevere Rome" },
-    { id: "rom_16", type: "food", name: "Pompi Tiramisù", category: "Artisan Dessert", location: "Piazza di Spagna", lat: 41.9058, lon: 12.4828, desc: "The classic destination for coffee-soaked mascarpone tiramisù.", query: "Pompi Tiramisu Rome" },
-    { id: "rom_17", type: "food", name: "Bonci Pizzarium (Gourmet Pizza Slices)", category: "Gourmet Pizza", location: "Prati", lat: 41.9122, lon: 12.4455, desc: "Gabriele Bonci's world-famous bakery serving innovative pizza al taglio by weight.", query: "Bonci Pizzarium Rome" },
-    { id: "rom_18", type: "food", name: "Antico Forno Roscioli", category: "Historic Bakery", location: "Via dei Chiavari", lat: 41.8945, lon: 12.4738, desc: "Centuries-old bakery baking fresh pizza bianca stuffed with mortadella.", query: "Antico Forno Roscioli Rome" },
-    { id: "rom_19", type: "food", name: "Sergio al Palatino", category: "Classic Roman Dining", location: "Colosseum Area", lat: 41.8883, lon: 12.4901, desc: "Family-run trattoria steps from the Colosseum serving homemade amatriciana.", query: "Sergio al Palatino Rome" },
-    { id: "rom_20", type: "food", name: "Giolitti Gelateria (Since 1900)", category: "Historic Gelato", location: "Pantheon Area", lat: 41.8991, lon: 12.4788, desc: "Rome's oldest and most famous gelateria serving artisanal gelato with fresh panna.", query: "Giolitti Gelato Rome" }
-  ],
-
-  // 4. LISBON (20 Verified Items)
-  LISBON: [
-    { id: "lis_1", type: "sight", name: "Torre de Belém (Belém Tower)", category: "UNESCO World Heritage", location: "Belém Waterfront", lat: 38.6916, lon: -9.2160, desc: "16th-century Manueline fortified tower on the Tagus River marking Portugal's Age of Discovery.", query: "Belem Tower Lisbon" },
-    { id: "lis_2", type: "sight", name: "Mosteiro dos Jerónimos", category: "Manueline Masterpiece", location: "Belém", lat: 38.6979, lon: -9.2067, desc: "Monumental monastery with carved limestone cloisters and the tomb of Vasco da Gama.", query: "Jeronimos Monastery Lisbon" },
-    { id: "lis_3", type: "sight", name: "Castelo de São Jorge", category: "Moorish Fortress", location: "Alfama Hilltop", lat: 38.7139, lon: -9.1335, desc: "11th-century hilltop citadel with fortified ramparts offering 360-degree panoramic views.", query: "Castelo de Sao Jorge Lisbon" },
-    { id: "lis_4", type: "sight", name: "Praça do Comércio & Triumph Arch", category: "Monumental Waterfront Plaza", location: "Baixa", lat: 38.7075, lon: -9.1364, desc: "Grand yellow-arcaded square facing the river with bronze statue of King José I.", query: "Praca do Comercio Lisbon" },
-    { id: "lis_5", type: "sight", name: "Elevador de Santa Justa", category: "Historic Lift", location: "Baixa / Chiado", lat: 38.7121, lon: -9.1394, desc: "1902 wrought-iron vertical lift connecting downtown Baixa to higher Carmo square.", query: "Santa Justa Lift Lisbon" },
-    { id: "lis_6", type: "sight", name: "Miradouro de Santa Luzia", category: "Scenic Tile Terrace", location: "Alfama", lat: 38.7116, lon: -9.1303, desc: "Bougainvillea-covered terrace decorated with azulejo tiles overlooking terracotta roofs.", query: "Miradouro de Santa Luzia Lisbon" },
-    { id: "lis_7", type: "sight", name: "Historic Tram 28 Route", category: "Historic Yellow Tram", location: "Alfama / Chiado", lat: 38.7153, lon: -9.1360, desc: "Vintage 1930s yellow tram rattling through Lisbon's steepest cobblestone alleys.", query: "Tram 28 Lisbon" },
-    { id: "lis_8", type: "sight", name: "Padrão dos Descobrimentos", category: "Monumental Sculpture", location: "Belém Waterfront", lat: 38.6936, lon: -9.2057, desc: "52-meter carved monument shaped like a ship's prow honoring Portuguese explorers.", query: "Padrao dos Descobrimentos Lisbon" },
-    { id: "lis_9", type: "sight", name: "Carmo Convent Ruins", category: "Gothic Ruins", location: "Chiado", lat: 38.7122, lon: -9.1403, desc: "Haunting roofless Gothic cathedral ruins preserved from the 1755 earthquake.", query: "Carmo Convent Lisbon" },
-    { id: "lis_10", type: "sight", name: "Museu Nacional do Azulejo (Tile Museum)", category: "Decorative Art", location: "Xabregas", lat: 38.7246, lon: -9.1141, desc: "Displays five centuries of magnificent hand-painted glazed ceramic tile murals.", query: "National Tile Museum Lisbon" },
-    { id: "lis_11", type: "sight", name: "Oceanário de Lisboa", category: "World-Class Aquarium", location: "Parque das Nações", lat: 38.7635, lon: -9.0937, desc: "Massive 5-million-liter ocean tank holding sunfish, sharks, rays, and sea otters.", query: "Oceanario de Lisboa" },
-    { id: "lis_12", type: "sight", name: "Pena Palace & Quinta da Regaleira", category: "Fairytale Castle", location: "Sintra Mountains", lat: 38.7876, lon: -9.3906, desc: "Vibrant yellow-and-red Romanticist castle perched atop the Sintra mountains.", query: "Pena Palace Sintra" },
-    { id: "lis_13", type: "sight", name: "Cabo da Roca (Westernmost Europe)", category: "Coastal Landmark", location: "Cascais Coast", lat: 38.7804, lon: -9.4989, desc: "Dramatic 140-meter ocean cliffs marking the westernmost point of continental Europe.", query: "Cabo da Roca Portugal" },
-    { id: "lis_14", type: "food", name: "Pastéis de Belém (Since 1837)", category: "Original Custard Tart", location: "Rua de Belém", lat: 38.6975, lon: -9.2032, desc: "Baking the original secret recipe: warm crispy puff pastry filled with egg custard and cinnamon.", query: "Pasteis de Belem" },
-    { id: "lis_15", type: "food", name: "Time Out Market Lisboa", category: "Gourmet Food Hall", location: "Cais do Sodré", lat: 38.7071, lon: -9.1460, desc: "Curated food stalls by Portugal's top chefs, seafood counters, and wine bars.", query: "Time Out Market Lisbon" },
-    { id: "lis_16", type: "food", name: "Cervejaria Ramiro (Seafood Institution)", category: "Seafood Dining", location: "Intendente", lat: 38.7206, lon: -9.1351, desc: "Famous for giant tiger prawns grilled in butter, barnacles, crab, and prego steak sandwiches.", query: "Cervejaria Ramiro Lisbon" },
-    { id: "lis_17", type: "food", name: "Manteigaria Pastéis de Nata", category: "Artisan Tarts", location: "Chiado", lat: 38.7107, lon: -9.1437, desc: "Fresh artisanal pastéis de nata coming hot out of the oven around the clock.", query: "Manteigaria Chiado Lisbon" },
-    { id: "lis_18", type: "food", name: "A Cevicheria (Chef Kiko Martins)", category: "Modern Seafood", location: "Príncipe Real", lat: 38.7176, lon: -9.1491, desc: "Acclaimed dining counter with a giant foam octopus serving fresh Portuguese ceviches.", query: "A Cevicheria Lisbon" },
-    { id: "lis_19", type: "food", name: "Tasca do Chico (Live Fado)", category: "Historic Fado Tavern", location: "Bairro Alto", lat: 38.7126, lon: -9.1448, desc: "Atmospheric tavern famous for soulful spontaneous Fado singing and grilled chouriço.", query: "Tasca do Chico Bairro Alto" },
-    { id: "lis_20", type: "food", name: "Solar dos Presuntos", category: "Heritage Gastronomy", location: "Lavra", lat: 38.7180, lon: -9.1415, desc: "Serving rich seafood rice (arroz de marisco), roasted suckling pig, and Iberian ham.", query: "Solar dos Presuntos Lisbon" }
-  ],
-
-  // 5. SAN FRANCISCO (20 Verified Items)
-  SF: [
-    { id: "sf_1", type: "sight", name: "Golden Gate Bridge (Vista Point)", category: "Iconic Landmark", location: "Presidio / Marin", lat: 37.8199, lon: -122.4783, desc: "World-famous Art Deco suspension bridge spanning the Golden Gate strait.", query: "Golden Gate Bridge Vista Point" },
-    { id: "sf_2", type: "sight", name: "Alcatraz Island & Cellhouse Tour", category: "National Historic Landmark", location: "SF Bay", lat: 37.8269, lon: -122.4230, desc: "Legendary former federal penitentiary in the middle of SF Bay offering ranger-led audio tours.", query: "Alcatraz Island Tour" },
-    { id: "sf_3", type: "sight", name: "Pier 39 & Fisherman's Wharf Sea Lions", category: "Waterfront Attraction", location: "Fisherman's Wharf", lat: 37.8087, lon: -122.4098, desc: "Bustling promenade featuring famous barking sea lions and sourdough bakeries.", query: "Pier 39 San Francisco" },
-    { id: "sf_4", type: "sight", name: "Historic Cable Cars (Powell-Hyde Line)", category: "Historic Transit", location: "Powell St / Nob Hill", lat: 37.7845, lon: -122.4080, desc: "The world's last manually operated cable car system climbing SF's steepest scenic hills.", query: "Powell Hyde Cable Car Turnaround" },
-    { id: "sf_5", type: "sight", name: "Chinatown & Dragon Gate", category: "Cultural Heritage", location: "Grant Ave / Bush St", lat: 37.7908, lon: -122.4058, desc: "Oldest Chinatown in North America filled with herbal shops and dim sum parlors.", query: "Chinatown Dragon Gate San Francisco" },
-    { id: "sf_6", type: "sight", name: "Palace of Fine Arts & Lagoon", category: "Monumental Architecture", location: "Marina District", lat: 37.8029, lon: -122.4484, desc: "Greco-Roman rotunda built for the 1915 Panama-Pacific Exposition.", query: "Palace of Fine Arts San Francisco" },
-    { id: "sf_7", type: "sight", name: "Twin Peaks 360-Degree Lookout", category: "Scenic Viewpoint", location: "Twin Peaks Summit", lat: 37.7544, lon: -122.4477, desc: "Twin 922-foot hills offering the ultimate panoramic view of downtown and the bay.", query: "Twin Peaks San Francisco" },
-    { id: "sf_8", type: "sight", name: "Muir Woods National Monument", category: "Ancient Redwoods", location: "Mill Valley, Marin", lat: 37.8970, lon: -122.5811, desc: "Primeval coastal redwood sanctuary with towering 1,000-year-old trees.", query: "Muir Woods National Monument" },
-    { id: "sf_9", type: "sight", name: "Golden Gate Park & Japanese Tea Garden", category: "Urban Park Oasis", location: "Richmond / Sunset", lat: 37.7700, lon: -122.4700, desc: "1,017-acre park featuring the historic 1894 Japanese Tea Garden and de Young Museum.", query: "Japanese Tea Garden San Francisco" },
-    { id: "sf_10", type: "sight", name: "Lombard Street (Crookedest Street)", category: "Scenic Street", location: "Russian Hill", lat: 37.8021, lon: -122.4187, desc: "Famous steep block with eight sharp hairpin turns lined with blooming hydrangeas.", query: "Lombard Street San Francisco" },
-    { id: "sf_11", type: "food", name: "Tartine Bakery (Morning Buns & Sourdough)", category: "Iconic Bakery", location: "Mission District", lat: 37.7614, lon: -122.4241, desc: "World-renowned bakery famous for country sourdough loaves and morning buns.", query: "Tartine Bakery San Francisco" },
-    { id: "sf_12", type: "food", name: "La Taqueria (Mission-Style Burrito)", category: "Legendary Burrito", location: "Mission District", lat: 37.7508, lon: -122.4181, desc: "Award-winning Mission-style burritos grilled golden (dorado style) with carne asada.", query: "La Taqueria Mission San Francisco" },
-    { id: "sf_13", type: "food", name: "Swan Oyster Depot (Since 1912)", category: "Seafood Counter", location: "Nob Hill / Polk St", lat: 37.7909, lon: -122.4211, desc: "18-seat marble counter serving fresh Pacific Dungeness crab and clam chowder.", query: "Swan Oyster Depot San Francisco" },
-    { id: "sf_14", type: "food", name: "House of Prime Rib", category: "Classic Dining", location: "Nob Hill / Van Ness", lat: 37.7934, lon: -122.4228, desc: "Carving prime rib tableside from stainless steel Zeppelins with Yorkshire pudding.", query: "House of Prime Rib San Francisco" },
-    { id: "sf_15", type: "food", name: "Ghirardelli Chocolate Factory", category: "Historic Dessert", location: "Ghirardelli Square", lat: 37.8059, lon: -122.4226, desc: "Historic 1893 chocolate landmark serving hot fudge sundaes.", query: "Ghirardelli Square San Francisco" },
-    { id: "sf_16", type: "food", name: "Ferry Building Food Hall", category: "Artisan Marketplace", location: "Embarcadero", lat: 37.7955, lon: -122.3937, desc: "Clocktower terminal packed with artisan food purveyors and Blue Bottle coffee.", query: "Ferry Building Marketplace San Francisco" },
-    { id: "sf_17", type: "food", name: "Boudin Bakery Sourdough", category: "Original Sourdough", location: "Fisherman's Wharf", lat: 37.8085, lon: -122.4150, desc: "Baking SF sourdough with the original 1849 mother dough in bread bowls.", query: "Boudin Bakery Fisherman's Wharf" },
-    { id: "sf_18", type: "food", name: "Good Mong Kok Dim Sum", category: "Chinatown Dim Sum", location: "Chinatown", lat: 37.7950, lon: -122.4082, desc: "Takeout counter serving hot baked pork buns and har gow dumplings.", query: "Good Mong Kok Dim Sum San Francisco" },
-    { id: "sf_19", type: "food", name: "Zuni Café (Roast Chicken for Two)", category: "California Cuisine", location: "Market Street", lat: 37.7735, lon: -122.4215, desc: "Famous for wood-fired roast chicken served over warm bread salad with currants and pine nuts.", query: "Zuni Cafe San Francisco" },
-    { id: "sf_20", type: "food", name: "Bi-Rite Creamery (Salted Caramel Ice Cream)", category: "Artisan Ice Cream", location: "Mission / Dolores Park", lat: 37.7601, lon: -122.4257, desc: "Small-batch ice cream made with organic Straus Family Creamery milk next to Dolores Park.", query: "Bi-Rite Creamery San Francisco" }
-  ]
-};
-
-// ========================================================
-// 5. 2-TIER RESOLUTION ENGINE FOR SIGHTS & HOTELS
+// 4. TIER-1 RESOLUTION ENGINE FOR SIGHTS & HOTELS
 // ========================================================
 async function fetchTargetCitySights(cityName, airportCode, centerLat, centerLon) {
   const normCity = cityName.toLowerCase();
@@ -536,11 +398,38 @@ async function fetchTargetCitySights(cityName, airportCode, centerLat, centerLon
   else if (normCity.includes("chicago") || normCode === "ORD" || normCode === "MDW") matchedKey = "CHI";
   else if (normCity.includes("taipei") || normCode === "TPE" || normCode === "TSA") matchedKey = "TPE";
   else if (normCity.includes("rome") || normCode === "FCO") matchedKey = "ROME";
-  else if (normCity.includes("lisbon") || normCity.includes("lisboa") || normCode === "LIS") matchedKey = "LISBON";
+  else if (normCity.includes("lisbon") || normCode === "LIS") matchedKey = "LISBON";
   else if (normCity.includes("san francisco") || normCode === "SFO" || normCode === "SJC") matchedKey = "SF";
+  else if (normCity.includes("new york") || normCity.includes("manhattan")) matchedKey = "NYC";
+  else if (normCity.includes("los angeles") || normCode === "LAX") matchedKey = "LAX";
+  else if (normCity.includes("seattle") || normCode === "SEA") matchedKey = "SEA";
+  else if (normCity.includes("san diego") || normCode === "SAN") matchedKey = "SAN";
+  else if (normCity.includes("las vegas") || normCode === "LAS") matchedKey = "LAS";
+  else if (normCity.includes("honolulu") || normCode === "HNL") matchedKey = "HNL";
+  else if (normCity.includes("boston") || normCode === "BOS") matchedKey = "BOS";
+  else if (normCity.includes("washington") || normCode === "DCA" || normCode === "IAD") matchedKey = "WASHINGTON_DC";
+  else if (normCity.includes("miami") || normCode === "MIA") matchedKey = "MIAMI";
+  else if (normCity.includes("new orleans") || normCode === "MSY") matchedKey = "NEW_ORLEANS";
+  else if (normCity.includes("austin") || normCode === "AUS") matchedKey = "AUSTIN";
+  else if (normCity.includes("london") || normCode === "LHR") matchedKey = "LONDON";
+  else if (normCity.includes("paris") || normCode === "CDG") matchedKey = "PARIS";
+  else if (normCity.includes("florence") || normCode === "FLR") matchedKey = "FLORENCE";
+  else if (normCity.includes("barcelona") || normCode === "BCN") matchedKey = "BARCELONA";
+  else if (normCity.includes("madrid") || normCode === "MAD") matchedKey = "MADRID";
+  else if (normCity.includes("amsterdam") || normCode === "AMS") matchedKey = "AMSTERDAM";
+  else if (normCity.includes("taichung") || normCode === "RMQ") matchedKey = "TAICHUNG";
+  else if (normCity.includes("tainan") || normCode === "TNN") matchedKey = "TAINAN";
+  else if (normCity.includes("kaohsiung") || normCode === "KHH") matchedKey = "KHH";
+  else if (normCity.includes("tokyo") || normCode === "HND" || normCode === "NRT") matchedKey = "TOKYO";
+  else if (normCity.includes("kyoto") || normCode === "KIX") matchedKey = "KYOTO";
+  else if (normCity.includes("osaka") || normCode === "ITM") matchedKey = "OSAKA";
+  else if (normCity.includes("hong kong") || normCode === "HKG") matchedKey = "HKG";
+  else if (normCity.includes("seoul") || normCode === "ICN") matchedKey = "SEOUL";
+  else if (normCity.includes("singapore") || normCode === "SIN") matchedKey = "SINGAPORE";
+  else if (normCity.includes("bangkok") || normCode === "BKK") matchedKey = "BANGKOK";
+  else if (normCity.includes("sydney") || normCode === "SYD") matchedKey = "SYDNEY";
 
-  // Tier 1: Master Curated Catalog
-  if (matchedKey && MASTER_CURATED_CATALOG[matchedKey]) {
+  if (matchedKey && typeof MASTER_CURATED_CATALOG !== 'undefined' && MASTER_CURATED_CATALOG[matchedKey]) {
     return MASTER_CURATED_CATALOG[matchedKey].map((item, idx) => {
       const d = haversineDistance(centerLat, centerLon, item.lat, item.lon);
       return {
@@ -551,7 +440,6 @@ async function fetchTargetCitySights(cityName, airportCode, centerLat, centerLon
     });
   }
 
-  // Tier 2: Real-Time Dynamic GeoSearch Fallback for uncataloged destination
   let discoveredPlaces = [];
   try {
     const wikiUrl = `https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord=${centerLat}|${centerLon}&gsradius=15000&gslimit=35&format=json&origin=*`;
@@ -637,7 +525,7 @@ async function fetchLiveTargetHotels(centerLat, centerLon, cityName, airportCode
 }
 
 // ========================================================
-// 6. LEAFLET MAP & INTERACTIVE CONTROLS
+// 5. LEAFLET MAP & INTERACTIVE CONTROLS
 // ========================================================
 let leafletMapInstance = null;
 let baseTileLayer = null;
@@ -834,7 +722,7 @@ function closeCustomPlaceModal() {
 }
 
 // ========================================================
-// 7. FLIGHT SCHEDULE GENERATOR
+// 6. FLIGHT SCHEDULE GENERATOR
 // ========================================================
 function formatMinutesToDuration(mins) {
   const h = Math.floor(mins / 60);
@@ -928,7 +816,7 @@ function generateDynamicFlightSchedule(originObj, destAirportObj, departDate, re
 }
 
 // ========================================================
-// 8. APPLICATION CONTROLLER & STATE
+// 7. APPLICATION CONTROLLER & STATE
 // ========================================================
 let currentTripType = "roundtrip";
 let currentFlights = [];
@@ -1095,7 +983,7 @@ function renderDestinationSights(sights, cityName) {
   if (sightsSubtitleEl) sightsSubtitleEl.textContent = `Must-visit places, landmarks, and signature food experiences within ${currentRadiusKm} km of ${cityName}`;
 
   if (filtered.length === 0) {
-    sightsListEl.innerHTML = `<p style="color: var(--text-muted); font-size: 0.9rem; padding: 1.5rem 0;">No verified places found within ${currentRadiusKm} km. Try increasing the exploration radius or clicking "+ Add Custom Place".</p>`;
+    sightsListEl.innerHTML = `<p style="color: var(--text-muted); font-size: 0.9rem; padding: 1.5rem 0;">No verified places found within ${currentRadiusKm} km. Try increasing the exploration radius or clicking "+ Add Place".</p>`;
     return;
   }
 
@@ -1227,16 +1115,16 @@ function toggleDrawer(open) {
   const drawer = document.getElementById("itineraryDrawer");
   const overlay = document.getElementById("itineraryOverlay");
   if (open) {
-    drawer?.classList.remove("hidden");
+    if (drawer) drawer.style.transform = "translateX(0)";
     overlay?.classList.remove("hidden");
   } else {
-    drawer?.classList.add("hidden");
+    if (drawer) drawer.style.transform = "translateX(100%)";
     overlay?.classList.add("hidden");
   }
 }
 
 // ========================================================
-// 9. SAVED TRIPS MANAGER
+// 8. SAVED TRIPS MANAGER
 // ========================================================
 const SAVED_TRIPS_KEY = "voyagesearch_saved_trips";
 
@@ -1298,7 +1186,7 @@ function renderSavedTripsModal() {
     return;
   }
 
-  listEl.innerHTML = trips.map(t => `
+  listEl.innerHTML = `<div class="saved-trips-stack">` + trips.map(t => `
     <div class="saved-trip-item">
       <div class="saved-trip-info">
         <h4>${t.name}</h4>
@@ -1310,7 +1198,7 @@ function renderSavedTripsModal() {
         <button class="btn-del-trip" onclick="deleteSavedTrip('${t.id}')">✕</button>
       </div>
     </div>
-  `).join('');
+  `).join('') + `</div>`;
 }
 
 window.loadSavedTrip = function(tripId) {
@@ -1339,7 +1227,7 @@ window.deleteSavedTrip = function(tripId) {
 };
 
 // ========================================================
-// 10. DOM INITIALIZATION & EVENT LISTENERS
+// 9. DOM INITIALIZATION & EVENT LISTENERS
 // ========================================================
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
@@ -1418,24 +1306,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const returnGroup = document.getElementById("returnDateGroup");
       const multiCityFields = document.getElementById("multiCityFields");
-      const leg1Title = document.getElementById("leg1Title");
-      const departDateLabel = document.getElementById("departDateLabel");
 
       if (currentTripType === "roundtrip") {
         returnGroup?.classList.remove("hidden");
         multiCityFields?.classList.add("hidden");
-        if (leg1Title) leg1Title.style.display = "none";
-        if (departDateLabel) departDateLabel.textContent = "Depart Date";
       } else if (currentTripType === "oneway") {
         returnGroup?.classList.add("hidden");
         multiCityFields?.classList.add("hidden");
-        if (leg1Title) leg1Title.style.display = "none";
-        if (departDateLabel) departDateLabel.textContent = "Flight Date";
       } else if (currentTripType === "multicity") {
         returnGroup?.classList.add("hidden");
         multiCityFields?.classList.remove("hidden");
-        if (leg1Title) leg1Title.style.display = "block";
-        if (departDateLabel) departDateLabel.textContent = "Segment 1 Date";
       }
     });
   });
@@ -1474,7 +1354,8 @@ document.addEventListener("DOMContentLoaded", () => {
   toggleListViewBtn?.addEventListener("click", () => {
     toggleListViewBtn.classList.add("active");
     toggleMapViewBtn?.classList.remove("active");
-    mapSection?.classList.add("hidden");
+    mapSection?.classList.remove("hidden");
+    if (leafletMapInstance) leafletMapInstance.invalidateSize();
   });
 
   toggleMapViewBtn?.addEventListener("click", () => {
