@@ -1,296 +1,293 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chung's Bon Voyage Search - Live Travel, Hotels, Sights, Transit & Maps</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chung's Bon Voyage Search</title>
+  
+  <!-- Leaflet CSS for Maps -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+  <!-- ========================================== -->
+  <!-- HEADER & NAVIGATION                        -->
+  <!-- ========================================== -->
   <header class="navbar">
-    <div class="container navbar-container">
-      <div class="brand-block">
-        <h1>Chung's Bon Voyage <span class="highlight">Search</span></h1>
-        <p>Live Global Airport, Branded Hotel, Transit & Culinary Travel Hub</p>
+    <div class="nav-container">
+      <div class="nav-brand">
+        <span class="nav-logo">✈️</span>
+        <div class="brand-text">
+          <h1 class="nav-title">Chung's Bon Voyage Search</h1>
+          <span class="nav-subtitle">Smart Global Travel, Flight & Hotel Navigator</span>
+        </div>
       </div>
-
+      
       <div class="nav-controls">
-        <!-- Dark / Light Theme Toggle -->
-        <button id="themeToggleBtn" class="btn-theme-toggle" title="Toggle Dark / Light Theme">
-          <span id="themeToggleIcon">☀️</span> <span id="themeToggleText">Light</span>
-        </button>
-
-        <!-- Currency Converter Toggle -->
-        <div class="currency-selector-wrapper">
-          <label for="currencySelect">Currency:</label>
-          <select id="currencySelect" class="currency-select">
-            <option value="USD">USD ($)</option>
+        <!-- Currency Converter Selector -->
+        <div class="currency-wrapper">
+          <label for="currencySelect" class="sr-only">Currency</label>
+          <select id="currencySelect" class="currency-select" title="Change Currency Display">
+            <option value="USD" selected>USD ($)</option>
             <option value="EUR">EUR (€)</option>
             <option value="JPY">JPY (¥)</option>
             <option value="GBP">GBP (£)</option>
             <option value="TWD">TWD (NT$)</option>
+            <option value="CAD">CAD (CA$)</option>
             <option value="CNY">CNY (¥)</option>
           </select>
         </div>
 
-        <!-- Saved Trips Manager Trigger -->
-        <button id="openSavedTripsBtn" class="btn-secondary-nav" title="View Saved Itineraries">
-          💾 Saved Trips <span id="savedTripsCountBadge" class="mini-count-badge">0</span>
+        <!-- Saved Trips Trigger -->
+        <button id="openSavedTripsBtn" class="btn-secondary" title="View Saved Trips">
+          📑 Saved Trips <span id="savedTripsCountBadge" class="saved-badge">0</span>
         </button>
 
-        <!-- Trip Summary Badge -->
-        <div id="tripBadge" class="trip-summary-badge hidden">
-          <span id="tripBadgeText">0 Items Selected</span>
-          <button id="viewDrawerBtn" class="btn-sm">View Trip</button>
-        </div>
+        <!-- Light/Dark Mode Switcher -->
+        <button id="themeToggleBtn" class="theme-toggle" title="Toggle Light/Dark Theme">
+          <span id="themeToggleIcon">☀️</span>
+          <span id="themeToggleText">Light</span>
+        </button>
       </div>
     </div>
   </header>
 
-  <main class="container">
-    <!-- Search Form Card -->
+  <main class="main-container">
+    <!-- ========================================== -->
+    <!-- SEARCH & DISCOVERY ENGINE PANEL           -->
+    <!-- ========================================== -->
     <section class="search-card">
-      <!-- Trip Mode Switcher -->
-      <div class="trip-type-tabs">
-        <button type="button" class="tab-btn active" data-type="roundtrip">Round Trip</button>
-        <button type="button" class="tab-btn" data-type="oneway">One Way</button>
-        <button type="button" class="tab-btn" data-type="multicity">Multi-City / Open-Jaw</button>
+      <div class="trip-tabs">
+        <button type="button" class="tab-btn active" data-type="roundtrip">Round-Trip</button>
+        <button type="button" class="tab-btn" data-type="oneway">One-Way</button>
+        <button type="button" class="tab-btn" data-type="multicity">Multi-City</button>
       </div>
 
-      <form id="travelSearchForm">
-        <!-- 3-Way Location Inputs: Departure, Landing Airport & Specific Visit City -->
-        <div class="form-row form-row-3col">
-          <div class="input-group autocomplete-group">
-            <label for="origin">1. Departure Airport / City</label>
-            <input type="text" id="origin" placeholder="e.g. SFO, SJC, San Jose..." autocomplete="off" required>
+      <form id="travelSearchForm" class="search-form" autocomplete="off">
+        <div class="form-grid">
+          <!-- Segment 1 Origin -->
+          <div class="form-group autocomplete-group">
+            <label for="origin" id="originLabel">From (Airport Hub)</label>
+            <div class="input-icon-wrapper">
+              <span class="input-icon">🛫</span>
+              <input type="text" id="origin" name="origin" placeholder="e.g. San Francisco (SFO)" required />
+            </div>
             <div id="originSuggestions" class="autocomplete-dropdown"></div>
           </div>
-          
-          <div class="input-group autocomplete-group">
-            <label for="destination">2. Arrival Airport (Flight Hub)</label>
-            <input type="text" id="destination" placeholder="e.g. EWR (Newark), JFK, SAN, BCN..." autocomplete="off" required>
+
+          <!-- Segment 1 Destination Airport -->
+          <div class="form-group autocomplete-group">
+            <label for="destination" id="destLabel">Fly Into (Airport Hub)</label>
+            <div class="input-icon-wrapper">
+              <span class="input-icon">🛬</span>
+              <input type="text" id="destination" name="destination" placeholder="e.g. Chicago (ORD)" required />
+            </div>
             <div id="destSuggestions" class="autocomplete-dropdown"></div>
           </div>
 
-          <div class="input-group">
-            <label for="visitCity">3. Destination City / Area to Visit</label>
-            <input type="text" id="visitCity" placeholder="e.g. Jersey City, Princeton, Downtown..." required>
+          <!-- Target Visit City / Area -->
+          <div class="form-group">
+            <label for="visitCity">Target Explore Area</label>
+            <div class="input-icon-wrapper">
+              <span class="input-icon">📍</span>
+              <input type="text" id="visitCity" name="visitCity" placeholder="e.g. Chicago, Oak Park, Evanston" />
+            </div>
           </div>
-        </div>
 
-        <div class="form-row form-row-dates-radius">
-          <div class="input-group">
+          <!-- Departure Date -->
+          <div class="form-group">
             <label for="departDate" id="departDateLabel">Depart Date</label>
-            <input type="date" id="departDate" required>
-          </div>
-          
-          <div class="input-group" id="returnDateGroup">
-            <label for="returnDate">Return Date</label>
-            <input type="date" id="returnDate">
+            <input type="date" id="departDate" name="departDate" required />
           </div>
 
-          <!-- Live Exploration Radius Selector -->
-          <div class="input-group">
-            <label for="radiusSelect">Exploration Radius</label>
-            <select id="radiusSelect" class="radius-select">
-              <option value="5">5 km (~3 mi) - Downtown Core</option>
-              <option value="10" selected>10 km (~6 mi) - City & Neighborhoods</option>
-              <option value="15">15 km (~9.5 mi) - Metro & Coastal</option>
-              <option value="25">25 km (~15.5 mi) - Wide Regional Sweep</option>
+          <!-- Return Date (Roundtrip only) -->
+          <div class="form-group" id="returnDateGroup">
+            <label for="returnDate">Return Date</label>
+            <input type="date" id="returnDate" name="returnDate" />
+          </div>
+
+          <!-- Exploration Radius Selector -->
+          <div class="form-group">
+            <label for="radiusSelect">Explore Radius</label>
+            <select id="radiusSelect" name="radiusSelect">
+              <option value="5">5 km (Downtown Core)</option>
+              <option value="10" selected>10 km (Metropolitan Area)</option>
+              <option value="15">15 km (Greater City Area)</option>
+              <option value="25">25 km (Regional & Satellites)</option>
+              <option value="50">50 km (Day Trips & Countryside)</option>
             </select>
           </div>
         </div>
 
-        <!-- Leg 2: Open-Jaw / Multi-City (Initially Hidden) -->
-        <div id="multiCityFields" class="hidden">
-          <div class="form-section-title">Segment 2 (Return / Next Leg)</div>
-          <div class="form-row">
-            <div class="input-group autocomplete-group">
-              <label for="leg2Origin">Leg 2 Departure (e.g. Madrid MAD)</label>
-              <input type="text" id="leg2Origin" placeholder="Type leg 2 departure..." autocomplete="off">
+        <!-- Multi-City Segment 2 (Hidden by Default) -->
+        <div id="multiCityFields" class="multicity-container hidden">
+          <div class="multicity-header">
+            <span class="leg-indicator">Segment 2: Connecting Journey</span>
+          </div>
+          <div class="form-grid">
+            <div class="form-group autocomplete-group">
+              <label for="leg2Origin">Leg 2 Origin</label>
+              <input type="text" id="leg2Origin" placeholder="e.g. Chicago (ORD)" />
               <div id="leg2OriginSuggestions" class="autocomplete-dropdown"></div>
             </div>
-            
-            <div class="input-group autocomplete-group">
-              <label for="leg2Dest">Leg 2 Final Destination (e.g. SFO)</label>
-              <input type="text" id="leg2Dest" placeholder="Type leg 2 arrival..." autocomplete="off">
+            <div class="form-group autocomplete-group">
+              <label for="leg2Dest">Leg 2 Fly Into</label>
+              <input type="text" id="leg2Dest" placeholder="e.g. New York (JFK)" />
               <div id="leg2DestSuggestions" class="autocomplete-dropdown"></div>
             </div>
-          </div>
-
-          <div class="form-row">
-            <div class="input-group">
-              <label for="leg2Date">Leg 2 Flight Date</label>
-              <input type="date" id="leg2Date">
+            <div class="form-group">
+              <label for="leg2Date">Leg 2 Date</label>
+              <input type="date" id="leg2Date" />
             </div>
           </div>
         </div>
 
         <!-- Preferred Hotel Brands -->
-        <div class="hotel-brands-section">
-          <label>Preferred Hotel Brands (Target City)</label>
-          <div class="brand-checkboxes">
-            <label class="checkbox-label">
-              <input type="checkbox" name="hotelBrand" value="Marriott Bonvoy" checked> Marriott Bonvoy
+        <div class="hotel-preferences-section">
+          <span class="section-label">Preferred Hotel Loyalty Portals:</span>
+          <div class="checkbox-group">
+            <label class="custom-checkbox">
+              <input type="checkbox" name="hotelBrand" value="Marriott Bonvoy" checked />
+              <span class="checkbox-mark"></span>
+              <span class="brand-title">Marriott Bonvoy</span>
             </label>
-            <label class="checkbox-label">
-              <input type="checkbox" name="hotelBrand" value="World of Hyatt" checked> Hyatt
+            <label class="custom-checkbox">
+              <input type="checkbox" name="hotelBrand" value="World of Hyatt" checked />
+              <span class="checkbox-mark"></span>
+              <span class="brand-title">World of Hyatt</span>
             </label>
-            <label class="checkbox-label">
-              <input type="checkbox" name="hotelBrand" value="IHG" checked> IHG
+            <label class="custom-checkbox">
+              <input type="checkbox" name="hotelBrand" value="IHG" checked />
+              <span class="checkbox-mark"></span>
+              <span class="brand-title">IHG One Rewards</span>
             </label>
           </div>
         </div>
 
-        <button type="submit" class="btn-primary" id="searchBtn">Search Flights, Hotels, Sights, Transit & Maps</button>
+        <div class="form-footer">
+          <button type="submit" id="searchSubmitBtn" class="btn-primary">
+            <span>🔍 Search Corridor & Explore Map</span>
+          </button>
+        </div>
       </form>
     </section>
 
-    <!-- Loading State -->
-    <div id="loadingState" class="hidden">
+    <!-- ========================================== -->
+    <!-- LOADING SPINNER & STATUS                   -->
+    <!-- ========================================== -->
+    <div id="loadingState" class="loading-container hidden">
       <div class="spinner"></div>
-      <p id="loadingStatusText">Resolving flight corridors, local sights, transit passes, and interactive map pins...</p>
+      <p class="loading-text">Resolving geographic coordinates, flight schedules, and verified venues...</p>
     </div>
 
-    <!-- Results Area -->
-    <section id="resultsSection" class="hidden">
-      <div class="results-header">
-        <div>
-          <div class="resolved-route-badge" id="resolvedRouteBadge">
-            <span id="resolvedOriginText">--</span>
-            <span class="route-arrow">✈</span>
-            <span id="resolvedDestText">--</span>
-            <span class="city-target-pill" id="resolvedCityPill">📍 Target: --</span>
+    <!-- ========================================== -->
+    <!-- RESULTS & DESTINATION HUB                  -->
+    <!-- ========================================== -->
+    <section id="resultsSection" class="results-section hidden">
+      
+      <!-- Results Overview Banner -->
+      <div class="results-header-card">
+        <div class="results-header-main">
+          <div class="corridor-pills">
+            <span id="resolvedOriginText" class="corridor-badge">Origin</span>
+            <span class="arrow-separator">➔</span>
+            <span id="resolvedDestText" class="corridor-badge">Destination</span>
+            <span id="resolvedCityPill" class="city-badge">📍 Target City</span>
           </div>
-          <h2 id="resultsTitle">Showing results</h2>
+          <h2 id="resultsTitle" class="results-title">Exploring Destination</h2>
           <span id="tripLengthSubtitle" class="trip-length-text"></span>
         </div>
+        
+        <div class="results-header-actions">
+          <a id="googleFlightsLiveBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn-google-flights">
+            ✈️ Open in Google Flights ↗
+          </a>
+        </div>
+      </div>
 
-        <!-- View Mode Switcher -->
-        <div class="view-mode-toggle">
-          <button id="toggleListViewBtn" class="mode-btn active">📋 List View</button>
-          <button id="toggleMapViewBtn" class="mode-btn">🗺️ Interactive Map</button>
+      <!-- View Switcher -->
+      <div class="view-toggle-bar">
+        <div class="toggle-buttons">
+          <button id="toggleListViewBtn" class="toggle-btn active">📑 Side-by-Side View</button>
+          <button id="toggleMapViewBtn" class="toggle-btn">🗺️ Interactive Map View</button>
+        </div>
+        
+        <div class="radius-control-inline">
+          <label for="mapRadiusSelect">Radius:</label>
+          <select id="mapRadiusSelect" class="radius-inline-select">
+            <option value="5">5 km (Downtown)</option>
+            <option value="10" selected>10 km (Metro)</option>
+            <option value="15">15 km (Greater)</option>
+            <option value="25">25 km (Regional)</option>
+            <option value="50">50 km (Day Trips)</option>
+          </select>
         </div>
       </div>
 
       <!-- Interactive Map Section -->
-      <section id="mapSection" class="map-wrapper hidden">
+      <div id="mapSection" class="map-card">
         <div class="map-header">
           <div>
-            <h3>🗺️ Destination Exploration Map</h3>
-            <span class="map-subtitle" id="mapCitySubtitle">Click anywhere on the map or use the button to add custom pins</span>
+            <h3 class="section-title">📍 Geographic Exploration Map</h3>
+            <p class="section-subtitle">Real-time GPS pins for landmarks, culinary venues, and hotels within radius</p>
           </div>
-
-          <div class="map-toolbar-actions">
-            <!-- Add Custom Place Button directly on map -->
-            <button id="openAddPlaceMapBtn" class="btn-add-place">+ Add Custom Place</button>
-
-            <!-- Live In-Map Radius Bar -->
-            <div class="map-radius-control">
-              <label for="mapRadiusSelect">Radius:</label>
-              <select id="mapRadiusSelect" class="radius-select map-radius-dropdown">
-                <option value="5">5 km (Downtown)</option>
-                <option value="10" selected>10 km (City)</option>
-                <option value="15">15 km (Metro)</option>
-                <option value="25">25 km (Regional)</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="map-legend">
-            <span class="legend-item"><span class="legend-dot dot-hotel"></span> Hotels</span>
-            <span class="legend-item"><span class="legend-dot dot-sight"></span> Sights & Culture</span>
-            <span class="legend-item"><span class="legend-dot dot-food"></span> Food & Dining</span>
-          </div>
+          <button id="openAddPlaceMapBtn" class="btn-add-place">+ Add Custom Pin</button>
         </div>
-        <div id="leafletMap" class="leaflet-map-container"></div>
-      </section>
+        <div id="leafletMap" class="map-viewport"></div>
+      </div>
 
-      <!-- Public Transit Guide Panel -->
-      <section id="transitSection" class="transit-wrapper">
-        <div class="transit-header">
+      <!-- Public Transit & Rail Guide -->
+      <div class="transit-guide-section">
+        <div class="section-header">
           <div>
-            <h3>🚇 Public Transit & Airport Transfer Guide</h3>
-            <span class="transit-subtitle" id="transitCitySubtitle">Essential metro cards, airport express links, and transit navigation tips</span>
+            <h3 class="section-title">🚆 Essential Public Transit & Airport Rail</h3>
+            <p id="transitCitySubtitle" class="section-subtitle">Subway passes, airport express lines, and regional rail connections</p>
           </div>
         </div>
         <div id="transitContent" class="transit-grid"></div>
-      </section>
+      </div>
 
-      <!-- Key Sights & Food Experiences Section -->
-      <section id="sightsSection" class="sights-wrapper">
-        <div class="sights-header">
-          <div>
-            <div class="sights-title-block">
-              <h3>🏛️ Top Sights, Culture & Iconic Food</h3>
-              <span class="count-badge" id="sightsCount">0 highlights</span>
-            </div>
-            <span class="sights-subtitle" id="sightsCitySubtitle">Must-visit places, landmarks, and signature food experiences</span>
-          </div>
-
-          <!-- Actions: Filter Pills & Add Custom Place -->
-          <div class="sights-action-bar">
-            <button id="openAddPlaceListBtn" class="btn-add-place-sm">+ Add Place</button>
-            <div class="highlight-filter-bar">
-              <button class="sight-filter-btn active" data-filter="all">All</button>
-              <button class="sight-filter-btn" data-filter="sight">🏛️ Sights & Culture</button>
-              <button class="sight-filter-btn" data-filter="food">🍜 Food & Dining</button>
-            </div>
-          </div>
-        </div>
+      <!-- Main Columns: Highlights, Hotels, Flights -->
+      <div class="content-three-column">
         
-        <div id="sightsList" class="sights-grid"></div>
-      </section>
-      
-      <!-- Flights and Hotels Stack Columns -->
-      <div class="results-grid">
-        <!-- Flight Column -->
-        <div id="flightResults" class="results-column">
+        <!-- Column 1: Sights & Gastronomy -->
+        <div class="column-block">
           <div class="column-header">
-            <div>
-              <h3>Available Flights</h3>
-              <span class="count-badge" id="flightCount">0 found</span>
+            <div class="header-left">
+              <h3 class="col-title">🏛️ Verified Sights & Savor</h3>
+              <span id="sightsCount" class="badge-count">0 highlights</span>
             </div>
-            
-            <div class="sort-and-actions">
-              <a id="googleFlightsLiveBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn-google-flights" title="Open search on Google Flights">
-                ✈️ Live on Google Flights
-              </a>
-              <div class="sort-wrapper">
-                <label for="flightSort">Sort:</label>
-                <select id="flightSort" class="sort-select">
-                  <option value="price">Cheapest First</option>
-                  <option value="duration">Fastest Route</option>
-                  <option value="stops">Fewest Stops</option>
-                  <option value="departTime">Departure Time</option>
-                </select>
-              </div>
-            </div>
+            <button id="openAddPlaceListBtn" class="btn-inline-add">+ Add</button>
           </div>
-          <div id="flightList" class="cards-stack"></div>
-        </div>
-        
-        <!-- Hotel Column -->
-        <div id="hotelResults" class="results-column">
-          <div class="column-header">
-            <div>
-              <h3>Branded Hotels</h3>
-              <span class="count-badge" id="hotelCount">0 found</span>
-            </div>
-            
-            <div class="sort-wrapper">
-              <label for="hotelSort">Sort:</label>
-              <select id="hotelSort" class="sort-select">
-                <option value="rating">Top Rated</option>
-                <option value="priceLow">Price: Low to High</option>
-                <option value="priceHigh">Price: High to Low</option>
-              </select>
-            </div>
+          <p id="sightsCitySubtitle" class="column-subtext"></p>
+
+          <div class="filter-chips">
+            <button class="sight-filter-btn active" data-filter="all">All</button>
+            <button class="sight-filter-btn" data-filter="sight">🏛️ Sights & Culture</button>
+            <button class="sight-filter-btn" data-filter="food">🍜 Iconic Food</button>
           </div>
 
-          <!-- Hotel Filter Chips -->
-          <div class="hotel-filter-bar">
+          <div id="sightsList" class="cards-stack"></div>
+        </div>
+
+        <!-- Column 2: Branded Hotels -->
+        <div class="column-block">
+          <div class="column-header">
+            <div class="header-left">
+              <h3 class="col-title">🏨 Verified Loyalty Hotels</h3>
+              <span id="hotelCount" class="badge-count">0 found</span>
+            </div>
+            <select id="hotelSort" class="sort-select">
+              <option value="rating">Sort: Highest Rating</option>
+              <option value="priceLow">Sort: Price (Low ➔ High)</option>
+              <option value="priceHigh">Sort: Price (High ➔ Low)</option>
+            </select>
+          </div>
+          <p class="column-subtext">Direct brand portal booking for points and elite status benefits</p>
+
+          <div class="filter-chips">
             <button class="hotel-pill-btn active" data-brand="all">All Brands</button>
             <button class="hotel-pill-btn" data-brand="Marriott Bonvoy">Marriott</button>
             <button class="hotel-pill-btn" data-brand="World of Hyatt">Hyatt</button>
@@ -299,92 +296,51 @@
 
           <div id="hotelList" class="cards-stack"></div>
         </div>
+
+        <!-- Column 3: Flight Schedules -->
+        <div class="column-block">
+          <div class="column-header">
+            <div class="header-left">
+              <h3 class="col-title">✈️ Corridor Flight Matrix</h3>
+              <span id="flightCount" class="badge-count">0 options</span>
+            </div>
+            <select id="flightSort" class="sort-select">
+              <option value="price">Sort: Lowest Price</option>
+              <option value="duration">Sort: Shortest Duration</option>
+              <option value="stops">Sort: Non-stop First</option>
+              <option value="departTime">Sort: Departure Time</option>
+            </select>
+          </div>
+          <p class="column-subtext">Verified scheduled carrier connections</p>
+
+          <div id="flightList" class="cards-stack"></div>
+        </div>
+
       </div>
     </section>
   </main>
 
-  <!-- Add / Edit Custom Place Modal -->
-  <div id="placeModalOverlay" class="modal-overlay hidden"></div>
-  <div id="placeModal" class="modal-card hidden">
-    <div class="modal-header">
-      <h3 id="placeModalTitle">📍 Add New Place</h3>
-      <button id="closePlaceModalBtn" class="close-btn">&times;</button>
+  <!-- ========================================== -->
+  <!-- FLOATING TRIP BADGE (TRIGGER FOR DRAWER)   -->
+  <!-- ========================================== -->
+  <div id="tripBadge" class="floating-trip-badge hidden">
+    <div class="trip-badge-info">
+      <span id="tripBadgeText">0 Items Selected</span>
     </div>
-    <div class="modal-body">
-      <form id="customPlaceForm">
-        <input type="hidden" id="placeEditId" value="">
-        
-        <div class="input-group" style="margin-bottom: 1rem;">
-          <label for="placeNameInput">Place Name or Address</label>
-          <input type="text" id="placeNameInput" placeholder="e.g. Princeton Art Museum, Joe's Diner, Hotel..." required>
-        </div>
-
-        <div class="form-row" style="margin-bottom: 1rem;">
-          <div class="input-group">
-            <label for="placeCategoryType">Type</label>
-            <select id="placeCategoryType" class="sort-select">
-              <option value="sight">🏛️ Sight & Culture</option>
-              <option value="food">🍜 Food & Dining</option>
-              <option value="hotel">🏨 Hotel & Stay</option>
-            </select>
-          </div>
-
-          <div class="input-group">
-            <label for="placeCategoryLabel">Category Label</label>
-            <input type="text" id="placeCategoryLabel" placeholder="e.g. Historic Museum, Bakery..." required>
-          </div>
-        </div>
-
-        <div class="form-row" style="margin-bottom: 1rem;">
-          <div class="input-group">
-            <label for="placeDistrictInput">Neighborhood / District</label>
-            <input type="text" id="placeDistrictInput" placeholder="e.g. Downtown, Palmer Square..." required>
-          </div>
-
-          <div class="input-group">
-            <label for="placePriceInput">Price / Notes (Optional)</label>
-            <input type="text" id="placePriceInput" placeholder="e.g. Free admission, $25/person...">
-          </div>
-        </div>
-
-        <div class="input-group" style="margin-bottom: 1.25rem;">
-          <label for="placeDescInput">Description / Custom Notes</label>
-          <input type="text" id="placeDescInput" placeholder="Notes, must-try dishes, or travel tips...">
-        </div>
-
-        <div class="form-row">
-          <input type="hidden" id="placeLatInput" value="">
-          <input type="hidden" id="placeLonInput" value="">
-        </div>
-
-        <button type="submit" class="btn-primary" id="savePlaceModalSubmitBtn">Save Place to Map & List</button>
-      </form>
-    </div>
+    <button id="viewDrawerBtn" class="btn-trip-badge">Review Itinerary ➔</button>
   </div>
 
-  <!-- Saved Trips Management Modal -->
-  <div id="savedTripsModalOverlay" class="modal-overlay hidden"></div>
-  <div id="savedTripsModal" class="modal-card hidden">
-    <div class="modal-header">
-      <h3>💾 My Saved Itineraries</h3>
-      <button id="closeSavedTripsModalBtn" class="close-btn">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div id="savedTripsList" class="saved-trips-stack">
-        <p class="empty-state-text">No itineraries saved yet. Select a flight and hotel, then click "Save Trip Plan" in the drawer!</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Slide-In Itinerary Summary Drawer -->
+  <!-- ========================================== -->
+  <!-- ITINERARY SUMMARY DRAWER & OVERLAY         -->
+  <!-- ========================================== -->
   <div id="itineraryOverlay" class="drawer-overlay hidden"></div>
   <aside id="itineraryDrawer" class="itinerary-drawer hidden">
     <div class="drawer-header">
-      <h3>Trip Itinerary</h3>
-      <button id="closeDrawerBtn" class="close-btn">&times;</button>
+      <h3>📋 Trip Itinerary & Cost Estimator</h3>
+      <button id="closeDrawerBtn" class="btn-close-drawer">✕</button>
     </div>
-    
-    <div class="drawer-content">
+
+    <div class="drawer-body">
       <div class="drawer-section">
         <h4>Selected Flight</h4>
         <div id="drawerFlightContent" class="drawer-card empty-card">
@@ -393,58 +349,127 @@
       </div>
 
       <div class="drawer-section">
-        <h4>Selected Lodging</h4>
+        <h4>Selected Accommodation</h4>
         <div id="drawerHotelContent" class="drawer-card empty-card">
           <span>No hotel selected yet.</span>
         </div>
       </div>
 
-      <!-- Daily Estimated Budget Breakdown -->
-      <div class="drawer-section budget-section">
-        <h4>Daily Budget Estimator</h4>
-        <div class="budget-card">
-          <div class="price-row">
-            <span>Est. Daily Food & Dining:</span>
-            <strong id="drawerDailyFood">$75 / day</strong>
+      <div class="drawer-section">
+        <h4>Daily Living Expenses (Estimate)</h4>
+        <div class="living-costs-table">
+          <div class="cost-row">
+            <span>Dining & Street Food:</span>
+            <strong id="drawerDailyFood">$60 / day</strong>
           </div>
-          <div class="price-row">
-            <span>Est. Daily Transit & Passes:</span>
-            <strong id="drawerDailyTransit">$15 / day</strong>
+          <div class="cost-row">
+            <span>Local Transit & Passes:</span>
+            <strong id="drawerDailyTransit">$12 / day</strong>
           </div>
         </div>
       </div>
 
-      <div class="drawer-pricing">
-        <div class="price-row">
-          <span>Flight Subtotal:</span>
+      <div class="drawer-section totals-section">
+        <div class="cost-row">
+          <span>Flight Total:</span>
           <strong id="drawerFlightPrice">$0</strong>
         </div>
-        <div class="price-row">
+        <div class="cost-row">
           <span id="drawerHotelLabel">Hotel Subtotal:</span>
           <strong id="drawerHotelPrice">$0</strong>
         </div>
-        <div class="price-row">
-          <span>Estimated Living & Transit:</span>
+        <div class="cost-row">
+          <span>Living & Transit Subtotal:</span>
           <strong id="drawerLivingPrice">$0</strong>
         </div>
-        <div class="price-row total-row">
+        <hr class="drawer-divider" />
+        <div class="cost-row grand-total-row">
           <span>Grand Total Estimate:</span>
-          <strong id="drawerTotalPrice" class="highlight-total">$0</strong>
-        </div>
-        
-        <div class="drawer-action-row">
-          <button id="saveTripToStorageBtn" class="btn-secondary drawer-btn" style="margin-bottom: 0.5rem;">
-            💾 Save Trip to Local Storage
-          </button>
-          <a id="drawerGoogleFlightsLink" href="#" target="_blank" rel="noopener noreferrer" class="btn-primary drawer-btn">
-            Book on Google Flights ↗
-          </a>
+          <strong id="drawerTotalPrice" class="grand-total-price">$0</strong>
         </div>
       </div>
     </div>
+
+    <div class="drawer-footer">
+      <button id="saveTripToStorageBtn" class="btn-save-trip">💾 Save Itinerary Plan</button>
+      <a id="drawerGoogleFlightsLink" href="#" target="_blank" class="btn-book-external">Open Google Flights ↗</a>
+    </div>
   </aside>
 
+  <!-- ========================================== -->
+  <!-- SAVED TRIPS MODAL                          -->
+  <!-- ========================================== -->
+  <div id="savedTripsModalOverlay" class="modal-overlay hidden"></div>
+  <div id="savedTripsModal" class="modal-card hidden">
+    <div class="modal-header">
+      <h3>📑 Saved Itinerary Plans</h3>
+      <button id="closeSavedTripsModalBtn" class="btn-close-modal">✕</button>
+    </div>
+    <div id="savedTripsList" class="modal-body">
+      <!-- Injected dynamically -->
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- ADD / EDIT CUSTOM PLACE MODAL              -->
+  <!-- ========================================== -->
+  <div id="placeModalOverlay" class="modal-overlay hidden"></div>
+  <div id="placeModal" class="modal-card hidden">
+    <div class="modal-header">
+      <h3 id="placeModalTitle">📍 Add New Place</h3>
+      <button id="closePlaceModalBtn" class="btn-close-modal">✕</button>
+    </div>
+    <form id="customPlaceForm" class="modal-form">
+      <input type="hidden" id="placeEditId" />
+      <div class="form-group">
+        <label for="placeNameInput">Place or Venue Name</label>
+        <input type="text" id="placeNameInput" required placeholder="e.g. Local Ramen Shop, Viewpoint..." />
+      </div>
+      <div class="form-group">
+        <label for="placeCategoryType">Type</label>
+        <select id="placeCategoryType">
+          <option value="sight">🏛️ Sight / Cultural Landmark</option>
+          <option value="food">🍜 Culinary / Restaurant</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="placeCategoryLabel">Category Label</label>
+        <input type="text" id="placeCategoryLabel" placeholder="e.g. Historic Castle, Artisan Bakery..." />
+      </div>
+      <div class="form-group">
+        <label for="placeDistrictInput">District / Neighborhood</label>
+        <input type="text" id="placeDistrictInput" placeholder="e.g. Old Town, Waterfront..." />
+      </div>
+      <div class="form-group">
+        <label for="placeDescInput">Description / Notes</label>
+        <textarea id="placeDescInput" rows="2" placeholder="Brief notes on what makes this place special..."></textarea>
+      </div>
+      <div class="form-row-two">
+        <div class="form-group">
+          <label for="placeLatInput">Latitude</label>
+          <input type="number" step="any" id="placeLatInput" placeholder="Optional exact GPS" />
+        </div>
+        <div class="form-group">
+          <label for="placeLonInput">Longitude</label>
+          <input type="number" step="any" id="placeLonInput" placeholder="Optional exact GPS" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn-primary">Save Pin</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT MODULES                         -->
+  <!-- ========================================== -->
+  <!-- Leaflet Map Engine -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="app.js?v=2.0"></script>
+  
+  <!-- Master Curated Database Module -->
+  <script src="destinations.js?v=3.0"></script>
+  
+  <!-- Application Core Controller -->
+  <script src="app.js?v=3.0"></script>
 </body>
 </html>
