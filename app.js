@@ -2,6 +2,24 @@
 // 1. GLOBAL AIRPORT & DOWNTOWN DIRECTORY
 // ========================================================
 const majorAirportCatalog = [
+  // Chicago Hubs
+  { 
+    code: "ORD", 
+    name: "Chicago O'Hare International", 
+    city: "Chicago", 
+    country: "United States", 
+    airportLat: 41.9742, airportLon: -87.9073,
+    cityLat: 41.8781, cityLon: -87.6298 // Downtown Chicago (The Loop)
+  },
+  { 
+    code: "MDW", 
+    name: "Chicago Midway International", 
+    city: "Chicago", 
+    country: "United States", 
+    airportLat: 41.7868, airportLon: -87.7522,
+    cityLat: 41.8781, cityLon: -87.6298 
+  },
+
   // San Francisco Bay Area & Silicon Valley
   { 
     code: "SFO", 
@@ -9,7 +27,7 @@ const majorAirportCatalog = [
     city: "San Francisco", 
     country: "United States", 
     airportLat: 37.6213, airportLon: -122.3790,
-    cityLat: 37.7749, cityLon: -122.4194 // Downtown San Francisco
+    cityLat: 37.7749, cityLon: -122.4194 
   },
   { 
     code: "SJC", 
@@ -17,7 +35,7 @@ const majorAirportCatalog = [
     city: "San Jose", 
     country: "United States", 
     airportLat: 37.3639, airportLon: -121.9289,
-    cityLat: 37.3382, cityLon: -121.8863 // Downtown San Jose
+    cityLat: 37.3382, cityLon: -121.8863 
   },
   { 
     code: "OAK", 
@@ -43,7 +61,7 @@ const majorAirportCatalog = [
     city: "New York", 
     country: "United States", 
     airportLat: 40.6413, airportLon: -73.7781,
-    cityLat: 40.7580, cityLon: -73.9855 // Midtown Manhattan
+    cityLat: 40.7580, cityLon: -73.9855 
   },
   { 
     code: "LGA", 
@@ -96,23 +114,7 @@ const majorAirportCatalog = [
     cityLat: 21.2766, cityLon: -157.8283 
   },
 
-  // US Midwest & East Coast
-  { 
-    code: "MDW", 
-    name: "Chicago Midway International", 
-    city: "Chicago", 
-    country: "United States", 
-    airportLat: 41.7868, airportLon: -87.7522,
-    cityLat: 41.8781, cityLon: -87.6298 
-  },
-  { 
-    code: "ORD", 
-    name: "Chicago O'Hare International", 
-    city: "Chicago", 
-    country: "United States", 
-    airportLat: 41.9742, airportLon: -87.9073,
-    cityLat: 41.8781, cityLon: -87.6298 
-  },
+  // US East Coast & Midwest
   { 
     code: "BOS", 
     name: "Boston Logan International", 
@@ -368,10 +370,10 @@ async function resolveAirportHub(userInput) {
     name: `${cleanInput} Airport`,
     city: cleanInput,
     country: "",
-    airportLat: 37.7749,
-    airportLon: -122.4194,
-    cityLat: 37.7749,
-    cityLon: -122.4194
+    airportLat: 41.8781,
+    airportLon: -87.6298,
+    cityLat: 41.8781,
+    cityLon: -87.6298
   };
 }
 
@@ -389,6 +391,9 @@ async function resolveVisitCityLocation(cityName, fallbackAirportObj) {
   const lower = cleanCity.toLowerCase();
 
   // Known city coordinates
+  if (lower.includes("chicago") || lower.includes("windy city") || lower.includes("the loop")) {
+    return { cityName: "Chicago", lat: 41.8781, lon: -87.6298 };
+  }
   if (lower.includes("san francisco") || lower.includes("sf") || lower.includes("bay area")) {
     return { cityName: "San Francisco", lat: 37.7749, lon: -122.4194 };
   }
@@ -409,9 +414,6 @@ async function resolveVisitCityLocation(cityName, fallbackAirportObj) {
   }
   if (lower.includes("san diego")) {
     return { cityName: "San Diego", lat: 32.7157, lon: -117.1611 };
-  }
-  if (lower.includes("chicago")) {
-    return { cityName: "Chicago", lat: 41.8781, lon: -87.6298 };
   }
   if (lower.includes("taipei")) {
     return { cityName: "Taipei", lat: 25.0330, lon: 121.5654 };
@@ -561,8 +563,7 @@ function toggleTheme() {
       ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
       : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
     
-    baseTileLayer = L.tileLayer(tileUrl, { maxZoom: 19, attribution: '© OpenStreetMap © CARTO' });
-    baseTileLayer.addTo(leafletMapInstance);
+    baseTileLayer = L.tileLayer(tileUrl, { maxZoom: 19, attribution: '© OpenStreetMap © CARTO' }).addTo(leafletMapInstance);
   }
 }
 
@@ -601,6 +602,12 @@ function formatCurrency(amountInUSD) {
 // 3. PUBLIC TRANSIT & CORRIDOR GUIDES
 // ========================================================
 const cityTransitGuides = {
+  CHI: [
+    { title: "CTA 'L' Rapid Transit Network & Contactless Tap", badge: "Subway & Elevated Rail", desc: "Tap any contactless credit card, phone, or Ventra card at all 145 CTA train stations. Easy transfer connections across the Loop.", route: "Single Fare ($2.50) / 24-Hour Unlimited Pass ($5.00)" },
+    { title: "Direct O'Hare (ORD) ➔ Loop Blue Line", badge: "24/7 Airport Express", desc: "Board the Blue Line directly inside O'Hare Airport Lower Level concourse for a direct 45-minute ride straight to downtown Loop stations.", route: "O'Hare ➔ Loop (45 mins, $5.00 from airport)" },
+    { title: "Direct Midway (MDW) ➔ Loop Orange Line", badge: "Airport Express Link", desc: "Board the Orange Line inside the Midway terminal for a quick 25-minute scenic elevated ride into downtown Chicago.", route: "Midway ➔ Downtown Loop (25 mins, $2.50)" },
+    { title: "Chicago Water Taxi & Lakefront Riverwalk", badge: "Scenic Waterways", desc: "Cruises linking Ogilvie/Union Station, Chinatown, River North, Michigan Avenue, and Navy Pier along the Chicago River.", route: "Single River Route ($6.00 / $10.00 All-Day Pass)" }
+  ],
   SF: [
     { title: "BART (Bay Area Rapid Transit)", badge: "Airport & Regional Rail", desc: "Fast regional subway connecting SFO Airport directly to Downtown SF (Powell/Montgomery), Oakland, and Berkeley.", route: "SFO Airport ➔ Downtown SF (30 mins, $10.50 via Clipper)" },
     { title: "Clipper Card & SF Muni Network", badge: "Transit Card", desc: "Contactless card or Apple/Google Wallet for Muni buses, historic F-Market streetcars, Metro subway, and Cable Cars.", route: "Muni Single Ride ($2.50) / Cable Car ($8.00)" },
@@ -632,13 +639,6 @@ const cityTransitGuides = {
   BCN: [
     { title: "Barcelona Metro & T-Casual Card", badge: "Transit Card", desc: "Buy a 10-journey 'T-Casual' card at any metro station for integrated travel across Metro, Bus, and Tram in Zone 1.", route: "Metro Lines L1-L5, T-Casual (~€12.15)" },
     { title: "Aerobús Express (A1 / A2)", badge: "Airport Transfer", desc: "Dedicated express bus running every 5-10 minutes from Terminal 1 & 2 directly to Plaça de Catalunya.", route: "Airport ➔ Plaça Espanya ➔ Plaça Catalunya (35 mins, ~€7.25)" }
-  ],
-  MDW: [
-    { title: "CTA 'L' Train Orange Line", badge: "Airport Express", desc: "Board the Orange Line directly inside Midway Terminal for a seamless 25-minute direct ride to Downtown Chicago Loop.", route: "Midway Station ➔ Loop ($2.50 / Contactless tap)" },
-    { title: "Ventra Card / Contactless Tap", badge: "Transit Card", desc: "Tap any credit card or Apple/Google Pay at all CTA train turnstiles and city buses. 1-day & 3-day unlimited passes available.", route: "Unlimited 1-Day Pass ($5.00)" }
-  ],
-  ORD: [
-    { title: "CTA 'L' Train Blue Line", badge: "Airport Express", desc: "Direct 24/7 rapid transit from O'Hare Lower Level concourse directly to Downtown Loop stations.", route: "O'Hare ➔ Loop (45 mins, $5.00 from airport)" }
   ]
 };
 
@@ -651,7 +651,9 @@ function renderTransitGuide(airportCode, cityName) {
   const normCity = (cityName || "").toLowerCase();
   
   let key = normCode;
-  if (normCity.includes("san francisco") || normCity.includes("sf") || normCode === "SFO" || normCode === "SJC" || normCode === "OAK") {
+  if (normCity.includes("chicago") || normCode === "ORD" || normCode === "MDW") {
+    key = "CHI";
+  } else if (normCity.includes("san francisco") || normCity.includes("sf") || normCode === "SFO" || normCode === "SJC" || normCode === "OAK") {
     key = "SF";
   } else if (normCity.includes("princeton")) {
     key = "PRINCETON";
@@ -659,8 +661,6 @@ function renderTransitGuide(airportCode, cityName) {
     key = "NYC";
   } else if (normCity.includes("san diego") || normCode === "SAN") {
     key = "SAN";
-  } else if (normCity.includes("chicago") || normCode === "MDW" || normCode === "ORD") {
-    key = "MDW";
   }
 
   const guides = cityTransitGuides[key] || [
@@ -690,6 +690,30 @@ function renderTransitGuide(airportCode, cityName) {
 // 4. CURATED SIGHTS & CULINARY CATALOG
 // ========================================================
 const curatedCityGuides = {
+  // CHICAGO & SURROUNDING METRO (Exact GPS)
+  CHI: [
+    { id: "chi_s1", type: "sight", name: "Millennium Park & Cloud Gate ('The Bean')", category: "Iconic Landmark", location: "Downtown Loop / Michigan Ave", lat: 41.8826, lon: -87.6226, desc: "World-famous polished steel sculpture reflecting Chicago's skyline, Lurie Garden, and Crown Fountain.", query: "Cloud Gate Millennium Park Chicago" },
+    { id: "chi_s2", type: "sight", name: "The Art Institute of Chicago & Modern Wing", category: "World-Class Museum", location: "Michigan Avenue", lat: 41.8796, lon: -87.6237, desc: "Over 300,000 works of art featuring Seurat's Grand Jatte, Edward Hopper's Nighthawks, and Impressionist galleries.", query: "Art Institute of Chicago" },
+    { id: "chi_s3", type: "sight", name: "Chicago Architecture Center River Cruise", category: "Iconic Architecture Tour", location: "Chicago Riverwalk / Michigan Ave", lat: 41.8887, lon: -87.6244, desc: "90-minute docent-led boat cruise through the canyon of skyscrapers that birthed modern architecture.", query: "Chicago Architecture Center River Cruise" },
+    { id: "chi_s4", type: "sight", name: "Willis Tower Skydeck & 'The Ledge'", category: "Observation Deck", location: "Financial District / Wacker Dr", lat: 41.8789, lon: -87.6359, desc: "103rd-floor glass boxes extending 4.3 feet out over the street with sweeping 4-state views.", query: "Skydeck Chicago Willis Tower" },
+    { id: "chi_s5", type: "sight", name: "360 CHICAGO Observation Deck & TILT", category: "Panoramic Viewpoint", location: "Magnificent Mile (875 N Michigan)", lat: 41.8988, lon: -87.6229, desc: "94th-floor observation deck with moving glass platform tilting visitors 30 degrees over Michigan Avenue.", query: "360 CHICAGO Observation Deck" },
+    { id: "chi_s6", type: "sight", name: "The Field Museum of Natural History", category: "World-Class Museum", location: "Museum Campus / Lakefront", lat: 41.8663, lon: -87.6170, desc: "Renowned natural history museum home to 'Sue' the T. rex, ancient Egyptian tombs, and gemstone halls.", query: "Field Museum Chicago" },
+    { id: "chi_s7", type: "sight", name: "Shedd Aquarium & Oceanarium", category: "Marine Sanctuary", location: "Museum Campus", lat: 41.8676, lon: -87.6140, desc: "Historic 1930 lakefront aquarium housing beluga whales, Caribbean coral reefs, and sea otters.", query: "Shedd Aquarium Chicago" },
+    { id: "chi_s8", type: "sight", name: "Navy Pier & Centennial Wheel", category: "Waterfront Destination", location: "Streeterville / Lake Michigan", lat: 41.8917, lon: -87.6086, desc: "Lakefront pier featuring a 200-foot Ferris wheel, Shakespeare Theater, boat tours, and fireworks.", query: "Navy Pier Chicago" },
+    { id: "chi_s9", type: "sight", name: "Wrigley Field Historic Ballpark (4.5 mi north)", category: "Historic Sports Heritage", location: "Wrigleyville / Lakeview", lat: 41.9484, lon: -87.6553, desc: "Legendary 1914 home of the Chicago Cubs with ivy-covered brick walls and neighborhood rooftop bleachers.", query: "Wrigley Field Chicago" },
+    { id: "chi_s10", type: "sight", name: "Chicago Cultural Center (Tiffany Dome)", category: "Architectural Marvel", location: "Loop / Washington St", lat: 41.8837, lon: -87.6248, desc: "Magnificent 1897 public palace featuring the world's largest stained glass Tiffany dome.", query: "Chicago Cultural Center Tiffany Dome" },
+    { id: "chi_s11", type: "sight", name: "Garfield Park Conservatory (4.5 mi west)", category: "Botanical Oasis", location: "Garfield Park", lat: 41.8863, lon: -87.7171, desc: "One of the largest botanical conservatories in the country with thousands of rare tropical plants under glass.", query: "Garfield Park Conservatory Chicago" },
+    { id: "chi_s12", type: "sight", name: "Frank Lloyd Wright Home & Studio (8.5 mi west)", category: "Historic Architecture", location: "Oak Park", lat: 41.8940, lon: -87.7983, desc: "Birthplace of the American Prairie School architectural style and historic neighborhood walking district.", query: "Frank Lloyd Wright Home Oak Park" },
+    { id: "chi_f1", type: "food", name: "Pequod's Pizza (Caramelized Crust Deep Dish)", category: "Legendary Deep Dish", location: "Lincoln Park", lat: 41.9219, lon: -87.6644, desc: "World-famous deep-dish pan pizza with a halo of dark caramelized crispy cheddar-mozzarella cheese crust.", query: "Pequod's Pizza Chicago" },
+    { id: "chi_f2", type: "food", name: "Lou Malnati's Pizzeria (Buttercrust Deep Dish)", category: "Classic Deep Dish", location: "River North / Loop", lat: 41.8903, lon: -87.6338, desc: "Iconic Chicago buttercrust deep-dish loaded with vine-ripened California tomatoes and mozzarella.", query: "Lou Malnati's Pizzeria River North" },
+    { id: "chi_f3", type: "food", name: "Portillo's (Chicago-Style Hot Dogs & Cake Shake)", category: "Iconic Street Food", location: "River North / Ontario St", lat: 41.8935, lon: -87.6318, desc: "All-beef frankfurter 'dragged through the garden', Italian beef, and chocolate cake blended milkshakes.", query: "Portillo's Hot Dogs Ontario Chicago" },
+    { id: "chi_f4", type: "food", name: "Al's #1 Italian Beef (Since 1938)", category: "Historic Italian Beef", location: "Little Italy (Taylor St)", lat: 41.8698, lon: -87.6540, desc: "Thinly sliced roast beef soaked in seasoned au jus, tucked into French bread and crowned with spicy giardiniera.", query: "Al's Italian Beef Taylor Street" },
+    { id: "chi_f5", type: "food", name: "Garrett Popcorn Shops (The Garrett Mix)", category: "Iconic Snack", location: "Michigan Avenue", lat: 41.8966, lon: -87.6241, desc: "Famous batch-cooked blend of sweet CaramelCrisp and savory sharp CheddarCraft popcorn.", query: "Garrett Popcorn Michigan Ave Chicago" },
+    { id: "chi_f6", type: "food", name: "The Original Rainbow Cone (Since 1926)", category: "Historic Dessert", location: "Navy Pier / Beverly", lat: 41.8915, lon: -87.6080, desc: "Five legendary sliced layers of chocolate, strawberry, Palmer House (vanilla/walnut), pistachio, and orange sherbet.", query: "Original Rainbow Cone Navy Pier" },
+    { id: "chi_f7", type: "food", name: "MingHin Cuisine & Chinatown Square", category: "Cantonese Dim Sum", location: "Chinatown", lat: 41.8533, lon: -87.6329, desc: "Michelin Bib Gourmand dim sum palace serving steamed dumplings, barbecue pork buns, and seafood.", query: "MingHin Cuisine Chinatown Chicago" },
+    { id: "chi_f8", type: "food", name: "Green Mill Cocktail Lounge (Historic Jazz)", category: "Historic Jazz Lounge", location: "Uptown (5.5 mi north)", lat: 41.9691, lon: -87.6599, desc: "Historic 1907 cocktail lounge once patronized by Al Capone, hosting premier live jazz nightly.", query: "Green Mill Jazz Lounge Chicago" }
+  ],
+
   // SAN FRANCISCO & BAY AREA REGION (Exact GPS)
   SF: [
     { id: "sf_s1", type: "sight", name: "Golden Gate Bridge (Vista Point & Walkway)", category: "Iconic Landmark", location: "Presidio / Marin Headlands", lat: 37.8199, lon: -122.4783, desc: "World-famous Art Deco suspension bridge spanning the Golden Gate strait with scenic walking paths.", query: "Golden Gate Bridge Vista Point" },
@@ -759,6 +783,9 @@ function getCuratedGuideForCity(cityName, airportCode) {
   const normCity = (cityName || "").toLowerCase();
   const normCode = (airportCode || "").toUpperCase();
 
+  if (normCity.includes("chicago") || normCode === "ORD" || normCode === "MDW") {
+    return curatedCityGuides.CHI;
+  }
   if (normCity.includes("san francisco") || normCity.includes("sf") || normCode === "SFO" || normCode === "SJC" || normCode === "OAK") {
     return curatedCityGuides.SF;
   }
@@ -791,7 +818,6 @@ async function fetchTargetCitySights(cityName, airportCode, centerLat, centerLon
     });
   }
 
-  // Dynamic fallback set
   return [
     { id: "fb_1", type: "sight", name: `${cityName} Historic District`, category: "Historic Landmark", location: "City Center", lat: centerLat + 0.003, lon: centerLon + 0.002, distanceKm: 0.4, desc: "Pedestrian-friendly central quarter featuring historic architecture, shops, and cafes.", query: `${cityName} Old Town` },
     { id: "fb_2", type: "sight", name: `${cityName} Central Plaza & Park`, category: "Public Landmark", location: "Central Square", lat: centerLat - 0.004, lon: centerLon + 0.003, distanceKm: 0.6, desc: "The primary architectural landmark and cultural gathering hub of the city.", query: `${cityName} Central Plaza` },
@@ -819,6 +845,23 @@ function getBrandPortalUrl(brand, city, checkIn, checkOut) {
 
 async function fetchLiveTargetHotels(centerLat, centerLon, cityName, airportCode, selectedBrands, checkIn, checkOut) {
   const norm = (cityName || "").toLowerCase();
+
+  // Curated Hotels for Chicago
+  if (norm.includes("chicago") || airportCode === "ORD" || airportCode === "MDW") {
+    const chiHotels = [
+      { id: "chi_h1", name: "The Ritz-Carlton, Chicago", brand: "Marriott Bonvoy", rating: 4.8, priceUSD: 460, lat: 41.8976, lon: -87.6231, area: "Magnificent Mile / Water Tower", badge: "Iconic Luxury", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
+      { id: "chi_h2", name: "Chicago Marriott Downtown Magnificent Mile", brand: "Marriott Bonvoy", rating: 4.5, priceUSD: 285, lat: 41.8920, lon: -87.6247, area: "Magnificent Mile", badge: "Full Service", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
+      { id: "chi_h3", name: "Park Hyatt Chicago", brand: "World of Hyatt", rating: 4.9, priceUSD: 510, lat: 41.8980, lon: -87.6255, area: "Water Tower / Magnificent Mile", badge: "Palace Luxury Flagship", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) },
+      { id: "chi_h4", name: "Hyatt Regency Chicago", brand: "World of Hyatt", rating: 4.6, priceUSD: 260, lat: 41.8878, lon: -87.6225, area: "Chicago Riverwalk / Downtown", badge: "Riverfront Hub", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) },
+      { id: "chi_h5", name: "InterContinental Chicago Magnificent Mile", brand: "IHG", rating: 4.7, priceUSD: 310, lat: 41.8912, lon: -87.6244, area: "Magnificent Mile (Historic 1929 Tower)", badge: "Historic Landmark", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) },
+      { id: "chi_h6", name: "The Kimpton Gray Hotel", brand: "IHG", rating: 4.7, priceUSD: 275, lat: 41.8812, lon: -87.6318, area: "Financial District / Loop", badge: "Boutique Luxury", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) }
+    ];
+
+    return chiHotels.map(h => {
+      const d = haversineDistance(centerLat, centerLon, h.lat, h.lon);
+      return { ...h, distanceKm: parseFloat(d.toFixed(1)) };
+    }).filter(h => selectedBrands.includes(h.brand));
+  }
 
   // Curated Hotels for San Francisco
   if (norm.includes("san francisco") || norm.includes("sf") || airportCode === "SFO" || airportCode === "SJC" || airportCode === "OAK") {
@@ -921,7 +964,6 @@ function initLeafletMap(centerLat, centerLon, sights, hotels, radiusKm) {
     leafletMapInstance = L.map('leafletMap').setView([centerLat, centerLon], 12);
     baseTileLayer = L.tileLayer(tileUrl, { maxZoom: 19, attribution: '© OpenStreetMap © CARTO' }).addTo(leafletMapInstance);
     mapMarkersLayer = L.layerGroup().addTo(leafletMapInstance);
-    // Automatic on-click map listener removed so panning/clicking does not open the modal
   } else {
     leafletMapInstance.setView([centerLat, centerLon], 12);
   }
@@ -1164,27 +1206,27 @@ function generateDynamicFlightSchedule(originObj, destAirportObj, departDate, re
 
   let carrierPool = [
     { name: "United Airlines", code: "UA" },
-    { name: "EVA Air", code: "BR" },
-    { name: "China Airlines", code: "CI" },
-    { name: "STARLUX Airlines", code: "JX" }
+    { name: "American Airlines", code: "AA" },
+    { name: "Delta Air Lines", code: "DL" },
+    { name: "Southwest Airlines", code: "WN" }
   ];
-  let layoverHubs = ["SFO", "TPE", "LAX", "SEA"];
+  let layoverHubs = ["DEN", "DFW", "MSP", "SLC"];
 
-  if (!isTranspacific) {
+  if (isTranspacific) {
     carrierPool = [
       { name: "United Airlines", code: "UA" },
-      { name: "Delta Air Lines", code: "DL" },
-      { name: "American Airlines", code: "AA" },
-      { name: "Southwest Airlines", code: "WN" }
+      { name: "EVA Air", code: "BR" },
+      { name: "China Airlines", code: "CI" },
+      { name: "STARLUX Airlines", code: "JX" }
     ];
-    layoverHubs = ["DEN", "PHX", "LAS", "SLC"];
+    layoverHubs = ["SFO", "TPE", "LAX", "SEA"];
   }
 
   const flights = [];
   const basePriceUSD = Math.round(isLongHaul ? 850 + (distanceKm * 0.045) : 180 + (distanceKm * 0.08));
 
   // 1. Non-stop #1
-  const d1 = "11:40 PM";
+  const d1 = "06:45 AM";
   flights.push({
     id: "fl-1",
     airline: carrierPool[0].name,
@@ -1193,16 +1235,16 @@ function generateDynamicFlightSchedule(originObj, destAirportObj, departDate, re
     stopDetails: "Non-stop",
     departTime: d1,
     arriveTime: calculateArrivalTime(d1, nonStopFlightMinutes, timeZoneDiffHours),
-    rawDepartTimeMin: 1420,
+    rawDepartTimeMin: 405,
     durationText: formatMinutesToDuration(nonStopFlightMinutes),
     rawDurationMinutes: nonStopFlightMinutes,
-    priceUSD: basePriceUSD + 160,
+    priceUSD: basePriceUSD + 140,
     cabin: "Economy Standard",
     bookingUrl: gFlightsUrl
   });
 
   // 2. Non-stop #2
-  const d2 = "03:30 PM";
+  const d2 = "12:15 PM";
   flights.push({
     id: "fl-2",
     airline: carrierPool[1].name,
@@ -1211,30 +1253,30 @@ function generateDynamicFlightSchedule(originObj, destAirportObj, departDate, re
     stopDetails: "Non-stop",
     departTime: d2,
     arriveTime: calculateArrivalTime(d2, nonStopFlightMinutes, timeZoneDiffHours),
-    rawDepartTimeMin: 930,
+    rawDepartTimeMin: 735,
     durationText: formatMinutesToDuration(nonStopFlightMinutes),
     rawDurationMinutes: nonStopFlightMinutes,
-    priceUSD: basePriceUSD + 210,
+    priceUSD: basePriceUSD + 185,
     cabin: "Main Cabin",
     bookingUrl: gFlightsUrl
   });
 
   // 3. 1-Stop Connection
   const hub1 = layoverHubs[0];
-  const dur1 = nonStopFlightMinutes + 130;
-  const d3 = "08:15 AM";
+  const dur1 = nonStopFlightMinutes + 120;
+  const d3 = "08:30 AM";
   flights.push({
     id: "fl-3",
     airline: carrierPool[2].name,
     flightNum: `${carrierPool[2].code}${Math.floor(100 + Math.random() * 800)}`,
     stops: 1,
-    stopDetails: `1 stop (${hub1} - 1h 50m)`,
+    stopDetails: `1 stop (${hub1} - 1h 40m)`,
     departTime: d3,
     arriveTime: calculateArrivalTime(d3, dur1, timeZoneDiffHours),
-    rawDepartTimeMin: 495,
+    rawDepartTimeMin: 510,
     durationText: formatMinutesToDuration(dur1),
     rawDurationMinutes: dur1,
-    priceUSD: Math.round(basePriceUSD * 0.86),
+    priceUSD: Math.round(basePriceUSD * 0.85),
     cabin: "Economy Basic",
     bookingUrl: gFlightsUrl
   });
@@ -1712,7 +1754,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let lat = parseFloat(document.getElementById("placeLatInput").value) || targetCenterLat;
     let lon = parseFloat(document.getElementById("placeLonInput").value) || targetCenterLon;
 
-    // If adding by name and coordinates are default center, try geocoding address
+    // Geocode fallback if needed
     if (!editId && name && (lat === targetCenterLat && lon === targetCenterLon)) {
       try {
         const queryText = `${name}, ${resolvedVisitCityObj ? resolvedVisitCityObj.cityName : ""}`;
