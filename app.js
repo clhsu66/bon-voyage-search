@@ -2,275 +2,47 @@
 // 1. GLOBAL AIRPORT & DOWNTOWN DIRECTORY
 // ========================================================
 const majorAirportCatalog = [
-  // Chicago Hubs
-  { 
-    code: "ORD", 
-    name: "Chicago O'Hare International", 
-    city: "Chicago", 
-    country: "United States", 
-    airportLat: 41.9742, airportLon: -87.9073,
-    cityLat: 41.8781, cityLon: -87.6298 // Downtown Chicago (The Loop)
-  },
-  { 
-    code: "MDW", 
-    name: "Chicago Midway International", 
-    city: "Chicago", 
-    country: "United States", 
-    airportLat: 41.7868, airportLon: -87.7522,
-    cityLat: 41.8781, cityLon: -87.6298 
-  },
+  // Taiwan Hubs
+  { code: "TPE", name: "Taiwan Taoyuan International", city: "Taipei", country: "Taiwan", airportLat: 25.0797, airportLon: 121.2342, cityLat: 25.0330, cityLon: 121.5654 },
+  { code: "TSA", name: "Taipei Songshan Airport", city: "Taipei", country: "Taiwan", airportLat: 25.0697, airportLon: 121.5525, cityLat: 25.0330, cityLon: 121.5654 },
+  { code: "RMQ", name: "Taichung International Airport", city: "Taichung", country: "Taiwan", airportLat: 24.2647, airportLon: 120.6214, cityLat: 24.1477, cityLon: 120.6736 },
+  { code: "TNN", name: "Tainan Airport", city: "Tainan", country: "Taiwan", airportLat: 22.9506, airportLon: 120.2058, cityLat: 22.9997, cityLon: 120.2270 },
+  { code: "KHH", name: "Kaohsiung International Airport", city: "Kaohsiung", country: "Taiwan", airportLat: 22.5772, airportLon: 120.3500, cityLat: 22.6273, cityLon: 120.3014 },
 
-  // San Francisco Bay Area & Silicon Valley
-  { 
-    code: "SFO", 
-    name: "San Francisco International", 
-    city: "San Francisco", 
-    country: "United States", 
-    airportLat: 37.6213, airportLon: -122.3790,
-    cityLat: 37.7749, cityLon: -122.4194 
-  },
-  { 
-    code: "SJC", 
-    name: "San José Mineta International", 
-    city: "San Jose", 
-    country: "United States", 
-    airportLat: 37.3639, airportLon: -121.9289,
-    cityLat: 37.3382, cityLon: -121.8863 
-  },
-  { 
-    code: "OAK", 
-    name: "Oakland San Francisco Bay", 
-    city: "Oakland", 
-    country: "United States", 
-    airportLat: 37.7213, airportLon: -122.2207,
-    cityLat: 37.8044, cityLon: -122.2711 
-  },
+  // Japan Hubs
+  { code: "HND", name: "Tokyo Haneda", city: "Tokyo", country: "Japan", airportLat: 35.5494, airportLon: 139.7798, cityLat: 35.6895, cityLon: 139.6917 },
+  { code: "NRT", name: "Tokyo Narita", city: "Tokyo", country: "Japan", airportLat: 35.7720, airportLon: 140.3929, cityLat: 35.6895, cityLon: 139.6917 },
+  { code: "KIX", name: "Kansai International (Kyoto/Osaka)", city: "Kyoto / Osaka", country: "Japan", airportLat: 34.4320, airportLon: 135.2304, cityLat: 35.0116, cityLon: 135.7681 },
+  { code: "ITM", name: "Osaka Itami", city: "Osaka", country: "Japan", airportLat: 34.7855, airportLon: 135.4382, cityLat: 34.6937, cityLon: 135.5023 },
 
-  // New York & New Jersey Area Hubs
-  { 
-    code: "EWR", 
-    name: "Newark Liberty International", 
-    city: "Newark / New York", 
-    country: "United States", 
-    airportLat: 40.6895, airportLon: -74.1745,
-    cityLat: 40.7357, cityLon: -74.1724 
-  },
-  { 
-    code: "JFK", 
-    name: "John F. Kennedy International", 
-    city: "New York", 
-    country: "United States", 
-    airportLat: 40.6413, airportLon: -73.7781,
-    cityLat: 40.7580, cityLon: -73.9855 
-  },
-  { 
-    code: "LGA", 
-    name: "LaGuardia Airport", 
-    city: "New York", 
-    country: "United States", 
-    airportLat: 40.7769, airportLon: -73.8740,
-    cityLat: 40.7580, cityLon: -73.9855 
-  },
+  // Europe Hubs
+  { code: "LHR", name: "London Heathrow", city: "London", country: "United Kingdom", airportLat: 51.4700, airportLon: -0.4543, cityLat: 51.5074, cityLon: -0.1278 },
+  { code: "LGW", name: "London Gatwick", city: "London", country: "United Kingdom", airportLat: 51.1537, airportLon: -0.1821, cityLat: 51.5074, cityLon: -0.1278 },
+  { code: "CDG", name: "Paris Charles de Gaulle", city: "Paris", country: "France", airportLat: 49.0097, airportLon: 2.5479, cityLat: 48.8566, cityLon: 2.3522 },
+  { code: "ORY", name: "Paris Orly", city: "Paris", country: "France", airportLat: 48.7262, airportLon: 2.3652, cityLat: 48.8566, cityLon: 2.3522 },
+  { code: "FCO", name: "Rome Fiumicino Leonardo da Vinci", city: "Rome", country: "Italy", airportLat: 41.8003, airportLon: 12.2389, cityLat: 41.9028, cityLon: 12.4964 },
+  { code: "BCN", name: "Barcelona-El Prat", city: "Barcelona", country: "Spain", airportLat: 41.2974, airportLon: 2.0833, cityLat: 41.3874, cityLon: 2.1686 },
+  { code: "MAD", name: "Adolfo Suárez Madrid-Barajas", city: "Madrid", country: "Spain", airportLat: 40.4839, airportLon: -3.5680, cityLat: 40.4168, cityLon: -3.7038 },
+  { code: "FLR", name: "Florence Peretola", city: "Florence", country: "Italy", airportLat: 43.8100, airportLon: 11.2012, cityLat: 43.7696, cityLon: 11.2558 },
+  { code: "AMS", name: "Amsterdam Schiphol", city: "Amsterdam", country: "Netherlands", airportLat: 52.3105, airportLon: 4.7683, cityLat: 52.3676, cityLon: 4.9041 },
 
-  // California & US West
-  { 
-    code: "SAN", 
-    name: "San Diego International", 
-    city: "San Diego", 
-    country: "United States", 
-    airportLat: 32.7338, airportLon: -117.1933,
-    cityLat: 32.7157, cityLon: -117.1611 
-  },
-  { 
-    code: "LAX", 
-    name: "Los Angeles International", 
-    city: "Los Angeles", 
-    country: "United States", 
-    airportLat: 33.9416, airportLon: -118.4085,
-    cityLat: 34.0522, cityLon: -118.2437 
-  },
-  { 
-    code: "SEA", 
-    name: "Seattle-Tacoma International", 
-    city: "Seattle", 
-    country: "United States", 
-    airportLat: 47.4502, airportLon: -122.3088,
-    cityLat: 47.6062, cityLon: -122.3321 
-  },
-  { 
-    code: "LAS", 
-    name: "Harry Reid International", 
-    city: "Las Vegas", 
-    country: "United States", 
-    airportLat: 36.0840, airportLon: -115.1537,
-    cityLat: 36.1147, cityLon: -115.1728 
-  },
-  { 
-    code: "HNL", 
-    name: "Daniel K. Inouye International", 
-    city: "Honolulu", 
-    country: "United States", 
-    airportLat: 21.3245, airportLon: -157.9251,
-    cityLat: 21.2766, cityLon: -157.8283 
-  },
+  // Hong Kong & Asia
+  { code: "HKG", name: "Hong Kong International", city: "Hong Kong", country: "Hong Kong", airportLat: 22.3080, airportLon: 113.9185, cityLat: 22.2855, cityLon: 114.1577 },
 
-  // US East Coast & Midwest
-  { 
-    code: "BOS", 
-    name: "Boston Logan International", 
-    city: "Boston", 
-    country: "United States", 
-    airportLat: 42.3656, airportLon: -71.0096,
-    cityLat: 42.3601, cityLon: -71.0589 
-  },
-  { 
-    code: "MIA", 
-    name: "Miami International", 
-    city: "Miami", 
-    country: "United States", 
-    airportLat: 25.7959, airportLon: -80.2870,
-    cityLat: 25.7617, cityLon: -80.1918 
-  },
-  { 
-    code: "AUS", 
-    name: "Austin-Bergstrom International", 
-    city: "Austin", 
-    country: "United States", 
-    airportLat: 30.1975, airportLon: -97.6664,
-    cityLat: 30.2672, cityLon: -97.7431 
-  },
-
-  // Greater China & East Asia
-  { 
-    code: "TPE", 
-    name: "Taiwan Taoyuan International", 
-    city: "Taipei", 
-    country: "Taiwan", 
-    airportLat: 25.0797, airportLon: 121.2342,
-    cityLat: 25.0330, cityLon: 121.5654 
-  },
-  { 
-    code: "TSA", 
-    name: "Taipei Songshan Airport", 
-    city: "Taipei", 
-    country: "Taiwan", 
-    airportLat: 25.0697, airportLon: 121.5525,
-    cityLat: 25.0330, cityLon: 121.5654 
-  },
-  { 
-    code: "HND", 
-    name: "Tokyo Haneda", 
-    city: "Tokyo", 
-    country: "Japan", 
-    airportLat: 35.5494, airportLon: 139.7798,
-    cityLat: 35.6895, cityLon: 139.6917 
-  },
-  { 
-    code: "NRT", 
-    name: "Tokyo Narita", 
-    city: "Tokyo", 
-    country: "Japan", 
-    airportLat: 35.7720, airportLon: 140.3929,
-    cityLat: 35.6895, cityLon: 139.6917 
-  },
-  { 
-    code: "KIX", 
-    name: "Kansai International (Kyoto/Osaka)", 
-    city: "Kyoto / Osaka", 
-    country: "Japan", 
-    airportLat: 34.4320, airportLon: 135.2304,
-    cityLat: 35.0116, cityLon: 135.7681 
-  },
-  { 
-    code: "PVG", 
-    name: "Shanghai Pudong International", 
-    city: "Shanghai", 
-    country: "China", 
-    airportLat: 31.1443, airportLon: 121.8083,
-    cityLat: 31.2304, cityLon: 121.4737 
-  },
-  { 
-    code: "SHA", 
-    name: "Shanghai Hongqiao International", 
-    city: "Shanghai", 
-    country: "China", 
-    airportLat: 31.1979, airportLon: 121.3363,
-    cityLat: 31.2304, cityLon: 121.4737 
-  },
-  { 
-    code: "HKG", 
-    name: "Hong Kong International", 
-    city: "Hong Kong", 
-    country: "Hong Kong", 
-    airportLat: 22.3080, airportLon: 113.9185,
-    cityLat: 22.2855, cityLon: 114.1577 
-  },
-  { 
-    code: "ICN", 
-    name: "Seoul Incheon International", 
-    city: "Seoul", 
-    country: "South Korea", 
-    airportLat: 37.4602, airportLon: 126.4407,
-    cityLat: 37.5665, cityLon: 126.9780 
-  },
-
-  // Europe
-  { 
-    code: "BCN", 
-    name: "Barcelona-El Prat Airport", 
-    city: "Barcelona", 
-    country: "Spain", 
-    airportLat: 41.2974, airportLon: 2.0833,
-    cityLat: 41.3874, cityLon: 2.1686 
-  },
-  { 
-    code: "MAD", 
-    name: "Adolfo Suárez Madrid-Barajas", 
-    city: "Madrid", 
-    country: "Spain", 
-    airportLat: 40.4839, airportLon: -3.5680,
-    cityLat: 40.4168, cityLon: -3.7038 
-  },
-  { 
-    code: "FCO", 
-    name: "Rome Fiumicino Leonardo da Vinci", 
-    city: "Rome", 
-    country: "Italy", 
-    airportLat: 41.8003, airportLon: 12.2389,
-    cityLat: 41.9028, cityLon: 12.4964 
-  },
-  { 
-    code: "FLR", 
-    name: "Florence Peretola", 
-    city: "Florence", 
-    country: "Italy", 
-    airportLat: 43.8100, airportLon: 11.2012,
-    cityLat: 43.7696, cityLon: 11.2558 
-  },
-  { 
-    code: "CDG", 
-    name: "Paris Charles de Gaulle", 
-    city: "Paris", 
-    country: "France", 
-    airportLat: 49.0097, airportLon: 2.5479,
-    cityLat: 48.8566, cityLon: 2.3522 
-  },
-  { 
-    code: "LHR", 
-    name: "London Heathrow", 
-    city: "London", 
-    country: "United Kingdom", 
-    airportLat: 51.4700, airportLon: -0.4543,
-    cityLat: 51.5074, cityLon: -0.1278 
-  },
-  { 
-    code: "AMS", 
-    name: "Amsterdam Schiphol", 
-    city: "Amsterdam", 
-    country: "Netherlands", 
-    airportLat: 52.3105, airportLon: 4.7683,
-    cityLat: 52.3676, cityLon: 4.9041 
-  }
+  // United States Hubs
+  { code: "SFO", name: "San Francisco International", city: "San Francisco", country: "United States", airportLat: 37.6213, airportLon: -122.3790, cityLat: 37.7749, cityLon: -122.4194 },
+  { code: "SJC", name: "San José Mineta International", city: "San Jose", country: "United States", airportLat: 37.3639, airportLon: -121.9289, cityLat: 37.3382, cityLon: -121.8863 },
+  { code: "OAK", name: "Oakland San Francisco Bay", city: "Oakland", country: "United States", airportLat: 37.7213, airportLon: -122.2207, cityLat: 37.8044, cityLon: -122.2711 },
+  { code: "LAX", name: "Los Angeles International", city: "Los Angeles", country: "United States", airportLat: 33.9416, airportLon: -118.4085, cityLat: 34.0522, cityLon: -118.2437 },
+  { code: "SAN", name: "San Diego International", city: "San Diego", country: "United States", airportLat: 32.7338, airportLon: -117.1933, cityLat: 32.7157, cityLon: -117.1611 },
+  { code: "SEA", name: "Seattle-Tacoma International", city: "Seattle", country: "United States", airportLat: 47.4502, airportLon: -122.3088, cityLat: 47.6062, cityLon: -122.3321 },
+  { code: "HNL", name: "Daniel K. Inouye International", city: "Honolulu", country: "United States", airportLat: 21.3245, airportLon: -157.9251, cityLat: 21.2766, cityLon: -157.8283 },
+  { code: "ORD", name: "Chicago O'Hare International", city: "Chicago", country: "United States", airportLat: 41.9742, airportLon: -87.9073, cityLat: 41.8781, cityLon: -87.6298 },
+  { code: "MDW", name: "Chicago Midway International", city: "Chicago", country: "United States", airportLat: 41.7868, airportLon: -87.7522, cityLat: 41.8781, cityLon: -87.6298 },
+  { code: "EWR", name: "Newark Liberty International", city: "Newark / New York", country: "United States", airportLat: 40.6895, airportLon: -74.1745, cityLat: 40.7357, cityLon: -74.1724 },
+  { code: "JFK", name: "John F. Kennedy International", city: "New York", country: "United States", airportLat: 40.6413, airportLon: -73.7781, cityLat: 40.7580, cityLon: -73.9855 },
+  { code: "LGA", name: "LaGuardia Airport", city: "New York", country: "United States", airportLat: 40.7769, airportLon: -73.8740, cityLat: 40.7580, cityLon: -73.9855 },
+  { code: "BOS", name: "Boston Logan International", city: "Boston", country: "United States", airportLat: 42.3656, airportLon: -71.0096, cityLat: 42.3601, cityLon: -71.0589 }
 ];
 
 function haversineDistance(lat1, lon1, lat2, lon2) {
@@ -370,10 +142,10 @@ async function resolveAirportHub(userInput) {
     name: `${cleanInput} Airport`,
     city: cleanInput,
     country: "",
-    airportLat: 41.8781,
-    airportLon: -87.6298,
-    cityLat: 41.8781,
-    cityLon: -87.6298
+    airportLat: 25.0330,
+    airportLon: 121.5654,
+    cityLat: 25.0330,
+    cityLon: 121.5654
   };
 }
 
@@ -391,6 +163,48 @@ async function resolveVisitCityLocation(cityName, fallbackAirportObj) {
   const lower = cleanCity.toLowerCase();
 
   // Known city coordinates
+  if (lower.includes("tokyo") || lower.includes("hnd") || lower.includes("nrt") || lower.includes("shinjuku") || lower.includes("shibuya")) {
+    return { cityName: "Tokyo", lat: 35.6895, lon: 139.6917 };
+  }
+  if (lower.includes("kyoto") || lower.includes("kix")) {
+    return { cityName: "Kyoto", lat: 35.0116, lon: 135.7681 };
+  }
+  if (lower.includes("osaka") || lower.includes("itm")) {
+    return { cityName: "Osaka", lat: 34.6937, lon: 135.5023 };
+  }
+  if (lower.includes("london") || lower.includes("lhr") || lower.includes("lgw")) {
+    return { cityName: "London", lat: 51.5074, lon: -0.1278 };
+  }
+  if (lower.includes("paris") || lower.includes("cdg") || lower.includes("ory")) {
+    return { cityName: "Paris", lat: 48.8566, lon: 2.3522 };
+  }
+  if (lower.includes("rome") || lower.includes("fco") || lower.includes("vatican")) {
+    return { cityName: "Rome", lat: 41.9028, lon: 12.4964 };
+  }
+  if (lower.includes("barcelona") || lower.includes("bcn")) {
+    return { cityName: "Barcelona", lat: 41.3874, lon: 2.1686 };
+  }
+  if (lower.includes("madrid") || lower.includes("mad")) {
+    return { cityName: "Madrid", lat: 40.4168, lon: -3.7038 };
+  }
+  if (lower.includes("hong kong") || lower.includes("hkg")) {
+    return { cityName: "Hong Kong", lat: 22.2855, lon: 114.1577 };
+  }
+  if (lower.includes("honolulu") || lower.includes("hnl") || lower.includes("waikiki") || lower.includes("oahu")) {
+    return { cityName: "Honolulu", lat: 21.2766, lon: -157.8283 };
+  }
+  if (lower.includes("taipei") || lower.includes("tpe") || lower.includes("tsa") || lower.includes("new taipei") || lower.includes("tamsui") || lower.includes("beitou") || lower.includes("jiufen")) {
+    return { cityName: "Taipei", lat: 25.0330, lon: 121.5654 };
+  }
+  if (lower.includes("taichung") || lower.includes("rmq")) {
+    return { cityName: "Taichung", lat: 24.1477, lon: 120.6736 };
+  }
+  if (lower.includes("tainan") || lower.includes("tnn")) {
+    return { cityName: "Tainan", lat: 22.9997, lon: 120.2270 };
+  }
+  if (lower.includes("kaohsiung") || lower.includes("khh")) {
+    return { cityName: "Kaohsiung", lat: 22.6273, lon: 120.3014 };
+  }
   if (lower.includes("chicago") || lower.includes("windy city") || lower.includes("the loop")) {
     return { cityName: "Chicago", lat: 41.8781, lon: -87.6298 };
   }
@@ -406,23 +220,8 @@ async function resolveVisitCityLocation(cityName, fallbackAirportObj) {
   if (lower.includes("manhattan") || lower.includes("new york") || lower.includes("nyc")) {
     return { cityName: "New York (Manhattan)", lat: 40.7580, lon: -73.9855 };
   }
-  if (lower.includes("brooklyn")) {
-    return { cityName: "Brooklyn, NY", lat: 40.6782, lon: -73.9442 };
-  }
-  if (lower.includes("jersey city")) {
-    return { cityName: "Jersey City, NJ", lat: 40.7178, lon: -74.0431 };
-  }
   if (lower.includes("san diego")) {
     return { cityName: "San Diego", lat: 32.7157, lon: -117.1611 };
-  }
-  if (lower.includes("taipei")) {
-    return { cityName: "Taipei", lat: 25.0330, lon: 121.5654 };
-  }
-  if (lower.includes("tokyo")) {
-    return { cityName: "Tokyo", lat: 35.6895, lon: 139.6917 };
-  }
-  if (lower.includes("barcelona")) {
-    return { cityName: "Barcelona", lat: 41.3874, lon: 2.1686 };
   }
 
   try {
@@ -563,7 +362,8 @@ function toggleTheme() {
       ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
       : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
     
-    baseTileLayer = L.tileLayer(tileUrl, { maxZoom: 19, attribution: '© OpenStreetMap © CARTO' }).addTo(leafletMapInstance);
+    baseTileLayer = L.tileLayer(tileUrl, { maxZoom: 19, attribution: '© OpenStreetMap © CARTO' });
+    baseTileLayer.addTo(leafletMapInstance);
   }
 }
 
@@ -599,46 +399,77 @@ function formatCurrency(amountInUSD) {
 }
 
 // ========================================================
-// 3. PUBLIC TRANSIT & CORRIDOR GUIDES
+// 3. PUBLIC TRANSIT & HIGH-SPEED RAIL GUIDES
 // ========================================================
 const cityTransitGuides = {
-  CHI: [
-    { title: "CTA 'L' Rapid Transit Network & Contactless Tap", badge: "Subway & Elevated Rail", desc: "Tap any contactless credit card, phone, or Ventra card at all 145 CTA train stations. Easy transfer connections across the Loop.", route: "Single Fare ($2.50) / 24-Hour Unlimited Pass ($5.00)" },
-    { title: "Direct O'Hare (ORD) ➔ Loop Blue Line", badge: "24/7 Airport Express", desc: "Board the Blue Line directly inside O'Hare Airport Lower Level concourse for a direct 45-minute ride straight to downtown Loop stations.", route: "O'Hare ➔ Loop (45 mins, $5.00 from airport)" },
-    { title: "Direct Midway (MDW) ➔ Loop Orange Line", badge: "Airport Express Link", desc: "Board the Orange Line inside the Midway terminal for a quick 25-minute scenic elevated ride into downtown Chicago.", route: "Midway ➔ Downtown Loop (25 mins, $2.50)" },
-    { title: "Chicago Water Taxi & Lakefront Riverwalk", badge: "Scenic Waterways", desc: "Cruises linking Ogilvie/Union Station, Chinatown, River North, Michigan Avenue, and Navy Pier along the Chicago River.", route: "Single River Route ($6.00 / $10.00 All-Day Pass)" }
-  ],
-  SF: [
-    { title: "BART (Bay Area Rapid Transit)", badge: "Airport & Regional Rail", desc: "Fast regional subway connecting SFO Airport directly to Downtown SF (Powell/Montgomery), Oakland, and Berkeley.", route: "SFO Airport ➔ Downtown SF (30 mins, $10.50 via Clipper)" },
-    { title: "Clipper Card & SF Muni Network", badge: "Transit Card", desc: "Contactless card or Apple/Google Wallet for Muni buses, historic F-Market streetcars, Metro subway, and Cable Cars.", route: "Muni Single Ride ($2.50) / Cable Car ($8.00)" },
-    { title: "Caltrain Peninsula Corridor", badge: "Silicon Valley Link", desc: "Commuter rail corridor linking San Francisco 4th & King through Millbrae, Palo Alto, Sunnyvale, to San Jose Diridon.", route: "San Francisco ➔ San Jose (~65 mins Express)" }
-  ],
-  PRINCETON: [
-    { title: "NJ Transit Northeast Corridor & 'Dinky' Train", badge: "Rail Network", desc: "Take NJ Transit Northeast Corridor line to Princeton Junction, then connect on the 5-minute 'Dinky' shuttle directly to campus center.", route: "Princeton Junction ➔ Princeton Campus ($3.00)" },
-    { title: "TigerTransit Campus & Town Shuttles", badge: "Free Local Transit", desc: "Free municipal and university shuttle buses connecting Palmer Square, Princeton Shopping Center, and train stations.", route: "Central Princeton Circulator (100% Free)" },
-    { title: "Direct Newark EWR Airport Corridor", badge: "Airport Express", desc: "Direct NJ Transit Northeast Corridor commuter rail from Princeton Junction straight to Newark Liberty International Airport Station.", route: "Princeton Junction ➔ EWR Airport (~45 mins, $18.50)" }
-  ],
-  NYC: [
-    { title: "MTA Subway & OMNY Tap-to-Pay", badge: "Subway System", desc: "Tap your contactless credit card or phone at any turnstile across all NYC subway lines. Automatic weekly fare capping after 12 rides.", route: "Single Ride ($2.90), 7-Day Unlimited Cap" },
-    { title: "AirTrain JFK / EWR Express Link", badge: "Airport Express", desc: "Direct airport rail linking JFK to Jamaica Station and Newark EWR to NJ Transit into NY Penn Station.", route: "AirTrain JFK ($8.50) / NJ Transit EWR ($16.00)" },
-    { title: "NYC Ferry Scenic Waterways", badge: "Scenic Ferry", desc: "Water transit along the East River connecting Wall Street, DUMBO, Williamsburg, and Midtown 34th Street.", route: "Single Ferry Ticket ($4.00)" }
-  ],
-  SAN: [
-    { title: "MTS San Diego Trolley & PRONTO Card", badge: "Transit Network", desc: "Blue, Green, Orange, and Copper light-rail lines connect Downtown Gaslamp, Old Town, Mission Valley, Little Italy, and the US/Mexico border.", route: "PRONTO App or tap credit card ($2.50 / $6.00 Day Pass)" },
-    { title: "San Diego Flyer Airport Shuttle", badge: "Free Airport Link", desc: "100% free electric express shuttle bus connecting San Diego Airport Terminal 1 & 2 directly to Old Town Transit Center.", route: "Airport ➔ Old Town Transit Station (Every 10-15 mins, Free)" },
-    { title: "Coronado Ferry & Coastal Biking", badge: "Scenic Harbor Transit", desc: "Scenic 15-minute public ferry crossing San Diego Bay from Broadway Pier directly to Coronado Ferry Landing.", route: "Broadway Pier ➔ Coronado Island ($8.00 each way)" }
-  ],
   TPE: [
-    { title: "Taoyuan Airport MRT (Express Train)", badge: "Airport Express", desc: "Purple Express train connects Terminal 1 & 2 directly to Taipei Main Station in 36 minutes with free onboard Wi-Fi.", route: "Taoyuan Airport ➔ Taipei Main Station (36 mins, NT$150)" },
-    { title: "Taipei EasyCard (Yoyo Card)", badge: "Transit Card", desc: "Contactless card used across Taipei MRT, public buses, YouBike rentals, and convenience stores.", route: "Available at all MRT stations (20% transit discount)" }
+    { title: "Taoyuan Airport MRT (Express Purple Line)", badge: "Airport Express", desc: "Purple Express train connects Terminal 1 & 2 directly to Taipei Main Station in 36 minutes with free onboard Wi-Fi & wireless charging.", route: "Taoyuan Airport ➔ Taipei Main Station (36 mins, NT$150)" },
+    { title: "Taipei EasyCard / iPASS & Metro Network", badge: "Transit Card", desc: "Contactless card accepted across all Taipei MRT subway lines, city buses, YouBike 2.0 public bike rentals, and 7-Eleven/FamilyMart stores.", route: "Single ride NT$20–NT$65 / 24-hr Pass NT$180" },
+    { title: "Taiwan High Speed Rail (THSR)", badge: "Bullet Train", desc: "Direct 300 km/h bullet trains from Taipei Main Station and Nangang linking Taichung (45m), Tainan (80m), and Kaohsiung (90m).", route: "Taipei ➔ Taichung (45 mins) / Kaohsiung (90 mins)" },
+    { title: "TRA Pingxi & Ruifang Coastal Railway", badge: "Scenic Day Trip", desc: "Scenic regional rail connection from Taipei Main Station to Ruifang Station, transferring to Jiufen village, Pingxi, and Shifen Waterfall.", route: "Taipei ➔ Ruifang (40 mins, NT$49)" }
   ],
-  HND: [
-    { title: "Tokyo Monorail / Keikyu Line", badge: "Airport Express", desc: "Tokyo Monorail connects Haneda to Hamamatsucho Station in 13 minutes. Keikyu Line provides direct trains to Shinagawa and Asakusa.", route: "Haneda ➔ Shinagawa / Hamamatsucho (13-15 mins)" },
-    { title: "Digital Suica / Pasmo IC Card", badge: "Transit Card", desc: "Add a digital Suica card to Apple Wallet or Google Wallet for instant tap transit on all Tokyo metro lines, JR trains, buses, and konbini stores.", route: "Accepted on all Japan Rail & Tokyo Metro" }
+  TAICHUNG: [
+    { title: "Taichung Green Line MRT & Public Bus", badge: "Metro & Rapid Bus", desc: "Green Line MRT connects THSR Taichung Station (Xinwuri) directly through downtown, City Hall, and Wenxin Forest Park.", route: "Single Fare (NT$20–NT$50 / EasyCard)" },
+    { title: "Taiwan High Speed Rail (THSR Taichung)", badge: "Bullet Train Hub", desc: "Central Taiwan hub with high-frequency bullet trains running to Taipei (45m) and Kaohsiung Zuoying (45m).", route: "THSR Taichung Station ➔ Taipei / Kaohsiung" }
+  ],
+  TAINAN: [
+    { title: "Tainan Historic City Bus & Tainan Pass", badge: "Cultural Transit", desc: "Tourist loop buses 88 (Anping Route) and 99 (Qigu Salt Mountain Route) connecting Tainan Railway Station with historic temples and fortresses.", route: "City Bus NT$18 / 1-Day Pass NT$150" },
+    { title: "THSR Tainan Station Shuttle (H31 Line)", badge: "HSR Express Link", desc: "Free express feeder shuttle bus (H31) from THSR Tainan Station directly to Tainan City Hall and Downtown Cultural District.", route: "THSR Station ➔ Downtown Tainan (~35 mins, Free with HSR ticket)" }
+  ],
+  KHH: [
+    { title: "Kaohsiung MRT (Red & Orange Lines)", badge: "Metro System", desc: "Rapid transit intersecting at Formosa Boulevard Station (Dome of Light), connecting Kaohsiung Airport (KHH), Zuoying THSR, and Pier-2.", route: "KHH Airport ➔ Downtown (15 mins, NT$30)" },
+    { title: "Kaohsiung Circular Light Rail (LRT)", badge: "Scenic Waterfront Rail", desc: "Green circular light-rail tram running along Kaohsiung Music Center, Great Harbor Bridge, Pier-2 Art Center, and Glory Pier.", route: "Flat Fare (NT$10–NT$30 with EasyCard)" },
+    { title: "Cijin Island Scenic Harbor Ferry", badge: "Harbor Transit", desc: "Short 5-minute ferry ride from Gushan Ferry Pier directly to Cijin Island seafood street and lighthouse.", route: "Gushan Pier ➔ Cijin Island (NT$30 with EasyCard)" }
+  ],
+  TOKYO: [
+    { title: "Tokyo Monorail & Keikyu Airport Lines", badge: "Airport Rail Link", desc: "Tokyo Monorail connects Haneda to Hamamatsucho Station in 13 minutes. Narita Express (N'EX) links Narita to Tokyo Station in 55 minutes.", route: "Haneda ➔ Downtown (13 mins) / Narita ➔ Tokyo (55 mins)" },
+    { title: "Digital Suica / Pasmo IC Card & Tokyo Metro", badge: "Transit Card", desc: "Tap contactless transit on Apple/Google Wallet across all Tokyo Metro, Toei Subway, and JR Yamanote lines.", route: "Accepted on all Japan Rail & Tokyo Metro lines" }
+  ],
+  KYOTO_OSAKA: [
+    { title: "JR Haruka Airport Express & Kansai Thru Pass", badge: "Airport Express", desc: "Direct Haruka train from Kansai Airport (KIX) to Tennoji (30m), Shin-Osaka (50m), and Kyoto Station (75m).", route: "KIX ➔ Shin-Osaka (50 mins) / Kyoto (75 mins)" },
+    { title: "Hankyu & Keihan Intercity Railways", badge: "Scenic Regional Link", desc: "Fast regional trains connecting Osaka Umeda directly to Central Kyoto Gion & Arashiyama bamboo groves.", route: "Osaka ➔ Kyoto (40 mins, ~¥410)" }
+  ],
+  LONDON: [
+    { title: "London Underground (The Tube) & Elizabeth Line", badge: "Subway & Rail", desc: "Contactless tap-to-pay on all Tube lines, buses, and the Elizabeth Line directly from Heathrow Airport into central London.", route: "Heathrow ➔ Central London (30 mins via Elizabeth Line)" },
+    { title: "Gatwick Express & Thameslink", badge: "Airport Rail", desc: "Direct high-frequency trains from London Gatwick Airport to London Victoria and London Bridge.", route: "Gatwick ➔ Victoria (30 mins)" }
+  ],
+  PARIS: [
+    { title: "Paris Métro & RER Regional Rail", badge: "Metro & Rail Network", desc: "RER B line directly links CDG Airport to Gare du Nord and Châtelet-Les Halles in 35 minutes. Navigo Easy tap card for Metro.", route: "CDG ➔ Châtelet (35 mins, ~€11.80)" },
+    { title: "RER C Versailles Express", badge: "Palace Link", desc: "Direct commuter rail connecting Eiffel Tower / Saint-Michel directly to Versailles Château Rive Gauche.", route: "Paris ➔ Versailles (35 mins)" }
+  ],
+  ROME: [
+    { title: "Leonardo Express & Rome Metro (Metrebus)", badge: "Airport Rail Link", desc: "Non-stop Leonardo Express train connects Fiumicino Airport (FCO) directly to Roma Termini central station in 32 minutes.", route: "FCO Airport ➔ Roma Termini (32 mins, €14)" },
+    { title: "Rome Metro & Contactless Tap", badge: "Subway System", desc: "Tap your contactless card at Metro Line A (Vatican/Spagna) and Line B (Colosseo) turnstiles.", route: "Single Ride (€1.50 / 100 mins)" }
   ],
   BCN: [
-    { title: "Barcelona Metro & T-Casual Card", badge: "Transit Card", desc: "Buy a 10-journey 'T-Casual' card at any metro station for integrated travel across Metro, Bus, and Tram in Zone 1.", route: "Metro Lines L1-L5, T-Casual (~€12.15)" },
-    { title: "Aerobús Express (A1 / A2)", badge: "Airport Transfer", desc: "Dedicated express bus running every 5-10 minutes from Terminal 1 & 2 directly to Plaça de Catalunya.", route: "Airport ➔ Plaça Espanya ➔ Plaça Catalunya (35 mins, ~€7.25)" }
+    { title: "Barcelona Metro & T-Casual Pass", badge: "Transit Card", desc: "Buy a 10-journey 'T-Casual' card for integrated travel across Metro, Bus, and Tram in Zone 1.", route: "Metro Lines L1-L5, T-Casual (~€12.15)" },
+    { title: "Aerobús Express (A1 / A2)", badge: "Airport Transfer", desc: "Dedicated express bus running every 5-10 minutes from Terminal 1 & 2 directly to Plaça de Catalunya.", route: "Airport ➔ Plaça Catalunya (35 mins, ~€7.25)" }
+  ],
+  MADRID: [
+    { title: "Madrid Metro & Cercanías Renfe", badge: "Airport & City Metro", desc: "Metro Line 8 and Cercanías C-1 train link Madrid-Barajas Airport Terminals directly to Nuevos Ministerios and Atocha Station.", route: "Barajas ➔ Nuevos Ministerios (15 mins)" }
+  ],
+  HKG: [
+    { title: "Hong Kong Airport Express", badge: "High-Speed Rail", desc: "Connects HKG Airport directly to Kowloon Station (21 mins) and Central Hong Kong Station (24 mins) with in-town check-in.", route: "HKG Airport ➔ Central (24 mins, HK$115)" },
+    { title: "Octopus Card & MTR Network", badge: "Transit Card", desc: "All-in-one contactless card for MTR subway, Star Ferry, Ding Ding historic trams, and peak tram.", route: "Accepted citywide" }
+  ],
+  HONOLULU: [
+    { title: "Waikiki Trolley & TheBus Transit", badge: "Island Transit", desc: "TheBus system and open-air scenic Waikiki Trolley lines connecting Waikiki to Diamond Head, Ala Moana, and Pearl Harbor.", route: "TheBus Single Fare ($3.00 / HOLO Card)" }
+  ],
+  CHI: [
+    { title: "CTA 'L' Rapid Transit Network & Contactless Tap", badge: "Subway & Elevated Rail", desc: "Tap any contactless credit card, phone, or Ventra card at all 145 CTA train stations. Easy transfer connections across the Loop.", route: "Single Fare ($2.50) / 24-Hour Unlimited Pass ($5.00)" },
+    { title: "Direct O'Hare (ORD) ➔ Loop Blue Line", badge: "24/7 Airport Express", desc: "Board the Blue Line directly inside O'Hare Airport Lower Level concourse for a direct 45-minute ride straight to downtown Loop stations.", route: "O'Hare ➔ Loop (45 mins, $5.00 from airport)" }
+  ],
+  SF: [
+    { title: "BART (Bay Area Rapid Transit)", badge: "Airport & Regional Rail", desc: "Fast regional subway connecting SFO Airport directly to Downtown SF (Powell/Montgomery), Oakland, and Berkeley.", route: "SFO Airport ➔ Downtown SF (30 mins, $10.50 via Clipper)" }
+  ],
+  PRINCETON: [
+    { title: "NJ Transit Northeast Corridor & 'Dinky' Train", badge: "Rail Network", desc: "Take NJ Transit Northeast Corridor line to Princeton Junction, then connect on the 5-minute 'Dinky' shuttle directly to campus center.", route: "Princeton Junction ➔ Princeton Campus ($3.00)" }
+  ],
+  NYC: [
+    { title: "MTA Subway & OMNY Tap-to-Pay", badge: "Subway System", desc: "Tap your contactless credit card or phone at any turnstile across all NYC subway lines. Automatic weekly fare capping after 12 rides.", route: "Single Ride ($2.90), 7-Day Unlimited Cap" }
+  ],
+  SAN: [
+    { title: "MTS San Diego Trolley & PRONTO Card", badge: "Transit Network", desc: "Blue, Green, Orange, and Copper light-rail lines connect Downtown Gaslamp, Old Town, Mission Valley, Little Italy, and the US/Mexico border.", route: "PRONTO App or tap credit card ($2.50 / $6.00 Day Pass)" }
   ]
 };
 
@@ -651,7 +482,33 @@ function renderTransitGuide(airportCode, cityName) {
   const normCity = (cityName || "").toLowerCase();
   
   let key = normCode;
-  if (normCity.includes("chicago") || normCode === "ORD" || normCode === "MDW") {
+  if (normCity.includes("taipei") || normCity.includes("new taipei") || normCity.includes("tamsui") || normCity.includes("beitou") || normCity.includes("jiufen") || normCode === "TPE" || normCode === "TSA") {
+    key = "TPE";
+  } else if (normCity.includes("taichung") || normCode === "RMQ") {
+    key = "TAICHUNG";
+  } else if (normCity.includes("tainan") || normCode === "TNN") {
+    key = "TAINAN";
+  } else if (normCity.includes("kaohsiung") || normCode === "KHH") {
+    key = "KHH";
+  } else if (normCity.includes("tokyo") || normCode === "HND" || normCode === "NRT") {
+    key = "TOKYO";
+  } else if (normCity.includes("kyoto") || normCity.includes("osaka") || normCode === "KIX" || normCode === "ITM") {
+    key = "KYOTO_OSAKA";
+  } else if (normCity.includes("london") || normCode === "LHR" || normCode === "LGW") {
+    key = "LONDON";
+  } else if (normCity.includes("paris") || normCode === "CDG" || normCode === "ORY") {
+    key = "PARIS";
+  } else if (normCity.includes("rome") || normCode === "FCO") {
+    key = "ROME";
+  } else if (normCity.includes("barcelona") || normCode === "BCN") {
+    key = "BCN";
+  } else if (normCity.includes("madrid") || normCode === "MAD") {
+    key = "MADRID";
+  } else if (normCity.includes("hong kong") || normCode === "HKG") {
+    key = "HKG";
+  } else if (normCity.includes("honolulu") || normCode === "HNL") {
+    key = "HONOLULU";
+  } else if (normCity.includes("chicago") || normCode === "ORD" || normCode === "MDW") {
     key = "CHI";
   } else if (normCity.includes("san francisco") || normCity.includes("sf") || normCode === "SFO" || normCode === "SJC" || normCode === "OAK") {
     key = "SF";
@@ -669,7 +526,7 @@ function renderTransitGuide(airportCode, cityName) {
     { title: "City Walking & Micromobility Rentals", badge: "Local Mobility", desc: `Pedestrian-friendly central districts with municipal shared bike and scooter stations located near major sights.`, route: "Station hubs across central plazas" }
   ];
 
-  if (subtitleEl) subtitleEl.textContent = `Essential metro cards, airport express links, and transit navigation for ${cityName}`;
+  if (subtitleEl) subtitleEl.textContent = `Essential metro cards, high-speed rail links, and transit navigation for ${cityName}`;
 
   transitContentEl.innerHTML = guides.map(g => `
     <div class="transit-card">
@@ -690,92 +547,185 @@ function renderTransitGuide(airportCode, cityName) {
 // 4. CURATED SIGHTS & CULINARY CATALOG
 // ========================================================
 const curatedCityGuides = {
-  // CHICAGO & SURROUNDING METRO (Exact GPS)
+  // TOKYO & SURROUNDING KANTO
+  TOKYO: [
+    { id: "tyo_s1", type: "sight", name: "Sensō-ji Temple & Nakamise-dori", category: "Historic Temple", location: "Asakusa", lat: 35.7148, lon: 139.7967, desc: "Tokyo's oldest Buddhist temple founded in 645 AD featuring the iconic giant red Kaminarimon lantern and street snack stalls.", query: "Senso-ji Asakusa Tokyo" },
+    { id: "tyo_s2", type: "sight", name: "Meiji Jingu Shrine & Yoyogi Forest", category: "Shinto Shrine Oasis", location: "Shibuya / Harajuku", lat: 35.6764, lon: 139.6993, desc: "Tranquil 170-acre evergreen forest sanctuary dedicated to Emperor Meiji, entered through massive wooden Torii gates.", query: "Meiji Jingu Tokyo" },
+    { id: "tyo_s3", type: "sight", name: "Shibuya Sky & Scramble Crossing", category: "Observation Deck & Crossing", location: "Shibuya", lat: 35.6580, lon: 139.7016, desc: "Open-air 360-degree rooftop deck 229 meters high overlooking the world's busiest pedestrian scramble crossing.", query: "Shibuya Sky Observation Deck" },
+    { id: "tyo_s4", type: "sight", name: "teamLab Planets Tokyo", category: "Immersive Digital Art", location: "Toyosu Waterfront", lat: 35.6491, lon: 139.7898, desc: "Body-immersive digital museum where visitors walk barefoot through crystal universes and floating flower gardens.", query: "teamLab Planets Tokyo" },
+    { id: "tyo_s5", type: "sight", name: "Tsukiji Outer Market", category: "Seafood Market", location: "Chuo / Tsukiji", lat: 35.6654, lon: 139.7707, desc: "Bustling market alleys serving fresh sea urchin (uni), wagyu skewers, tamagoyaki omelets, and premium sushi.", query: "Tsukiji Outer Market Tokyo" },
+    { id: "tyo_s6", type: "sight", name: "Kamakura Great Buddha & Kotoku-in (25 mi south)", category: "Historic Coastal Landmark", location: "Kamakura", lat: 35.3167, lon: 139.5361, desc: "Monumental 13th-century outdoor bronze seated Buddha statue in the scenic coastal samurai capital.", query: "Kamakura Great Buddha" },
+    { id: "tyo_f1", type: "food", name: "Ichiran Ramen Shibuya (Tonkotsu Broth)", category: "Iconic Tonkotsu Ramen", location: "Shibuya", lat: 35.6620, lon: 139.7005, desc: "Solo flavor-focus booths serving rich, slow-simmered natural tonkotsu pork bone broth with custom spicy red sauce.", query: "Ichiran Ramen Shibuya" },
+    { id: "tyo_f2", type: "food", name: "Ginza Kagari (Rich Chicken Paitan Soba)", category: "Michelin Recognized Ramen", location: "Ginza", lat: 35.6702, lon: 139.7644, desc: "Velvety, creamy chicken paitan broth simmered to golden perfection crowned with seasonal vegetables and truffle oil.", query: "Ginza Kagari Ramen" }
+  ],
+
+  // KYOTO & OSAKA REGION
+  KYOTO_OSAKA: [
+    { id: "kyo_s1", type: "sight", name: "Fushimi Inari-Taisha (10,000 Vermilion Torii Gates)", category: "Sacred Shinto Shrine", location: "Fushimi / Kyoto", lat: 34.9671, lon: 135.7727, desc: "Breathtaking mountain trails lined with thousands of bright vermilion Torii gates winding through sacred cedar forests.", query: "Fushimi Inari Taisha Kyoto" },
+    { id: "kyo_s2", type: "sight", name: "Kinkaku-ji (The Golden Pavilion)", category: "Zen Buddhist Temple", location: "Kita / Kyoto", lat: 35.0394, lon: 135.7292, desc: "Top two floors completely covered in pure gold leaf, reflecting across the Mirror Pond in a classical Muromachi garden.", query: "Kinkaku-ji Golden Pavilion Kyoto" },
+    { id: "kyo_s3", type: "sight", name: "Arashiyama Bamboo Grove & Tenryu-ji", category: "Natural Bamboo Sanctuary", location: "Arashiyama / Kyoto", lat: 35.0169, lon: 135.6712, desc: "Towering green bamboo stalks swaying in the breeze alongside the historic Oi River and Togetsukyo Bridge.", query: "Arashiyama Bamboo Grove" },
+    { id: "kyo_s4", type: "sight", name: "Dotonbori Canal & Glico Running Man (Osaka)", category: "Neon Entertainment Strip", location: "Namba / Osaka", lat: 34.6687, lon: 135.5013, desc: "Vibrant neon-lit canal lined with giant animatronic crab signs, takoyaki street stands, and izakayas.", query: "Dotonbori Osaka" },
+    { id: "kyo_s5", type: "sight", name: "Osaka Castle & Castle Park", category: "Samurai Castle Fortress", location: "Chuo / Osaka", lat: 34.6873, lon: 135.5262, desc: "16th-century fortress encircled by massive stone moats, cherry blossom orchards, and golden tiger roof ornaments.", query: "Osaka Castle" },
+    { id: "kyo_f1", type: "food", name: "Nishiki Market Street Food (Kyoto's Kitchen)", category: "Historic Culinary Arcade", location: "Nakagyo / Kyoto", lat: 35.0050, lon: 135.7649, desc: "Five-block historic covered market serving skewered glazed octopus, matcha soft-serve, and dashi tamagoyaki.", query: "Nishiki Market Kyoto" },
+    { id: "kyo_f2", type: "food", name: "Kukuru Takoyaki & Kushikatsu Daruma (Osaka)", category: "Iconic Street Gastronomy", location: "Dotonbori / Shinsekai", lat: 34.6689, lon: 135.5015, desc: "Crispy octopus balls molten on the inside, and deep-fried golden skewered meats with no-double-dipping sauce.", query: "Takoyaki Kukuru Dotonbori" }
+  ],
+
+  // LONDON & SURROUNDING ENGLAND
+  LONDON: [
+    { id: "lon_s1", type: "sight", name: "Tower of London & Crown Jewels", category: "Royal Historic Fortress", location: "Tower Hill / Thames", lat: 51.5081, lon: -0.0759, desc: "Nearly 1,000-year-old castle and former prison housing the sparkling Crown Jewels and historic Yeoman Warders.", query: "Tower of London" },
+    { id: "lon_s2", type: "sight", name: "The British Museum", category: "World-Class Museum", location: "Bloomsbury", lat: 51.5194, lon: -0.1270, desc: "Over 8 million historic works of world culture under the Great Court glass dome, including the Rosetta Stone.", query: "The British Museum London" },
+    { id: "lon_s3", type: "sight", name: "Westminster Abbey & Big Ben", category: "Royal Coronation Abbey", location: "Westminster", lat: 51.4993, lon: -0.1273, desc: "Gothic church site of every British royal coronation since 1066, adjacent to the Houses of Parliament and Big Ben.", query: "Westminster Abbey London" },
+    { id: "lon_s4", type: "sight", name: "The London Eye", category: "Observation Wheel", location: "South Bank", lat: 51.5033, lon: -0.1195, desc: "135-meter cantilevered observation wheel offering 360-degree views across London's skyline.", query: "The London Eye" },
+    { id: "lon_s5", type: "sight", name: "Windsor Castle (21 mi west)", category: "Royal Castle Residence", location: "Windsor, Berkshire", lat: 51.4839, lon: -0.6044, desc: "The oldest and largest occupied castle in the world, serving as a royal residence for nearly 1,000 years.", query: "Windsor Castle" },
+    { id: "lon_f1", type: "food", name: "Borough Market (Artisan Gourmet Market)", category: "Historic Food Market", location: "Southwark / London Bridge", lat: 51.5055, lon: -0.0910, desc: "Historic food market serving Swiss raclette, duck confit sandwiches, sausage rolls, and artisan cheeses.", query: "Borough Market London" },
+    { id: "lon_f2", type: "food", name: "Dishoom (Bombay Cafe & House Black Daal)", category: "Iconic Indian Gastronomy", location: "Covent Garden / Kings Cross", lat: 51.5126, lon: -0.1265, desc: "Homage to the Irani cafes of old Bombay, renowned for 24-hour slow-cooked black daal, garlic naan, and chicken ruby.", query: "Dishoom Covent Garden" }
+  ],
+
+  // PARIS & SURROUNDING REGION
+  PARIS: [
+    { id: "par_s1", type: "sight", name: "Eiffel Tower & Champ de Mars", category: "Iconic Monument", location: "7th Arrondissement", lat: 48.8584, lon: 2.2945, desc: "Gustave Eiffel's 330-meter wrought-iron lattice masterpiece offering spectacular views and glittering hourly light shows.", query: "Eiffel Tower Paris" },
+    { id: "par_s2", type: "sight", name: "Louvre Museum & Glass Pyramid", category: "World-Class Museum", location: "1st Arrondissement", lat: 48.8606, lon: 2.3376, desc: "World's largest art museum holding the Mona Lisa, Venus de Milo, and Winged Victory of Samothrace in a former royal palace.", query: "Louvre Museum Paris" },
+    { id: "par_s3", type: "sight", name: "Musée d'Orsay", category: "Impressionist Sanctuary", location: "7th Arrondissement / Seine", lat: 48.8599, lon: 2.3266, desc: "Stunning Beaux-Arts railway station housing masterpieces by Monet, Van Gogh, Renoir, Degas, and Cézanne.", query: "Musee d'Orsay Paris" },
+    { id: "par_s4", type: "sight", name: "Cathédrale Notre-Dame de Paris & Sainte-Chapelle", category: "Gothic Masterpiece", location: "Île de la Cité", lat: 48.8530, lon: 2.3499, desc: "Restored French Gothic cathedral and nearby Sainte-Chapelle renowned for its 1,113 stained-glass windows.", query: "Notre-Dame de Paris" },
+    { id: "par_s5", type: "sight", name: "Palace of Versailles & Royal Gardens (12 mi southwest)", category: "Royal Palace Estate", location: "Versailles", lat: 48.8049, lon: 2.1204, desc: "The opulent palace of the Sun King Louis XIV featuring the Hall of Mirrors, Grand Trianon, and fountain gardens.", query: "Palace of Versailles" },
+    { id: "par_f1", type: "food", name: "Du Pain et des Idées (Escargot Pistache Pastry)", category: "Artisan Boulangerie", location: "10th Arrondissement (Canal Saint-Martin)", lat: 48.8712, lon: 2.3629, desc: "Historic 1875 bakery acclaimed for crispy pain des amis and pistachio-chocolate escargot swirl pastries.", query: "Du Pain et des Idees Paris" },
+    { id: "par_f2", type: "food", name: "Le Relais de l'Entrecôte (Steak Frites)", category: "Classic Parisian Bistro", location: "Saint-Germain / Champs-Élysées", lat: 48.8687, lon: 2.3045, desc: "Famous bistro serving tender sirloin steak covered in legendary secret green herb butter sauce with golden fries.", query: "Le Relais de l'Entrecote Paris" }
+  ],
+
+  // ROME & VATICAN CITY
+  ROME: [
+    { id: "rom_s1", type: "sight", name: "Colosseum & Roman Forum", category: "Ancient World Wonder", location: "Piazza del Colosseo", lat: 41.8902, lon: 12.4922, desc: "Nearly 2,000-year-old stone amphitheater where gladiators fought, paired with the ancient center of Roman civic life.", query: "Colosseum Rome" },
+    { id: "rom_s2", type: "sight", name: "Pantheon & Piazza della Rotonda", category: "Ancient Architectural Wonder", location: "Central Historic District", lat: 41.8986, lon: 12.4769, desc: "Best-preserved Roman monument featuring an open oculus dome that remains the largest unreinforced concrete dome in the world.", query: "Pantheon Rome" },
+    { id: "rom_s3", type: "sight", name: "Trevi Fountain & Spanish Steps", category: "Baroque Monument", location: "Piazza di Trevi", lat: 41.9009, lon: 12.4833, desc: "Monumental Baroque fountain fed by ancient aqueducts, tradition says tossing a coin ensures your return to Rome.", query: "Trevi Fountain Rome" },
+    { id: "rom_s4", type: "sight", name: "Vatican Museums & St. Peter's Basilica", category: "Papal Art & Basilica", location: "Vatican City", lat: 41.9065, lon: 12.4536, desc: "Michelangelo's Sistine Chapel ceiling, Raphael Rooms, and the grandest Renaissance basilica in Christendom.", query: "Vatican Museums Sistine Chapel" },
+    { id: "rom_f1", type: "food", name: "Roscioli Salumeria con Cucina (Carbonara)", category: "Iconic Roman Pasta", location: "Campo de' Fiori", lat: 41.8941, lon: 12.4735, desc: "Legendary deli-restaurant renowned across Italy for silky authentic Spaghetti alla Carbonara and fresh burrata.", query: "Roscioli Rome" },
+    { id: "rom_f2", type: "food", name: "Da Enzo al 29 (Cacio e Pepe & Carciofi)", category: "Traditional Trattoria", location: "Trastevere", lat: 41.8876, lon: 12.4784, desc: "Beloved neighborhood trattoria serving crispy fried Roman artichokes, cacio e pepe, and creamy tiramisu.", query: "Da Enzo al 29 Trastevere Rome" }
+  ],
+
+  // BARCELONA & CATALONIA
+  BCN: [
+    { id: "bcn_s1", type: "sight", name: "Basílica de la Sagrada Família", category: "Gaudí Masterpiece", location: "Eixample", lat: 41.4036, lon: 2.1744, desc: "Antoni Gaudí's monumental basilica featuring forest-like stone pillars and soaring stained-glass light.", query: "Sagrada Familia Barcelona" },
+    { id: "bcn_s2", type: "sight", name: "Park Güell & Gaudí Dragon Stairway", category: "Mosaic Park Reserve", location: "Gràcia", lat: 41.4145, lon: 2.1527, desc: "Enchanting park filled with colorful mosaic benches, gingerbread gatehouses, and sweeping views of Barcelona.", query: "Park Guell Barcelona" },
+    { id: "bcn_s3", type: "sight", name: "Gothic Quarter (Barri Gòtic) & Cathedral", category: "Medieval Historic Quarter", location: "Ciutat Vella", lat: 41.3839, lon: 2.1764, desc: "Atmospheric labyrinth of narrow cobblestone streets, hidden Roman walls, and medieval stone plazas.", query: "Gothic Quarter Barcelona" },
+    { id: "bcn_f1", type: "food", name: "Mercat de la Boqueria (Fresh Seafood & Jamón)", category: "Famous Food Market", location: "La Rambla", lat: 41.3817, lon: 2.1715, desc: "Vibrant market hall packed with freshly sliced Jamón Ibérico de Bellota, grilled prawns, and tropical fruit juices.", query: "La Boqueria Barcelona" },
+    { id: "bcn_f2", type: "food", name: "Cervecería Catalana (Tapas & Sangria)", category: "Premier Tapas Bar", location: "Eixample (Carrer de Mallorca)", lat: 41.3923, lon: 2.1609, desc: "High-energy tapas counter serving montaditos, grilled razor clams, patatas bravas, and beef tenderloin skewers.", query: "Cerveceria Catalana Barcelona" }
+  ],
+
+  // MADRID & CENTRAL SPAIN
+  MAD: [
+    { id: "mad_s1", type: "sight", name: "Prado National Museum (Museo del Prado)", category: "World-Class Museum", location: "Paseo del Prado", lat: 40.4138, lon: -3.6921, desc: "Houses masterworks by Velázquez (Las Meninas), Goya, El Greco, and Hieronymus Bosch in a neoclassical palace.", query: "Museo del Prado Madrid" },
+    { id: "mad_s2", type: "sight", name: "Royal Palace of Madrid & Sabatini Gardens", category: "Royal Residence", location: "Palacio District", lat: 40.4180, lon: -3.7143, desc: "The largest operational royal palace in Western Europe with 3,418 opulent frescoed rooms and royal armory.", query: "Royal Palace of Madrid" },
+    { id: "mad_s3", type: "sight", name: "El Retiro Park & Crystal Palace", category: "UNESCO Royal Park", location: "Retiro District", lat: 40.4153, lon: -3.6845, desc: "300-acre lush park featuring a boating lake, rose gardens, and the stunning glass-and-iron Palacio de Cristal.", query: "El Retiro Park Madrid" },
+    { id: "mad_f1", type: "food", name: "Mercado de San Miguel (Gourmet Tapas)", category: "Historic Gourmet Market", location: "Plaza de San Miguel", lat: 40.4154, lon: -3.7088, desc: "1916 iron-structured market serving gourmet tapas, Basque pintxos, Iberian ham, oysters, and Spanish wine.", query: "Mercado de San Miguel Madrid" },
+    { id: "mad_f2", type: "food", name: "Chocolatería San Ginés (Since 1894)", category: "Historic Churrería", location: "Pasadizo de San Ginés", lat: 40.4171, lon: -3.7067, desc: "Open 24/7 since 1894 serving hot, crisp golden churros and porras for dipping in thick dark melted chocolate.", query: "Chocolateria San Gines Madrid" }
+  ],
+
+  // HONG KONG
+  HKG: [
+    { id: "hkg_s1", type: "sight", name: "Victoria Peak & Historic Peak Tram", category: "Iconic Panorama", location: "Hong Kong Island", lat: 22.2759, lon: 114.1455, desc: "Funicular railway climbing to the highest point on Hong Kong Island for jaw-dropping views of Victoria Harbour skyscrapers.", query: "Victoria Peak Hong Kong" },
+    { id: "hkg_s2", type: "sight", name: "Tian Tan Big Buddha & Ngong Ping Cable Car", category: "Monumental Bronze Sanctuary", location: "Lantau Island", lat: 22.2540, lon: 113.9050, desc: "34-meter seated bronze Buddha statue reached by a glass-bottom crystal cable car ride over lush mountain peaks.", query: "Tian Tan Big Buddha Lantau" },
+    { id: "hkg_s3", type: "sight", name: "Star Ferry & Victoria Harbour Promenade", category: "Historic Harbor Crossing", location: "Tsim Sha Tsui / Central", lat: 22.2936, lon: 114.1685, desc: "Scenic double-decker green ferry crossing Victoria Harbour operating since 1888 with stunning skyline views.", query: "Star Ferry Hong Kong" },
+    { id: "hkg_f1", type: "food", name: "Tim Ho Wan (Michelin-Star Dim Sum)", category: "World's Famous Dim Sum", location: "Sham Shui Po / Central", lat: 22.3323, lon: 114.1627, desc: "Famous for its baked barbecue pork buns with sweet sugary crust, pan-fried turnip cake, and steamed shrimp dumplings.", query: "Tim Ho Wan Dim Sum Hong Kong" }
+  ],
+
+  // HONOLULU & OAHU
+  HONOLULU: [
+    { id: "hnl_s1", type: "sight", name: "Waikiki Beach & Diamond Head State Monument", category: "Iconic Beach & Crater", location: "Waikiki / Diamond Head", lat: 21.2620, lon: -157.8057, desc: "World-famous golden crescent beach and volcanic tuff crater trail offering sweeping vistas of the Pacific Ocean.", query: "Diamond Head State Monument Honolulu" },
+    { id: "hnl_s2", type: "sight", name: "Pearl Harbor National Memorial & USS Arizona", category: "National Historic Landmark", location: "Pearl Harbor", lat: 21.3650, lon: -157.9500, desc: "Historic WWII memorial honoring the lives lost on December 7, 1941, built directly over the sunken battleship USS Arizona.", query: "Pearl Harbor National Memorial" },
+    { id: "hnl_s3", type: "sight", name: "Hanauma Bay Nature Preserve", category: "Marine Sanctuary Snorkeling", location: "East Oahu", lat: 21.2690, lon: -157.6938, desc: "Curved volcanic crater bay with calm turquoise waters filled with living coral reefs, green sea turtles, and parrotfish.", query: "Hanauma Bay Nature Preserve" },
+    { id: "hnl_f1", type: "food", name: "Leonard's Bakery (Original Malasadas Since 1952)", category: "Legendary Hawaiian Bakery", location: "Kapahulu Avenue", lat: 21.2849, lon: -157.8130, desc: "Hot, freshly fried Portuguese dough pastries dusted in sugar, cinnamon, and filled with coconut (haupia) cream.", query: "Leonard's Bakery Honolulu" },
+    { id: "hnl_f2", type: "food", name: "Ono Seafood (Fresh Ahi Poke Bowls)", category: "Authentic Hawaiian Poke", location: "Kapahulu Avenue", lat: 21.2818, lon: -157.8145, desc: "Top-rated local poke counter serving fresh Hawaiian bigeye ahi tossed in shoyu, spicy mayo, Hawaiian sea salt, and seaweed.", query: "Ono Seafood Honolulu Poke" }
+  ],
+
+  // TAIPEI & GREATER NORTHERN TAIWAN
+  TPE: [
+    { id: "tpe_s1", type: "sight", name: "Taipei 101 & 89th-Floor Skyline Observatory", category: "Iconic Skyscraper", location: "Xinyi District", lat: 25.0339, lon: 121.5645, desc: "508-meter engineering marvel featuring the world's fastest elevators and panoramic 360-degree basin views.", query: "Taipei 101 Observatory" },
+    { id: "tpe_s2", type: "sight", name: "National Palace Museum (Imperial Treasures)", category: "World-Class Museum", location: "Shilin District", lat: 25.1024, lon: 121.5485, desc: "Houses nearly 700,000 ancient Chinese imperial artifacts spanning 8,000 years, including the Jadeite Cabbage.", query: "National Palace Museum Taipei" },
+    { id: "tpe_s3", type: "sight", name: "Chiang Kai-shek Memorial Hall & Liberty Square", category: "Monumental Architecture", location: "Zhongzheng District", lat: 25.0347, lon: 121.5218, desc: "Grand white-marble hall with blue-tiled octagonal roof, hourly ceremonial guard change, and classical gardens.", query: "Chiang Kai-shek Memorial Hall" },
+    { id: "tpe_s4", type: "sight", name: "Longshan Temple & Historic Bopiliao Block", category: "Historic Temple Heritage", location: "Wanhua District", lat: 25.0370, lon: 121.4999, desc: "Historic 1738 Buddhist-Taoist sanctuary with intricate dragon carvings, incense halls, and Qing-era brick alleys.", query: "Longshan Temple Taipei" },
+    { id: "tpe_s5", type: "sight", name: "Xiangshan (Elephant Mountain) Sunset Trail", category: "Scenic Viewpoint Hike", location: "Xinyi District", lat: 25.0274, lon: 121.5706, desc: "Steep 20-minute stone staircase hike leading to the iconic photography boulders overlooking Taipei 101.", query: "Elephant Mountain Hiking Trail" },
+    { id: "tpe_s6", type: "sight", name: "Beitou Thermal Valley & Hot Springs Museum", category: "Thermal Spring Oasis", location: "Beitou District", lat: 25.1378, lon: 121.5074, desc: "Steaming geothermal emerald-sulfur pool, historic 1913 Japanese bathhouse museum, and wooden public library.", query: "Beitou Thermal Valley" },
+    { id: "tpe_s7", type: "sight", name: "Tamsui Old Street & Fisherman's Wharf (11 mi north)", category: "Waterfront Sunset", location: "Tamsui Waterfront", lat: 25.1764, lon: 121.4326, desc: "Coastal boardwalk famous for golden sunsets over the Taiwan Strait, Lovers Bridge, and historic Fort San Domingo.", query: "Tamsui Fisherman's Wharf" },
+    { id: "tpe_s8", type: "sight", name: "Jiufen Mountain Village & Tea Houses (21 mi east)", category: "Historic Mountain Village", location: "Ruifang District", lat: 25.1099, lon: 121.8452, desc: "Misty mountain gold-mining village with lantern-lit narrow staircases, traditional tea houses, and ocean vistas.", query: "Jiufen Old Street Taiwan" },
+    { id: "tpe_s9", type: "sight", name: "Shifen Waterfall & Sky Lantern Old Street (19 mi east)", category: "Scenic Waterfall & Heritage", location: "Pingxi District", lat: 25.0494, lon: 121.7876, desc: "The 'Little Niagara of Taiwan' paired with railway tracks where visitors write wishes and launch sky lanterns.", query: "Shifen Waterfall Pingxi" },
+    { id: "tpe_s10", type: "sight", name: "Yehliu Geopark & Queen's Head Rock (22 mi north)", category: "Geological Marvel", location: "Wanli / North Coast", lat: 25.2064, lon: 121.6905, desc: "Dramatic coastal promontory eroded into otherworldly hoodoo rock formations resembling the Queen's Head.", query: "Yehliu Geopark" },
+    { id: "tpe_f1", type: "food", name: "Din Tai Fung Flagship (Xiao Long Bao Soup Dumplings)", category: "World-Famous Dumplings", location: "Xinyi / Dongmen", lat: 25.0338, lon: 121.5300, desc: "Legendary Michelin-recognized 18-fold steamed pork soup dumplings, truffle dumplings, and egg fried rice.", query: "Din Tai Fung Xinyi Flagship" },
+    { id: "tpe_f2", type: "food", name: "Raohe Street Night Market (Fuzhou Pepper Buns)", category: "Legendary Night Market", location: "Songshan District", lat: 25.0509, lon: 121.5775, desc: "600-meter vibrant market renowned for wood-fired crispy black pepper pork buns, herbal pork ribs, and shaved ice.", query: "Raohe Street Night Market" },
+    { id: "tpe_f3", type: "food", name: "Shilin Night Market (Giant Fried Chicken & Oyster Omelet)", category: "Mega Food Market", location: "Shilin District", lat: 25.0879, lon: 121.5241, desc: "Taipei's largest night market packed with sizzling hot star fried chicken cutlets, oyster omelets, and bubble tea.", query: "Shilin Night Market Taipei" },
+    { id: "tpe_f4", type: "food", name: "Ningxia Night Market (Taro Balls & Minced Pork Rice)", category: "Artisan Culinary Market", location: "Datong District", lat: 25.0558, lon: 121.5152, desc: "Traditional foodies' favorite night market famous for crispy deep-fried taro balls, braised pork rice (Lu Rou Fan), and beef soup.", query: "Ningxia Night Market Taipei" },
+    { id: "tpe_f5", type: "food", name: "Fu Hang Soy Milk (Michelin Bib Gourmand Breakfast)", category: "Historic Breakfast", location: "Huashan Market (Shandao Temple)", lat: 25.0442, lon: 121.5248, desc: "Beloved breakfast institution baking fresh thick flatbreads with eggs, deep-fried dough sticks (You Tiao), and savory soy milk.", query: "Fu Hang Soy Milk Taipei" },
+    { id: "tpe_f6", type: "food", name: "Yongkang Beef Noodles (Braised Sichuan Broth)", category: "Signature Beef Noodle", location: "Dongmen / Yongkang St", lat: 25.0329, lon: 121.5298, desc: "Tender Australian beef shank and tendon slow-simmered in rich spicy chili-bean broth with springy noodles.", query: "Yongkang Beef Noodles Taipei" }
+  ],
+
+  // TAICHUNG & CENTRAL TAIWAN
+  TAICHUNG: [
+    { id: "txg_s1", type: "sight", name: "National Taichung Theater (Toyo Ito Architecture)", category: "Architectural Marvel", location: "Xitun District", lat: 24.1628, lon: 120.6405, desc: "Futuristic opera house designed by Pritzker laureate Toyo Ito featuring curved sound-cave walls and rooftop garden.", query: "National Taichung Theater" },
+    { id: "txg_s2", type: "sight", name: "Rainbow Village (Artistic Heritage)", category: "Cultural Landmark", location: "Nantun District", lat: 24.1337, lon: 120.6098, desc: "Vibrant military dependents' village preserved and transformed with colorful folk art murals by Grandpa Rainbow.", query: "Rainbow Village Taichung" },
+    { id: "txg_s3", type: "sight", name: "Gaomei Wetlands & Boardwalk Windmills (15 mi west)", category: "Coastal Nature Sanctuary", location: "Qingshui District", lat: 24.3122, lon: 120.5501, desc: "Vast tidal mudflat ecosystem featuring a wooden walkway, wind turbines, and world-class mirror-reflection sunsets.", query: "Gaomei Wetlands Taichung" },
+    { id: "txg_f1", type: "food", name: "Chun Shui Tang (Original 1983 Birthplace of Bubble Tea)", category: "Historic Tea House", location: "West District (Siwei St)", lat: 24.1396, lon: 120.6723, desc: "The legendary original tea salon where iced milk tea was first combined with chewy tapioca pearl balls in 1983.", query: "Chun Shui Tang Original Siwei Taichung" },
+    { id: "txg_f2", type: "food", name: "Miyahara (Historic Ophthalmic Hospital Pastry Palace)", category: "Artisan Pastry & Ice Cream", location: "Central District / Taichung River", lat: 24.1378, lon: 120.6834, desc: "1927 red-brick eye clinic restored into a cathedral-like Harry Potter style palace of artisan chocolates, pineapple cakes, and ice cream.", query: "Miyahara Taichung" },
+    { id: "txg_f3", type: "food", name: "Fengjia Night Market (Taiwan's Largest Innovation Market)", category: "Legendary Night Market", location: "Xitun District", lat: 24.1798, lon: 120.6499, desc: "Huge culinary testing ground that originated cheese potato bakes, candied fruits, grilled squid, and egg rolls.", query: "Fengjia Night Market Taichung" }
+  ],
+
+  // TAINAN
+  TAINAN: [
+    { id: "tnn_s1", type: "sight", name: "Chimei Museum & Western Classical Palace", category: "World-Class Museum", location: "Rende District", lat: 22.9348, lon: 120.2260, desc: "Magnificent neoclassical palace surrounded by Olympus bridge statues, housing Western fine art, antique armor, and violins.", query: "Chimei Museum Tainan" },
+    { id: "tnn_s2", type: "sight", name: "Anping Old Fort (Fort Zeelandia) & Tree House", category: "17th-Century Dutch Heritage", location: "Anping District", lat: 23.0016, lon: 120.1607, desc: "1624 Dutch fortress paired with an ancient warehouse engulfed by the massive aerial roots of banyan trees.", query: "Anping Tree House Fort Zeelandia" },
+    { id: "tnn_s3", type: "sight", name: "Chihkan Tower (Fort Provintia)", category: "Historic Fortress", location: "West Central District", lat: 22.9975, lon: 120.2026, desc: "1653 Dutch outpost rebuilt into Qing Dynasty pavilions with stone turtle steles and lotus ponds.", query: "Chihkan Tower Tainan" },
+    { id: "tnn_f1", type: "food", name: "Tainan Fresh Scalded Beef Soup (Chih-Kan / A-Cun)", category: "Iconic Dawn Gastronomy", location: "West Central District", lat: 22.9965, lon: 120.1985, desc: "Thinly sliced freshly slaughtered warm local beef instantly cooked by pouring scalding hot beef-bone broth over the bowl.", query: "Tainan Beef Soup" },
+    { id: "tnn_f2", type: "food", name: "Chou's Shrimp Rolls & Anping Bean Jelly", category: "Heritage Seafood", location: "Anping Old Street", lat: 23.0003, lon: 120.1645, desc: "Crispy fried shrimp rolls stuffed with fresh sword shrimp, green onion, and minced pork, served with sweet wasabi dip.", query: "Chou's Shrimp Rolls Anping" }
+  ],
+
+  // KAOHSIUNG
+  KHH: [
+    { id: "khh_s1", type: "sight", name: "The Pier-2 Art Center & Great Harbor Bridge", category: "Harbor Cultural District", location: "Yancheng / Kaohsiung Harbor", lat: 22.6199, lon: 120.2818, desc: "Restored sugar warehouses turned into open-air contemporary art galleries, giant sculptures, and Asia's longest rotating bridge.", query: "Pier-2 Art Center Kaohsiung" },
+    { id: "khh_s2", type: "sight", name: "Lotus Pond & Dragon and Tiger Pagodas", category: "Scenic Temple Lake", location: "Zuoying District", lat: 22.6804, lon: 120.2917, desc: "Scenic lake featuring towering twin pagodas entered through the dragon's mouth and exited from the tiger's jaws for good fortune.", query: "Dragon and Tiger Pagodas Kaohsiung" },
+    { id: "khh_s3", type: "sight", name: "Fo Guang Shan Buddha Museum (15 mi northeast)", category: "Monumental Buddhist Sanctuary", location: "Dashu District", lat: 22.7554, lon: 120.4437, desc: "Massive 108-meter bronze seated Buddha statue, eight pagoda towers, and sacred Buddhist relic galleries.", query: "Fo Guang Shan Buddha Museum" },
+    { id: "khh_f1", type: "food", name: "Ruifeng Night Market (Angel Fried Chicken & Papaya Milk)", category: "Premier Night Market", location: "Zuoying District", lat: 22.6659, lon: 120.3005, desc: "Over 1,000 stalls packed with sizzling steak platters, thick angel fried chicken chops, and freshly pressed papaya milk.", query: "Ruifeng Night Market Kaohsiung" },
+    { id: "khh_f2", type: "food", name: "Gang Yuan Beef Noodles (Dry Tossed Beef Shank)", category: "Iconic Southern Noodle", location: "Yancheng District", lat: 22.6225, lon: 120.2842, desc: "Famous 70-year noodle shop serving rich lard-tossed dry noodles layered with braised beef shank slices and garlic.", query: "Gang Yuan Beef Noodles Kaohsiung" }
+  ],
+
+  // CHICAGO
   CHI: [
     { id: "chi_s1", type: "sight", name: "Millennium Park & Cloud Gate ('The Bean')", category: "Iconic Landmark", location: "Downtown Loop / Michigan Ave", lat: 41.8826, lon: -87.6226, desc: "World-famous polished steel sculpture reflecting Chicago's skyline, Lurie Garden, and Crown Fountain.", query: "Cloud Gate Millennium Park Chicago" },
     { id: "chi_s2", type: "sight", name: "The Art Institute of Chicago & Modern Wing", category: "World-Class Museum", location: "Michigan Avenue", lat: 41.8796, lon: -87.6237, desc: "Over 300,000 works of art featuring Seurat's Grand Jatte, Edward Hopper's Nighthawks, and Impressionist galleries.", query: "Art Institute of Chicago" },
     { id: "chi_s3", type: "sight", name: "Chicago Architecture Center River Cruise", category: "Iconic Architecture Tour", location: "Chicago Riverwalk / Michigan Ave", lat: 41.8887, lon: -87.6244, desc: "90-minute docent-led boat cruise through the canyon of skyscrapers that birthed modern architecture.", query: "Chicago Architecture Center River Cruise" },
     { id: "chi_s4", type: "sight", name: "Willis Tower Skydeck & 'The Ledge'", category: "Observation Deck", location: "Financial District / Wacker Dr", lat: 41.8789, lon: -87.6359, desc: "103rd-floor glass boxes extending 4.3 feet out over the street with sweeping 4-state views.", query: "Skydeck Chicago Willis Tower" },
     { id: "chi_s5", type: "sight", name: "360 CHICAGO Observation Deck & TILT", category: "Panoramic Viewpoint", location: "Magnificent Mile (875 N Michigan)", lat: 41.8988, lon: -87.6229, desc: "94th-floor observation deck with moving glass platform tilting visitors 30 degrees over Michigan Avenue.", query: "360 CHICAGO Observation Deck" },
-    { id: "chi_s6", type: "sight", name: "The Field Museum of Natural History", category: "World-Class Museum", location: "Museum Campus / Lakefront", lat: 41.8663, lon: -87.6170, desc: "Renowned natural history museum home to 'Sue' the T. rex, ancient Egyptian tombs, and gemstone halls.", query: "Field Museum Chicago" },
-    { id: "chi_s7", type: "sight", name: "Shedd Aquarium & Oceanarium", category: "Marine Sanctuary", location: "Museum Campus", lat: 41.8676, lon: -87.6140, desc: "Historic 1930 lakefront aquarium housing beluga whales, Caribbean coral reefs, and sea otters.", query: "Shedd Aquarium Chicago" },
-    { id: "chi_s8", type: "sight", name: "Navy Pier & Centennial Wheel", category: "Waterfront Destination", location: "Streeterville / Lake Michigan", lat: 41.8917, lon: -87.6086, desc: "Lakefront pier featuring a 200-foot Ferris wheel, Shakespeare Theater, boat tours, and fireworks.", query: "Navy Pier Chicago" },
-    { id: "chi_s9", type: "sight", name: "Wrigley Field Historic Ballpark (4.5 mi north)", category: "Historic Sports Heritage", location: "Wrigleyville / Lakeview", lat: 41.9484, lon: -87.6553, desc: "Legendary 1914 home of the Chicago Cubs with ivy-covered brick walls and neighborhood rooftop bleachers.", query: "Wrigley Field Chicago" },
-    { id: "chi_s10", type: "sight", name: "Chicago Cultural Center (Tiffany Dome)", category: "Architectural Marvel", location: "Loop / Washington St", lat: 41.8837, lon: -87.6248, desc: "Magnificent 1897 public palace featuring the world's largest stained glass Tiffany dome.", query: "Chicago Cultural Center Tiffany Dome" },
-    { id: "chi_s11", type: "sight", name: "Garfield Park Conservatory (4.5 mi west)", category: "Botanical Oasis", location: "Garfield Park", lat: 41.8863, lon: -87.7171, desc: "One of the largest botanical conservatories in the country with thousands of rare tropical plants under glass.", query: "Garfield Park Conservatory Chicago" },
-    { id: "chi_s12", type: "sight", name: "Frank Lloyd Wright Home & Studio (8.5 mi west)", category: "Historic Architecture", location: "Oak Park", lat: 41.8940, lon: -87.7983, desc: "Birthplace of the American Prairie School architectural style and historic neighborhood walking district.", query: "Frank Lloyd Wright Home Oak Park" },
     { id: "chi_f1", type: "food", name: "Pequod's Pizza (Caramelized Crust Deep Dish)", category: "Legendary Deep Dish", location: "Lincoln Park", lat: 41.9219, lon: -87.6644, desc: "World-famous deep-dish pan pizza with a halo of dark caramelized crispy cheddar-mozzarella cheese crust.", query: "Pequod's Pizza Chicago" },
     { id: "chi_f2", type: "food", name: "Lou Malnati's Pizzeria (Buttercrust Deep Dish)", category: "Classic Deep Dish", location: "River North / Loop", lat: 41.8903, lon: -87.6338, desc: "Iconic Chicago buttercrust deep-dish loaded with vine-ripened California tomatoes and mozzarella.", query: "Lou Malnati's Pizzeria River North" },
-    { id: "chi_f3", type: "food", name: "Portillo's (Chicago-Style Hot Dogs & Cake Shake)", category: "Iconic Street Food", location: "River North / Ontario St", lat: 41.8935, lon: -87.6318, desc: "All-beef frankfurter 'dragged through the garden', Italian beef, and chocolate cake blended milkshakes.", query: "Portillo's Hot Dogs Ontario Chicago" },
-    { id: "chi_f4", type: "food", name: "Al's #1 Italian Beef (Since 1938)", category: "Historic Italian Beef", location: "Little Italy (Taylor St)", lat: 41.8698, lon: -87.6540, desc: "Thinly sliced roast beef soaked in seasoned au jus, tucked into French bread and crowned with spicy giardiniera.", query: "Al's Italian Beef Taylor Street" },
-    { id: "chi_f5", type: "food", name: "Garrett Popcorn Shops (The Garrett Mix)", category: "Iconic Snack", location: "Michigan Avenue", lat: 41.8966, lon: -87.6241, desc: "Famous batch-cooked blend of sweet CaramelCrisp and savory sharp CheddarCraft popcorn.", query: "Garrett Popcorn Michigan Ave Chicago" },
-    { id: "chi_f6", type: "food", name: "The Original Rainbow Cone (Since 1926)", category: "Historic Dessert", location: "Navy Pier / Beverly", lat: 41.8915, lon: -87.6080, desc: "Five legendary sliced layers of chocolate, strawberry, Palmer House (vanilla/walnut), pistachio, and orange sherbet.", query: "Original Rainbow Cone Navy Pier" },
-    { id: "chi_f7", type: "food", name: "MingHin Cuisine & Chinatown Square", category: "Cantonese Dim Sum", location: "Chinatown", lat: 41.8533, lon: -87.6329, desc: "Michelin Bib Gourmand dim sum palace serving steamed dumplings, barbecue pork buns, and seafood.", query: "MingHin Cuisine Chinatown Chicago" },
-    { id: "chi_f8", type: "food", name: "Green Mill Cocktail Lounge (Historic Jazz)", category: "Historic Jazz Lounge", location: "Uptown (5.5 mi north)", lat: 41.9691, lon: -87.6599, desc: "Historic 1907 cocktail lounge once patronized by Al Capone, hosting premier live jazz nightly.", query: "Green Mill Jazz Lounge Chicago" }
+    { id: "chi_f3", type: "food", name: "Portillo's (Chicago-Style Hot Dogs & Cake Shake)", category: "Iconic Street Food", location: "River North / Ontario St", lat: 41.8935, lon: -87.6318, desc: "All-beef frankfurter 'dragged through the garden', Italian beef, and chocolate cake blended milkshakes.", query: "Portillo's Hot Dogs Ontario Chicago" }
   ],
 
-  // SAN FRANCISCO & BAY AREA REGION (Exact GPS)
+  // SAN FRANCISCO
   SF: [
     { id: "sf_s1", type: "sight", name: "Golden Gate Bridge (Vista Point & Walkway)", category: "Iconic Landmark", location: "Presidio / Marin Headlands", lat: 37.8199, lon: -122.4783, desc: "World-famous Art Deco suspension bridge spanning the Golden Gate strait with scenic walking paths.", query: "Golden Gate Bridge Vista Point" },
     { id: "sf_s2", type: "sight", name: "Alcatraz Island & Cellhouse Audio Tour", category: "National Historic Landmark", location: "San Francisco Bay", lat: 37.8269, lon: -122.4230, desc: "Legendary former federal penitentiary in the middle of SF Bay offering captivating ranger-led and audio tours.", query: "Alcatraz Island Tour" },
     { id: "sf_s3", type: "sight", name: "Fisherman's Wharf & Pier 39 Sea Lions", category: "Waterfront Attraction", location: "Fisherman's Wharf", lat: 37.8087, lon: -122.4098, desc: "Bustling waterfront promenade featuring famous barking sea lions, maritime museums, and sourdough bakeries.", query: "Pier 39 San Francisco" },
-    { id: "sf_s4", type: "sight", name: "Historic Cable Cars (Powell-Hyde Line)", category: "Historic Transit", location: "Powell St / Nob Hill", lat: 37.7845, lon: -122.4080, desc: "The world's last manually operated cable car system climbing San Francisco's steepest scenic hills.", query: "Powell Hyde Cable Car Turnaround" },
-    { id: "sf_s5", type: "sight", name: "Chinatown & Dragon Gate", category: "Cultural Heritage", location: "Grant Avenue / Bush St", lat: 37.7908, lon: -122.4058, desc: "Oldest Chinatown in North America filled with herbal shops, dragon lantern streets, and dim sum parlors.", query: "Chinatown Dragon Gate San Francisco" },
-    { id: "sf_s6", type: "sight", name: "Palace of Fine Arts & Marina Lagoon", category: "Monumental Architecture", location: "Marina District", lat: 37.8029, lon: -122.4484, desc: "Greco-Roman rotunda and colonnade built for the 1915 Panama-Pacific Exposition surrounded by a peaceful lagoon.", query: "Palace of Fine Arts San Francisco" },
-    { id: "sf_s7", type: "sight", name: "Twin Peaks Panoramic Viewpoint", category: "Scenic Viewpoint", location: "Twin Peaks Summit", lat: 37.7544, lon: -122.4477, desc: "Twin 922-foot hills offering the ultimate 360-degree panoramic view of downtown SF, the bridges, and the bay.", query: "Twin Peaks San Francisco" },
-    { id: "sf_s8", type: "sight", name: "Muir Woods National Monument (11.5 mi north)", category: "Ancient Redwood Forest", location: "Mill Valley, Marin", lat: 37.8970, lon: -122.5811, desc: "Primeval coastal redwood sanctuary with towering 1,000-year-old trees and peaceful boardwalk trails.", query: "Muir Woods National Monument" },
     { id: "sf_f1", type: "food", name: "Tartine Bakery (Morning Buns & Sourdough)", category: "Iconic Bakery", location: "Mission District", lat: 37.7614, lon: -122.4241, desc: "World-renowned bakery famous for flaky country sourdough loaves, cinnamon morning buns, and artisan tarts.", query: "Tartine Bakery San Francisco" },
-    { id: "sf_f2", type: "food", name: "La Taqueria (Mission-Style Burrito)", category: "Legendary Burrito", location: "Mission District", lat: 37.7508, lon: -122.4181, desc: "Award-winning Mission-style burritos grilled golden (dorado style) loaded with carne asada and guacamole.", query: "La Taqueria Mission San Francisco" },
-    { id: "sf_f3", type: "food", name: "Swan Oyster Depot (Since 1912)", category: "Historic Seafood Counter", location: "Nob Hill / Polk St", lat: 37.7909, lon: -122.4211, desc: "18-seat marble counter serving fresh Pacific Dungeness crab, clam chowder, and oysters on the half shell.", query: "Swan Oyster Depot San Francisco" },
-    { id: "sf_f4", type: "food", name: "House of Prime Rib", category: "Classic American Dining", location: "Nob Hill / Van Ness", lat: 37.7934, lon: -122.4228, desc: "Beloved San Francisco institution carving prime rib tableside from stainless steel Zeppelins with Yorkshire pudding.", query: "House of Prime Rib San Francisco" },
-    { id: "sf_f5", type: "food", name: "Ghirardelli Chocolate Factory & Ice Cream", category: "Historic Dessert", location: "Ghirardelli Square", lat: 37.8059, lon: -122.4226, desc: "Historic 1893 chocolate landmark serving hot fudge sundaes and freshly made handmade chocolates.", query: "Ghirardelli Square San Francisco" },
-    { id: "sf_f6", type: "food", name: "Ferry Building Food Hall & Farmers Market", category: "Artisan Marketplace", location: "Embarcadero", lat: 37.7955, lon: -122.3937, desc: "Historic 1898 clocktower ferry terminal packed with artisan food purveyors, oysters, cheeses, and Blue Bottle coffee.", query: "Ferry Building Marketplace San Francisco" }
+    { id: "sf_f2", type: "food", name: "La Taqueria (Mission-Style Burrito)", category: "Legendary Burrito", location: "Mission District", lat: 37.7508, lon: -122.4181, desc: "Award-winning Mission-style burritos grilled golden (dorado style) loaded with carne asada and guacamole.", query: "La Taqueria Mission San Francisco" }
   ],
 
-  // PRINCETON & CENTRAL NEW JERSEY
+  // PRINCETON
   PRINCETON: [
     { id: "pr_s1", type: "sight", name: "Nassau Hall & Princeton Campus", category: "Historic Landmark", location: "Princeton Campus", lat: 40.3487, lon: -74.6593, desc: "Historic 1756 building that briefly served as the US Capitol in 1783, framed by Collegiate Gothic courtyards.", query: "Nassau Hall Princeton University" },
     { id: "pr_s2", type: "sight", name: "Princeton University Chapel", category: "Gothic Masterpiece", location: "Central Campus", lat: 40.3491, lon: -74.6565, desc: "One of the largest university chapels in the world, featuring soaring stained glass and Skinner organ.", query: "Princeton University Chapel" },
-    { id: "pr_s3", type: "sight", name: "Princeton University Art Museum", category: "World-Class Museum", location: "McCormick Hall", lat: 40.3475, lon: -74.6575, desc: "Vast collection spanning ancient Mediterranean antiquities, Asian art, and Impressionist masterworks.", query: "Princeton University Art Museum" },
-    { id: "pr_s4", type: "sight", name: "Palmer Square & Historic Downtown", category: "Town Square", location: "Downtown Princeton", lat: 40.3503, lon: -74.6610, desc: "Colonial revival square lined with boutique shops, independent bookstores, artisan cafes, and outdoor green.", query: "Palmer Square Princeton" },
-    { id: "pr_s5", type: "sight", name: "Morven Museum & Garden", category: "Historic Estate", location: "Stockton Street", lat: 40.3468, lon: -74.6698, desc: "National Historic Landmark and former New Jersey Governor's mansion with five acres of historic gardens.", query: "Morven Museum Princeton" },
-    { id: "pr_s6", type: "sight", name: "Princeton Battlefield State Park (1.5 mi)", category: "Revolutionary War", location: "Mercer Street", lat: 40.3308, lon: -74.6738, desc: "Site of General George Washington's pivotal 1777 victory, Clarke House Museum, and Mercer Oak grove.", query: "Princeton Battlefield State Park" },
-    { id: "pr_s7", type: "sight", name: "McCarter Theatre Center", category: "Performing Arts", location: "University Place", lat: 40.3439, lon: -74.6625, desc: "Tony Award-winning theater producing world-premiere plays, classical music, and dance performances.", query: "McCarter Theatre Center Princeton" },
-    { id: "pr_s8", type: "sight", name: "Grounds For Sculpture (9.5 mi out)", category: "Sculpture Park", location: "Hamilton Township", lat: 40.2372, lon: -74.7175, desc: "Expansive 42-acre sculpture park and arboretum with over 300 contemporary outdoor sculptures.", query: "Grounds For Sculpture Hamilton NJ" },
-    { id: "pr_f1", type: "food", name: "Hoagie Haven (The Body Bag & Sanchez Hoagie)", category: "Legendary Eatery", location: "Nassau Street", lat: 40.3524, lon: -74.6548, desc: "Famous counter-service institution beloved by students since 1974 for loaded gourmet hoagies.", query: "Hoagie Haven Princeton" },
-    { id: "pr_f2", type: "food", name: "The Bent Spoon Artisan Ice Cream", category: "Artisan Dessert", location: "Palmer Square", lat: 40.3502, lon: -74.6608, desc: "Award-winning small-batch ice cream and sorbet made with seasonal local New Jersey farm ingredients.", query: "The Bent Spoon Princeton" },
-    { id: "pr_f3", type: "food", name: "Agricola Community Eatery (Farm-to-Table)", category: "Farm-to-Table Dining", location: "Witherspoon Street", lat: 40.3507, lon: -74.6601, desc: "Rustic-chic eatery sourcing heirloom vegetables, heritage meats, and flatbreads from local Great Meadow Farm.", query: "Agricola Eatery Princeton" },
-    { id: "pr_f4", type: "food", name: "Conte's Pizza & Bar (Thin Crust)", category: "Historic Pizzeria", location: "Witherspoon Street", lat: 40.3562, lon: -74.6565, desc: "Classic 1936 tavern renowned across New Jersey for crispy bar-style thin-crust sausage and garlic pies.", query: "Conte's Pizza Princeton" },
-    { id: "pr_f5", type: "food", name: "Mistral Modern Global Tapas", category: "Fine Dining", location: "Witherspoon Street", lat: 40.3508, lon: -74.6602, desc: "Chef-driven artisanal small plates blending French technique with global flavor profiles.", query: "Mistral Princeton" },
-    { id: "pr_f6", type: "food", name: "Small World Coffee", category: "Craft Coffeehouse", location: "Witherspoon / Nassau", lat: 40.3504, lon: -74.6599, desc: "Beloved community hub serving house-roasted espresso blends, cold brew, and fresh pastries since 1993.", query: "Small World Coffee Princeton" }
+    { id: "pr_f1", type: "food", name: "Hoagie Haven (The Body Bag & Sanchez Hoagie)", category: "Legendary Eatery", location: "Nassau Street", lat: 40.3524, lon: -74.6548, desc: "Famous counter-service institution beloved by students since 1974 for loaded gourmet hoagies.", query: "Hoagie Haven Princeton" }
   ],
 
-  // NEW YORK METRO
+  // NEW YORK
   NYC: [
     { id: "ny_s1", type: "sight", name: "Central Park (Bethesda Terrace & Bow Bridge)", category: "Iconic Park", location: "Central Park / Manhattan", lat: 40.7738, lon: -73.9708, desc: "843-acre green oasis featuring scenic lakes, Bethesda Terrace, and Ramble woodlands.", query: "Central Park New York" },
     { id: "ny_s2", type: "sight", name: "The Metropolitan Museum of Art (The Met)", category: "World-Class Museum", location: "Museum Mile / Upper East Side", lat: 40.7794, lon: -73.9632, desc: "Over 5,000 years of global art, Egyptian Temple of Dendur, and rooftop skyline terrace.", query: "The Metropolitan Museum of Art" },
     { id: "ny_s3", type: "sight", name: "Top of the Rock & Rockefeller Center", category: "Observation Deck", location: "Midtown Manhattan", lat: 40.7587, lon: -73.9787, desc: "Panoramic 360-degree observation deck with direct views of the Empire State Building and Central Park.", query: "Top of the Rock Observation Deck" },
-    { id: "ny_s4", type: "sight", name: "The High Line & Chelsea Market", category: "Elevated Park", location: "Chelsea / Meatpacking", lat: 40.7480, lon: -74.0048, desc: "1.45-mile elevated park built on historic freight rails alongside the Hudson River and food hall.", query: "The High Line New York" },
-    { id: "ny_s5", type: "sight", name: "Times Square & Broadway Theater District", category: "Entertainment Hub", location: "Midtown Manhattan", lat: 40.7580, lon: -73.9855, desc: "Neon-lit crossroads of the world featuring flagship Broadway musicals and energetic street life.", query: "Times Square New York" },
-    { id: "ny_s6", type: "sight", name: "Brooklyn Bridge & DUMBO Promenade (3.5 mi)", category: "Historic Bridge", location: "DUMBO / Brooklyn", lat: 40.7061, lon: -73.9969, desc: "Historic 1883 stone suspension bridge walkway leading into waterfront Brooklyn Bridge Park.", query: "DUMBO Brooklyn Bridge Park" },
-    { id: "ny_s7", type: "sight", name: "Statue of Liberty & Ellis Island Ferry", category: "National Monument", location: "Battery Park / Harbor", lat: 40.6892, lon: -74.0445, desc: "Symbol of American freedom in New York Harbor and historic immigration station.", query: "Statue of Liberty New York" },
-    { id: "ny_s8", type: "sight", name: "Flushing Meadows Corona Park & Unisphere (9 mi)", category: "Regional Park", location: "Queens", lat: 40.7465, lon: -73.8448, desc: "Site of the 1964 World's Fair featuring the monumental steel Unisphere globe.", query: "Unisphere Flushing Meadows" },
-    { id: "ny_f1", type: "food", name: "Katz's Delicatessen (Pastrami on Rye)", category: "Iconic Deli", location: "Lower East Side", lat: 40.7222, lon: -73.9874, desc: "Legendary 1888 deli serving hand-carved hot pastrami and corned beef on seedless rye.", query: "Katz's Delicatessen New York" },
-    { id: "ny_f2", type: "food", name: "Authentic New York Bagels at Russ & Daughters", category: "Historic Appetizing", location: "Lower East Side", lat: 40.7226, lon: -73.9882, desc: "Traditional bagel sandwiches loaded with house-smoked Gaspe Nova salmon and cream cheese.", query: "Russ and Daughters New York" },
-    { id: "ny_f3", type: "food", name: "NY Style Pizza at Joe's Pizza (Greenwich Village)", category: "Iconic Pizza Slice", location: "West Village", lat: 40.7306, lon: -74.0021, desc: "The quintessential NYC thin-crust fold-and-eat cheese slice hot from the deck oven.", query: "Joe's Pizza Carmine Street" },
-    { id: "ny_f4", type: "food", name: "Chinatown Dim Sum at Joe's Shanghai", category: "Cultural Dining", location: "Chinatown", lat: 40.7144, lon: -73.9981, desc: "Authentic soup dumplings (Xiao Long Bao), Cantonese roast pork, and steamed rice rolls.", query: "Joe's Shanghai Chinatown New York" }
+    { id: "ny_f1", type: "food", name: "Katz's Delicatessen (Pastrami on Rye)", category: "Iconic Deli", location: "Lower East Side", lat: 40.7222, lon: -73.9874, desc: "Legendary 1888 deli serving hand-carved hot pastrami and corned beef on seedless rye.", query: "Katz's Delicatessen New York" }
   ],
 
   // SAN DIEGO
   SAN: [
     { id: "sd_s1", type: "sight", name: "Balboa Park & Spanish Village Art Center", category: "Cultural Park", location: "Balboa Park", lat: 32.7341, lon: -117.1446, desc: "1,200-acre historic park with 17 museums, Spanish Colonial Revival architecture, and gardens.", query: "Balboa Park San Diego" },
     { id: "sd_s2", type: "sight", name: "San Diego Zoo", category: "World-Class Zoo", location: "Balboa Park", lat: 32.7353, lon: -117.1490, desc: "World-famous 100-acre wildlife sanctuary pioneering cageless open-air animal exhibits.", query: "San Diego Zoo" },
-    { id: "sd_s3", type: "sight", name: "USS Midway Aircraft Carrier Museum", category: "Maritime Museum", location: "Embarcadero / Downtown", lat: 32.7137, lon: -117.1751, desc: "Longest-serving US Navy aircraft carrier featuring 30 restored aircraft and flight simulators.", query: "USS Midway Museum San Diego" },
-    { id: "sd_s4", type: "sight", name: "Historic Gaslamp Quarter & Petco Park", category: "Historic District", location: "Downtown San Diego", lat: 32.7114, lon: -117.1599, desc: "Victorian-era commercial district with brick buildings, rooftop lounges, and restaurants.", query: "Gaslamp Quarter San Diego" },
-    { id: "sd_s5", type: "sight", name: "Coronado Beach & Hotel del Coronado (5 mi)", category: "Coastal Landmark", location: "Coronado Island", lat: 32.6809, lon: -117.1783, desc: "Legendary 1888 Victorian beach resort, sparkling sand beaches, and Orange Avenue shops.", query: "Hotel del Coronado San Diego" },
-    { id: "sd_s6", type: "sight", name: "La Jolla Cove & Coastal Sea Caves (13 mi north)", category: "Scenic Ocean Reserve", location: "La Jolla", lat: 32.8504, lon: -117.2730, desc: "Picturesque cove sheltered by sandstone cliffs with sea lions, snorkeling, and sea caves.", query: "La Jolla Cove San Diego" },
-    { id: "sd_f1", type: "food", name: "California Burrito at Lucha Libre Taco Shop", category: "Iconic Mexican", location: "Mission Hills", lat: 32.7441, lon: -117.1812, desc: "Carne asada, melted cheese, and French fries stuffed in a flour tortilla with house salsas.", query: "Lucha Libre Taco Shop San Diego" },
-    { id: "sd_f2", type: "food", name: "Fresh Catch & Fish Tacos at Mitch's Seafood", category: "Waterfront Seafood", location: "Point Loma Marina", lat: 32.7233, lon: -117.2285, desc: "Dockside casual seafood counter serving fresh local grilled fish tacos overlooking fishing boats.", query: "Mitch's Seafood San Diego" }
+    { id: "sd_f1", type: "food", name: "California Burrito at Lucha Libre Taco Shop", category: "Iconic Mexican", location: "Mission Hills", lat: 32.7441, lon: -117.1812, desc: "Carne asada, melted cheese, and French fries stuffed in a flour tortilla with house salsas.", query: "Lucha Libre Taco Shop San Diego" }
   ]
 };
 
@@ -783,21 +733,25 @@ function getCuratedGuideForCity(cityName, airportCode) {
   const normCity = (cityName || "").toLowerCase();
   const normCode = (airportCode || "").toUpperCase();
 
-  if (normCity.includes("chicago") || normCode === "ORD" || normCode === "MDW") {
-    return curatedCityGuides.CHI;
-  }
-  if (normCity.includes("san francisco") || normCity.includes("sf") || normCode === "SFO" || normCode === "SJC" || normCode === "OAK") {
-    return curatedCityGuides.SF;
-  }
-  if (normCity.includes("princeton")) {
-    return curatedCityGuides.PRINCETON;
-  }
-  if (normCity.includes("new york") || normCity.includes("manhattan") || normCity.includes("nyc") || normCity.includes("brooklyn") || normCode === "JFK" || normCode === "EWR" || normCode === "LGA") {
-    return curatedCityGuides.NYC;
-  }
-  if (normCity.includes("san diego") || normCode === "SAN") {
-    return curatedCityGuides.SAN;
-  }
+  if (normCity.includes("tokyo") || normCode === "HND" || normCode === "NRT") return curatedCityGuides.TOKYO;
+  if (normCity.includes("kyoto") || normCity.includes("osaka") || normCode === "KIX" || normCode === "ITM") return curatedCityGuides.KYOTO_OSAKA;
+  if (normCity.includes("london") || normCode === "LHR" || normCode === "LGW") return curatedCityGuides.LONDON;
+  if (normCity.includes("paris") || normCode === "CDG" || normCode === "ORY") return curatedCityGuides.PARIS;
+  if (normCity.includes("rome") || normCode === "FCO") return curatedCityGuides.ROME;
+  if (normCity.includes("barcelona") || normCode === "BCN") return curatedCityGuides.BCN;
+  if (normCity.includes("madrid") || normCode === "MAD") return curatedCityGuides.MAD;
+  if (normCity.includes("hong kong") || normCode === "HKG") return curatedCityGuides.HKG;
+  if (normCity.includes("honolulu") || normCode === "HNL") return curatedCityGuides.HONOLULU;
+  if (normCity.includes("taipei") || normCity.includes("new taipei") || normCity.includes("tamsui") || normCity.includes("beitou") || normCity.includes("jiufen") || normCode === "TPE" || normCode === "TSA") return curatedCityGuides.TPE;
+  if (normCity.includes("taichung") || normCode === "RMQ") return curatedCityGuides.TAICHUNG;
+  if (normCity.includes("tainan") || normCode === "TNN") return curatedCityGuides.TAINAN;
+  if (normCity.includes("kaohsiung") || normCode === "KHH") return curatedCityGuides.KHH;
+  if (normCity.includes("chicago") || normCode === "ORD" || normCode === "MDW") return curatedCityGuides.CHI;
+  if (normCity.includes("san francisco") || normCity.includes("sf") || normCode === "SFO" || normCode === "SJC" || normCode === "OAK") return curatedCityGuides.SF;
+  if (normCity.includes("princeton")) return curatedCityGuides.PRINCETON;
+  if (normCity.includes("new york") || normCity.includes("manhattan") || normCity.includes("brooklyn") || normCode === "JFK" || normCode === "EWR" || normCode === "LGA") return curatedCityGuides.NYC;
+  if (normCity.includes("san diego") || normCode === "SAN") return curatedCityGuides.SAN;
+
   return null;
 }
 
@@ -823,10 +777,8 @@ async function fetchTargetCitySights(cityName, airportCode, centerLat, centerLon
     { id: "fb_2", type: "sight", name: `${cityName} Central Plaza & Park`, category: "Public Landmark", location: "Central Square", lat: centerLat - 0.004, lon: centerLon + 0.003, distanceKm: 0.6, desc: "The primary architectural landmark and cultural gathering hub of the city.", query: `${cityName} Central Plaza` },
     { id: "fb_3", type: "sight", name: `${cityName} Art & Heritage Museum`, category: "Museum / Gallery", location: "Museum District", lat: centerLat + 0.006, lon: centerLon - 0.004, distanceKm: 0.9, desc: "Comprehensive collections spotlighting regional art, archaeology, and heritage.", query: `${cityName} Art Museum` },
     { id: "fb_4", type: "sight", name: `${cityName} Scenic Promenade`, category: "Scenic Walkway", location: "Waterfront", lat: centerLat - 0.006, lon: centerLon - 0.003, distanceKm: 0.8, desc: "Scenic walking promenade offering panoramic city views.", query: `${cityName} Riverwalk` },
-    { id: "fb_5", type: "sight", name: `${cityName} Regional Nature Reserve (8 mi out)`, category: "Regional Park", location: "Outer District", lat: centerLat + 0.09, lon: centerLon + 0.08, distanceKm: 13.0, desc: "Scenic regional park offering panoramic viewpoints and nature trails.", query: `${cityName} Nature Park` },
-    { id: "fb_6", type: "food", name: `${cityName} Public Food Market`, category: "Food Market", location: "Downtown Market", lat: centerLat + 0.002, lon: centerLon - 0.005, distanceKm: 0.5, desc: "Vibrant indoor market packed with fresh regional produce, street food stalls, and bakeries.", query: `${cityName} Central Market` },
-    { id: "fb_7", type: "food", name: `Traditional ${cityName} Regional Dining`, category: "Iconic Culinary", location: "Old Quarter", lat: centerLat - 0.003, lon: centerLon + 0.005, distanceKm: 0.6, desc: "Authentic local culinary dishes slow-cooked with fresh regional ingredients.", query: `${cityName} Traditional Food` },
-    { id: "fb_8", type: "food", name: `${cityName} Street Food & Tapas Alley`, category: "Local Food & Dining", location: "Evening Market", lat: centerLat + 0.004, lon: centerLon + 0.006, distanceKm: 0.7, desc: "Evening street food strip featuring local skewers, pastries, and beverages.", query: `${cityName} Street Food` }
+    { id: "fb_5", type: "food", name: `${cityName} Public Food Market`, category: "Food Market", location: "Downtown Market", lat: centerLat + 0.002, lon: centerLon - 0.005, distanceKm: 0.5, desc: "Vibrant indoor market packed with fresh regional produce, street food stalls, and bakeries.", query: `${cityName} Central Market` },
+    { id: "fb_6", type: "food", name: `Traditional ${cityName} Regional Dining`, category: "Iconic Culinary", location: "Old Quarter", lat: centerLat - 0.003, lon: centerLon + 0.005, distanceKm: 0.6, desc: "Authentic local culinary dishes slow-cooked with fresh regional ingredients.", query: `${cityName} Traditional Food` }
   ];
 }
 
@@ -846,87 +798,132 @@ function getBrandPortalUrl(brand, city, checkIn, checkOut) {
 async function fetchLiveTargetHotels(centerLat, centerLon, cityName, airportCode, selectedBrands, checkIn, checkOut) {
   const norm = (cityName || "").toLowerCase();
 
-  // Curated Hotels for Chicago
+  // Tokyo
+  if (norm.includes("tokyo") || airportCode === "HND" || airportCode === "NRT") {
+    const list = [
+      { id: "tyo_h1", name: "The Ritz-Carlton, Tokyo", brand: "Marriott Bonvoy", rating: 4.9, priceUSD: 680, lat: 35.6657, lon: 139.7310, area: "Roppongi / Tokyo Midtown", badge: "Iconic Luxury", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
+      { id: "tyo_h2", name: "Tokyo Marriott Hotel", brand: "Marriott Bonvoy", rating: 4.6, priceUSD: 280, lat: 35.6214, lon: 139.7380, area: "Shinagawa", badge: "Full Service", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
+      { id: "tyo_h3", name: "Park Hyatt Tokyo", brand: "World of Hyatt", rating: 4.9, priceUSD: 720, lat: 35.6854, lon: 139.6912, area: "Shinjuku Skyscraper District", badge: "Palace Luxury", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) },
+      { id: "tyo_h4", name: "Kimpton Shinjuku Tokyo", brand: "IHG", rating: 4.8, priceUSD: 360, lat: 35.6860, lon: 139.6935, area: "Shinjuku Central", badge: "Boutique Design", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) }
+    ];
+    return list.map(h => ({ ...h, distanceKm: parseFloat(haversineDistance(centerLat, centerLon, h.lat, h.lon).toFixed(1)) })).filter(h => selectedBrands.includes(h.brand));
+  }
+
+  // Kyoto & Osaka
+  if (norm.includes("kyoto") || norm.includes("osaka") || airportCode === "KIX" || airportCode === "ITM") {
+    const list = [
+      { id: "kyo_h1", name: "The Ritz-Carlton, Kyoto", brand: "Marriott Bonvoy", rating: 4.9, priceUSD: 750, lat: 35.0125, lon: 135.7712, area: "Kamogawa Riverfront", badge: "Luxury Sanctuary", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
+      { id: "kyo_h2", name: "Park Hyatt Kyoto", brand: "World of Hyatt", rating: 4.9, priceUSD: 850, lat: 34.9998, lon: 135.7801, area: "Higashiyama / Ninenzaka", badge: "Heritage Palace", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) },
+      { id: "kyo_h3", name: "InterContinental Osaka", brand: "IHG", rating: 4.9, priceUSD: 380, lat: 34.7045, lon: 135.4950, area: "Grand Front Osaka / Umeda", badge: "Prime City Hub", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) }
+    ];
+    return list.map(h => ({ ...h, distanceKm: parseFloat(haversineDistance(centerLat, centerLon, h.lat, h.lon).toFixed(1)) })).filter(h => selectedBrands.includes(h.brand));
+  }
+
+  // London
+  if (norm.includes("london") || airportCode === "LHR" || airportCode === "LGW") {
+    const list = [
+      { id: "lon_h1", name: "The London EDITION", brand: "Marriott Bonvoy", rating: 4.8, priceUSD: 520, lat: 51.5165, lon: -0.1360, area: "Fitzrovia / Oxford St", badge: "Boutique Luxury", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
+      { id: "lon_h2", name: "Hyatt Regency London - The Churchill", brand: "World of Hyatt", rating: 4.7, priceUSD: 420, lat: 51.5160, lon: -0.1585, area: "Marylebone / Portman Sq", badge: "Classic Elegance", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) },
+      { id: "lon_h3", name: "InterContinental London Park Lane", brand: "IHG", rating: 4.8, priceUSD: 490, lat: 51.5039, lon: -0.1505, area: "Mayfair / Hyde Park Corner", badge: "Historic Prestige", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) }
+    ];
+    return list.map(h => ({ ...h, distanceKm: parseFloat(haversineDistance(centerLat, centerLon, h.lat, h.lon).toFixed(1)) })).filter(h => selectedBrands.includes(h.brand));
+  }
+
+  // Paris
+  if (norm.includes("paris") || airportCode === "CDG" || airportCode === "ORY") {
+    const list = [
+      { id: "par_h1", name: "Hôtel de Crillon / Prince de Galles", brand: "Marriott Bonvoy", rating: 4.9, priceUSD: 850, lat: 48.8690, lon: 2.3015, area: "Champs-Élysées / George V", badge: "Palace Prestige", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
+      { id: "par_h2", name: "Park Hyatt Paris-Vendôme", brand: "World of Hyatt", rating: 4.9, priceUSD: 890, lat: 48.8692, lon: 2.3305, area: "Place Vendôme / Opéra", badge: "Palace Luxury", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) },
+      { id: "par_h3", name: "InterContinental Paris Le Grand", brand: "IHG", rating: 4.8, priceUSD: 480, lat: 48.8710, lon: 2.3312, area: "Opéra Garnier", badge: "Historic Landmark", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) }
+    ];
+    return list.map(h => ({ ...h, distanceKm: parseFloat(haversineDistance(centerLat, centerLon, h.lat, h.lon).toFixed(1)) })).filter(h => selectedBrands.includes(h.brand));
+  }
+
+  // Rome
+  if (norm.includes("rome") || airportCode === "FCO") {
+    const list = [
+      { id: "rom_h1", name: "The St. Regis Rome", brand: "Marriott Bonvoy", rating: 4.9, priceUSD: 720, lat: 41.9035, lon: 12.4950, area: "Piazza della Repubblica", badge: "Iconic Grandeur", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
+      { id: "rom_h2", name: "Six Senses Rome / InterContinental Ambasciatori", brand: "IHG", rating: 4.8, priceUSD: 560, lat: 41.9060, lon: 12.4905, area: "Via Veneto / Central", badge: "Historic Luxury", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) }
+    ];
+    return list.map(h => ({ ...h, distanceKm: parseFloat(haversineDistance(centerLat, centerLon, h.lat, h.lon).toFixed(1)) })).filter(h => selectedBrands.includes(h.brand));
+  }
+
+  // Barcelona
+  if (norm.includes("barcelona") || airportCode === "BCN") {
+    const list = [
+      { id: "bcn_h1", name: "W Barcelona (Hotel Vela)", brand: "Marriott Bonvoy", rating: 4.7, priceUSD: 360, lat: 41.3684, lon: 2.1901, area: "Barceloneta Beachfront", badge: "Waterfront Icon", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
+      { id: "bcn_h2", name: "Kimpton Vividora Hotel", brand: "IHG", rating: 4.8, priceUSD: 290, lat: 41.3845, lon: 2.1740, area: "Gothic Quarter", badge: "Boutique Design", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) }
+    ];
+    return list.map(h => ({ ...h, distanceKm: parseFloat(haversineDistance(centerLat, centerLon, h.lat, h.lon).toFixed(1)) })).filter(h => selectedBrands.includes(h.brand));
+  }
+
+  // Madrid
+  if (norm.includes("madrid") || airportCode === "MAD") {
+    const list = [
+      { id: "mad_h1", name: "The Westin Palace, Madrid", brand: "Marriott Bonvoy", rating: 4.8, priceUSD: 380, lat: 40.4150, lon: -3.6955, area: "Paseo del Prado / Cortes", badge: "Royal Grandeur", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
+      { id: "mad_h2", name: "Hyatt Centric Gran Via Madrid", brand: "World of Hyatt", rating: 4.7, priceUSD: 310, lat: 40.4205, lon: -3.7045, area: "Gran Vía Central", badge: "Prime City Hub", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) }
+    ];
+    return list.map(h => ({ ...h, distanceKm: parseFloat(haversineDistance(centerLat, centerLon, h.lat, h.lon).toFixed(1)) })).filter(h => selectedBrands.includes(h.brand));
+  }
+
+  // Hong Kong
+  if (norm.includes("hong kong") || airportCode === "HKG") {
+    const list = [
+      { id: "hkg_h1", name: "The Ritz-Carlton, Hong Kong", brand: "Marriott Bonvoy", rating: 4.9, priceUSD: 540, lat: 22.3034, lon: 114.1602, area: "ICC Tower / West Kowloon", badge: "Sky Luxury (118th Floor)", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
+      { id: "hkg_h2", name: "Grand Hyatt Hong Kong", brand: "World of Hyatt", rating: 4.8, priceUSD: 380, lat: 22.2805, lon: 114.1725, area: "Wan Chai Waterfront", badge: "Harbor Views", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) },
+      { id: "hkg_h3", name: "InterContinental Grand Stanford Hong Kong", brand: "IHG", rating: 4.7, priceUSD: 260, lat: 22.2985, lon: 114.1798, area: "Tsim Sha Tsui East", badge: "Harborfront Classic", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) }
+    ];
+    return list.map(h => ({ ...h, distanceKm: parseFloat(haversineDistance(centerLat, centerLon, h.lat, h.lon).toFixed(1)) })).filter(h => selectedBrands.includes(h.brand));
+  }
+
+  // Honolulu
+  if (norm.includes("honolulu") || airportCode === "HNL") {
+    const list = [
+      { id: "hnl_h1", name: "The Royal Hawaiian, a Luxury Collection Resort", brand: "Marriott Bonvoy", rating: 4.8, priceUSD: 450, lat: 21.2778, lon: -157.8285, area: "Waikiki Oceanfront", badge: "Historic 'Pink Palace'", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
+      { id: "hnl_h2", name: "Hyatt Regency Waikiki Beach Resort", brand: "World of Hyatt", rating: 4.6, priceUSD: 320, lat: 21.2765, lon: -157.8250, area: "Kalakaua Avenue / Waikiki", badge: "Oceanfront Resort", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) }
+    ];
+    return list.map(h => ({ ...h, distanceKm: parseFloat(haversineDistance(centerLat, centerLon, h.lat, h.lon).toFixed(1)) })).filter(h => selectedBrands.includes(h.brand));
+  }
+
+  // Taipei & Taiwan Cities
+  if (norm.includes("taipei") || norm.includes("new taipei") || airportCode === "TPE" || airportCode === "TSA") {
+    const list = [
+      { id: "tpe_h1", name: "W Taipei", brand: "Marriott Bonvoy", rating: 4.8, priceUSD: 310, lat: 25.0407, lon: 121.5658, area: "Xinyi District / Taipei 101", badge: "Iconic Luxury", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
+      { id: "tpe_h2", name: "Grand Hyatt Taipei", brand: "World of Hyatt", rating: 4.8, priceUSD: 260, lat: 25.0354, lon: 121.5623, area: "Xinyi District", badge: "Prime Landmark", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) },
+      { id: "tpe_h3", name: "Kimpton Da An Hotel", brand: "IHG", rating: 4.8, priceUSD: 230, lat: 25.0416, lon: 121.5469, area: "Daan District", badge: "Design Boutique", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) }
+    ];
+    return list.map(h => ({ ...h, distanceKm: parseFloat(haversineDistance(centerLat, centerLon, h.lat, h.lon).toFixed(1)) })).filter(h => selectedBrands.includes(h.brand));
+  }
+
+  // Chicago
   if (norm.includes("chicago") || airportCode === "ORD" || airportCode === "MDW") {
-    const chiHotels = [
-      { id: "chi_h1", name: "The Ritz-Carlton, Chicago", brand: "Marriott Bonvoy", rating: 4.8, priceUSD: 460, lat: 41.8976, lon: -87.6231, area: "Magnificent Mile / Water Tower", badge: "Iconic Luxury", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
-      { id: "chi_h2", name: "Chicago Marriott Downtown Magnificent Mile", brand: "Marriott Bonvoy", rating: 4.5, priceUSD: 285, lat: 41.8920, lon: -87.6247, area: "Magnificent Mile", badge: "Full Service", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
-      { id: "chi_h3", name: "Park Hyatt Chicago", brand: "World of Hyatt", rating: 4.9, priceUSD: 510, lat: 41.8980, lon: -87.6255, area: "Water Tower / Magnificent Mile", badge: "Palace Luxury Flagship", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) },
-      { id: "chi_h4", name: "Hyatt Regency Chicago", brand: "World of Hyatt", rating: 4.6, priceUSD: 260, lat: 41.8878, lon: -87.6225, area: "Chicago Riverwalk / Downtown", badge: "Riverfront Hub", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) },
-      { id: "chi_h5", name: "InterContinental Chicago Magnificent Mile", brand: "IHG", rating: 4.7, priceUSD: 310, lat: 41.8912, lon: -87.6244, area: "Magnificent Mile (Historic 1929 Tower)", badge: "Historic Landmark", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) },
-      { id: "chi_h6", name: "The Kimpton Gray Hotel", brand: "IHG", rating: 4.7, priceUSD: 275, lat: 41.8812, lon: -87.6318, area: "Financial District / Loop", badge: "Boutique Luxury", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) }
+    const list = [
+      { id: "chi_h1", name: "The Ritz-Carlton, Chicago", brand: "Marriott Bonvoy", rating: 4.8, priceUSD: 460, lat: 41.8976, lon: -87.6231, area: "Magnificent Mile", badge: "Iconic Luxury", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
+      { id: "chi_h2", name: "Park Hyatt Chicago", brand: "World of Hyatt", rating: 4.9, priceUSD: 510, lat: 41.8980, lon: -87.6255, area: "Water Tower / Magnificent Mile", badge: "Palace Luxury Flagship", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) },
+      { id: "chi_h3", name: "InterContinental Chicago Magnificent Mile", brand: "IHG", rating: 4.7, priceUSD: 310, lat: 41.8912, lon: -87.6244, area: "Magnificent Mile", badge: "Historic Landmark", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) }
     ];
-
-    return chiHotels.map(h => {
-      const d = haversineDistance(centerLat, centerLon, h.lat, h.lon);
-      return { ...h, distanceKm: parseFloat(d.toFixed(1)) };
-    }).filter(h => selectedBrands.includes(h.brand));
+    return list.map(h => ({ ...h, distanceKm: parseFloat(haversineDistance(centerLat, centerLon, h.lat, h.lon).toFixed(1)) })).filter(h => selectedBrands.includes(h.brand));
   }
 
-  // Curated Hotels for San Francisco
+  // San Francisco
   if (norm.includes("san francisco") || norm.includes("sf") || airportCode === "SFO" || airportCode === "SJC" || airportCode === "OAK") {
-    const sfHotels = [
+    const list = [
       { id: "sf_h1", name: "The St. Regis San Francisco", brand: "Marriott Bonvoy", rating: 4.9, priceUSD: 520, lat: 37.7860, lon: -122.4010, area: "SoMa / SFMOMA", badge: "Iconic Luxury", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
-      { id: "sf_h2", name: "San Francisco Marriott Marquis", brand: "Marriott Bonvoy", rating: 4.6, priceUSD: 295, lat: 37.7850, lon: -122.4045, area: "Union Square / SoMa", badge: "Full Service", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
-      { id: "sf_h3", name: "Grand Hyatt San Francisco", brand: "World of Hyatt", rating: 4.7, priceUSD: 310, lat: 37.7892, lon: -122.4075, area: "Union Square Center", badge: "Premium Hub", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) },
-      { id: "sf_h4", name: "Hyatt Regency San Francisco", brand: "World of Hyatt", rating: 4.6, priceUSD: 280, lat: 37.7942, lon: -122.3957, area: "Embarcadero Waterfront", badge: "Waterfront Atrium", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) },
-      { id: "sf_h5", name: "InterContinental Mark Hopkins San Francisco", brand: "IHG", rating: 4.7, priceUSD: 340, lat: 37.7918, lon: -122.4105, area: "Nob Hill (Top of the Mark)", badge: "Historic Landmark", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) },
-      { id: "sf_h6", name: "Hotel Indigo San Francisco (8 mi south)", brand: "IHG", rating: 4.4, priceUSD: 190, lat: 37.6000, lon: -122.3800, area: "Millbrae / Peninsula", badge: "Boutique Stay", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) }
+      { id: "sf_h2", name: "Grand Hyatt San Francisco", brand: "World of Hyatt", rating: 4.7, priceUSD: 310, lat: 37.7892, lon: -122.4075, area: "Union Square Center", badge: "Premium Hub", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) },
+      { id: "sf_h3", name: "InterContinental Mark Hopkins San Francisco", brand: "IHG", rating: 4.7, priceUSD: 340, lat: 37.7918, lon: -122.4105, area: "Nob Hill", badge: "Historic Landmark", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) }
     ];
-
-    return sfHotels.map(h => {
-      const d = haversineDistance(centerLat, centerLon, h.lat, h.lon);
-      return { ...h, distanceKm: parseFloat(d.toFixed(1)) };
-    }).filter(h => selectedBrands.includes(h.brand));
-  }
-
-  // Curated Hotels for Princeton
-  if (norm.includes("princeton")) {
-    const princetonHotels = [
-      { id: "pr_h1", name: "Princeton Marriott at Forrestal", brand: "Marriott Bonvoy", rating: 4.6, priceUSD: 260, lat: 40.3575, lon: -74.6225, area: "Route 1 / Forrestal Village", badge: "Full Service", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
-      { id: "pr_h2", name: "Courtyard by Marriott Princeton", brand: "Marriott Bonvoy", rating: 4.4, priceUSD: 195, lat: 40.3458, lon: -74.6364, area: "Carnegie Center", badge: "Select Service", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
-      { id: "pr_h3", name: "Hyatt Regency Princeton", brand: "World of Hyatt", rating: 4.7, priceUSD: 275, lat: 40.3275, lon: -74.6468, area: "Carnegie Center Boulevard", badge: "Full Service Hub", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) },
-      { id: "pr_h4", name: "Hyatt Place Princeton", brand: "World of Hyatt", rating: 4.5, priceUSD: 185, lat: 40.3125, lon: -74.6785, area: "MarketFair / Route 1", badge: "Select Service", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) },
-      { id: "pr_h5", name: "Holiday Inn Express Princeton SE", brand: "IHG", rating: 4.4, priceUSD: 165, lat: 40.3235, lon: -74.6540, area: "Plainsboro / Route 1", badge: "Comfort Lodging", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) }
-    ];
-
-    return princetonHotels.map(h => {
-      const d = haversineDistance(centerLat, centerLon, h.lat, h.lon);
-      return { ...h, distanceKm: parseFloat(d.toFixed(1)) };
-    }).filter(h => selectedBrands.includes(h.brand));
-  }
-  
-  if (norm.includes("manhattan") || norm.includes("new york") || airportCode === "JFK" || airportCode === "LGA" || airportCode === "EWR") {
-    const nyHotels = [
-      { id: "ny_h1", name: "The St. Regis New York", brand: "Marriott Bonvoy", rating: 4.9, priceUSD: 750, lat: 40.7616, lon: -73.9744, area: "Midtown / 5th Avenue", badge: "Iconic Luxury", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
-      { id: "ny_h2", name: "New York Marriott Marquis", brand: "Marriott Bonvoy", rating: 4.6, priceUSD: 380, lat: 40.7587, lon: -73.9862, area: "Times Square / Broadway", badge: "Full Service", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
-      { id: "ny_h3", name: "Park Hyatt New York", brand: "World of Hyatt", rating: 4.9, priceUSD: 790, lat: 40.7654, lon: -73.9790, area: "Carnegie Hall / Central Park", badge: "Palace Luxury", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) },
-      { id: "ny_h4", name: "Grand Hyatt New York / Hyatt Grand Central", brand: "World of Hyatt", rating: 4.5, priceUSD: 320, lat: 40.7521, lon: -73.9763, area: "Grand Central Terminal", badge: "Premium Hub", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) },
-      { id: "ny_h5", name: "InterContinental New York Barclay", brand: "IHG", rating: 4.7, priceUSD: 410, lat: 40.7562, lon: -73.9734, area: "Midtown East", badge: "Historic Landmark", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) },
-      { id: "ny_h6", name: "Kimpton Hotel Eventi", brand: "IHG", rating: 4.6, priceUSD: 340, lat: 40.7478, lon: -73.9899, area: "Chelsea / NoMad", badge: "Boutique", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) }
-    ];
-
-    return nyHotels.map(h => {
-      const d = haversineDistance(centerLat, centerLon, h.lat, h.lon);
-      return { ...h, distanceKm: parseFloat(d.toFixed(1)) };
-    }).filter(h => selectedBrands.includes(h.brand));
+    return list.map(h => ({ ...h, distanceKm: parseFloat(haversineDistance(centerLat, centerLon, h.lat, h.lon).toFixed(1)) })).filter(h => selectedBrands.includes(h.brand));
   }
 
   const fallback = [];
   if (selectedBrands.includes("Marriott Bonvoy")) {
-    fallback.push(
-      { id: `fb_h1_${cityName}`, name: `Marriott ${cityName} Grand`, brand: "Marriott Bonvoy", rating: 4.8, priceUSD: 340, lat: centerLat + 0.005, lon: centerLon + 0.004, distanceKm: 0.7, area: `${cityName} Center`, badge: "Full Service", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) }
-    );
+    fallback.push({ id: `fb_h1_${cityName}`, name: `Marriott ${cityName} Grand`, brand: "Marriott Bonvoy", rating: 4.8, priceUSD: 340, lat: centerLat + 0.005, lon: centerLon + 0.004, distanceKm: 0.7, area: `${cityName} Center`, badge: "Full Service", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) });
   }
   if (selectedBrands.includes("World of Hyatt")) {
-    fallback.push(
-      { id: `fb_h2_${cityName}`, name: `Hyatt Regency ${cityName}`, brand: "World of Hyatt", rating: 4.7, priceUSD: 320, lat: centerLat + 0.006, lon: centerLon - 0.003, distanceKm: 0.8, area: "Downtown", badge: "Premium", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) }
-    );
+    fallback.push({ id: `fb_h2_${cityName}`, name: `Hyatt Regency ${cityName}`, brand: "World of Hyatt", rating: 4.7, priceUSD: 320, lat: centerLat + 0.006, lon: centerLon - 0.003, distanceKm: 0.8, area: "Downtown", badge: "Premium", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) });
   }
   if (selectedBrands.includes("IHG")) {
-    fallback.push(
-      { id: `fb_h3_${cityName}`, name: `InterContinental ${cityName}`, brand: "IHG", rating: 4.8, priceUSD: 390, lat: centerLat + 0.003, lon: centerLon + 0.006, distanceKm: 0.7, area: "Plaza Center", badge: "Luxury Landmark", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) }
-    );
+    fallback.push({ id: `fb_h3_${cityName}`, name: `InterContinental ${cityName}`, brand: "IHG", rating: 4.8, priceUSD: 390, lat: centerLat + 0.003, lon: centerLon + 0.006, distanceKm: 0.7, area: "Plaza Center", badge: "Luxury Landmark", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) });
   }
   return fallback;
 }
@@ -1199,34 +1196,21 @@ function generateDynamicFlightSchedule(originObj, destAirportObj, departDate, re
   
   const nonStopFlightMinutes = Math.max(75, Math.round((distanceKm / 840) * 60 + 40));
   const isLongHaul = distanceKm > 4000;
-  const isTranspacific = (originObj.country === "Taiwan" || originObj.country === "Japan" || originObj.country === "China") ||
-                         (destAirportObj.country === "Taiwan" || destAirportObj.country === "Japan" || destAirportObj.country === "China");
-
   const timeZoneDiffHours = Math.round((destAirportObj.airportLon - originObj.airportLon) / 15);
 
   let carrierPool = [
-    { name: "United Airlines", code: "UA" },
-    { name: "American Airlines", code: "AA" },
-    { name: "Delta Air Lines", code: "DL" },
-    { name: "Southwest Airlines", code: "WN" }
+    { name: "EVA Air", code: "BR" },
+    { name: "China Airlines", code: "CI" },
+    { name: "STARLUX Airlines", code: "JX" },
+    { name: "United Airlines", code: "UA" }
   ];
-  let layoverHubs = ["DEN", "DFW", "MSP", "SLC"];
-
-  if (isTranspacific) {
-    carrierPool = [
-      { name: "United Airlines", code: "UA" },
-      { name: "EVA Air", code: "BR" },
-      { name: "China Airlines", code: "CI" },
-      { name: "STARLUX Airlines", code: "JX" }
-    ];
-    layoverHubs = ["SFO", "TPE", "LAX", "SEA"];
-  }
+  let layoverHubs = ["TPE", "SFO", "LAX", "SEA"];
 
   const flights = [];
   const basePriceUSD = Math.round(isLongHaul ? 850 + (distanceKm * 0.045) : 180 + (distanceKm * 0.08));
 
   // 1. Non-stop #1
-  const d1 = "06:45 AM";
+  const d1 = "11:45 PM";
   flights.push({
     id: "fl-1",
     airline: carrierPool[0].name,
@@ -1235,16 +1219,16 @@ function generateDynamicFlightSchedule(originObj, destAirportObj, departDate, re
     stopDetails: "Non-stop",
     departTime: d1,
     arriveTime: calculateArrivalTime(d1, nonStopFlightMinutes, timeZoneDiffHours),
-    rawDepartTimeMin: 405,
+    rawDepartTimeMin: 1425,
     durationText: formatMinutesToDuration(nonStopFlightMinutes),
     rawDurationMinutes: nonStopFlightMinutes,
-    priceUSD: basePriceUSD + 140,
+    priceUSD: basePriceUSD + 150,
     cabin: "Economy Standard",
     bookingUrl: gFlightsUrl
   });
 
   // 2. Non-stop #2
-  const d2 = "12:15 PM";
+  const d2 = "03:40 PM";
   flights.push({
     id: "fl-2",
     airline: carrierPool[1].name,
@@ -1253,27 +1237,27 @@ function generateDynamicFlightSchedule(originObj, destAirportObj, departDate, re
     stopDetails: "Non-stop",
     departTime: d2,
     arriveTime: calculateArrivalTime(d2, nonStopFlightMinutes, timeZoneDiffHours),
-    rawDepartTimeMin: 735,
+    rawDepartTimeMin: 940,
     durationText: formatMinutesToDuration(nonStopFlightMinutes),
     rawDurationMinutes: nonStopFlightMinutes,
-    priceUSD: basePriceUSD + 185,
+    priceUSD: basePriceUSD + 200,
     cabin: "Main Cabin",
     bookingUrl: gFlightsUrl
   });
 
   // 3. 1-Stop Connection
   const hub1 = layoverHubs[0];
-  const dur1 = nonStopFlightMinutes + 120;
-  const d3 = "08:30 AM";
+  const dur1 = nonStopFlightMinutes + 125;
+  const d3 = "08:15 AM";
   flights.push({
     id: "fl-3",
     airline: carrierPool[2].name,
     flightNum: `${carrierPool[2].code}${Math.floor(100 + Math.random() * 800)}`,
     stops: 1,
-    stopDetails: `1 stop (${hub1} - 1h 40m)`,
+    stopDetails: `1 stop (${hub1} - 1h 45m)`,
     departTime: d3,
     arriveTime: calculateArrivalTime(d3, dur1, timeZoneDiffHours),
-    rawDepartTimeMin: 510,
+    rawDepartTimeMin: 495,
     durationText: formatMinutesToDuration(dur1),
     rawDurationMinutes: dur1,
     priceUSD: Math.round(basePriceUSD * 0.85),
@@ -1525,8 +1509,8 @@ function updateItineraryDrawer() {
   const drawerDailyTransit = document.getElementById("drawerDailyTransit");
   const drawerGoogleFlightsLink = document.getElementById("drawerGoogleFlightsLink");
 
-  const dailyFoodUSD = 75;
-  const dailyTransitUSD = 15;
+  const dailyFoodUSD = 60;
+  const dailyTransitUSD = 12;
   const totalLivingUSD = (dailyFoodUSD + dailyTransitUSD) * tripDays;
 
   let flightCostUSD = 0;
