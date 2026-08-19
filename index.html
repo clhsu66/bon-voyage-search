@@ -86,8 +86,8 @@
           </div>
         </div>
 
-        <div class="form-section-title">2. Dates & Exploration Radius</div>
-        <div class="form-row form-row-dates-radius">
+        <div class="form-section-title">2. Dates, Travelers & Exploration Radius</div>
+        <div class="form-row form-row-dates-radius" style="grid-template-columns: 1fr 1fr 0.8fr 1.1fr;">
           <!-- Departure Date -->
           <div class="input-group">
             <label for="departDate" id="departDateLabel">Depart Date</label>
@@ -98,6 +98,12 @@
           <div class="input-group" id="returnDateGroup">
             <label for="returnDate">Return Date</label>
             <input type="date" id="returnDate" name="returnDate" />
+          </div>
+
+          <!-- Travelers Count -->
+          <div class="input-group">
+            <label for="travelersCount">Travelers</label>
+            <input type="number" id="travelersCount" name="travelersCount" value="1" min="1" max="10" required />
           </div>
 
           <!-- Exploration Radius Selector -->

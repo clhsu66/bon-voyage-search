@@ -539,8 +539,34 @@ async function fetchLiveTargetHotels(centerLat, centerLon, cityName, airportCode
 }
 
 // ========================================================
-// 5. LEAFLET MAP & INTERACTIVE CONTROLS
+// 5. TAGGING STATE & LEAFLET MAP & INTERACTIVE CONTROLS
 // ========================================================
+let taggedPlaces = [];
+
+window.handleToggleTag = function(id, itemType) {
+  const existingIdx = taggedPlaces.findIndex(p => p.id === id);
+  if (existingIdx > -1) {
+    taggedPlaces.splice(existingIdx, 1);
+  } else {
+    let item = null;
+    if (itemType === "hotel") {
+      item = currentHotels.find(h => h.id === id);
+    } else {
+      item = currentSights.find(s => s.id === id);
+    }
+    if (item) {
+      taggedPlaces.push({ ...item, itemType });
+    }
+  }
+  sortAndRenderHotels();
+  renderDestinationSights(currentSights, resolvedVisitCityObj ? resolvedVisitCityObj.cityName : "");
+  updateItineraryDrawer();
+};
+
+function isItemTagged(id) {
+  return taggedPlaces.some(p => p.id === id);
+}
+
 let leafletMapInstance = null;
 let baseTileLayer = null;
 let mapMarkersLayer = null;
@@ -602,20 +628,22 @@ function applyRadiusFilterAndRender(radiusKm) {
 
     filteredHotels.forEach(h => {
       if (h.lat && h.lon) {
+        const isTagged = isItemTagged(h.id);
         const hotelIcon = L.divIcon({
-          className: 'custom-map-marker marker-hotel',
-          html: `🏨`,
+          className: `custom-map-marker marker-hotel ${isTagged ? 'marker-tagged' : ''}`,
+          html: isTagged ? `⭐` : `🏨`,
           iconSize: [30, 30],
           iconAnchor: [15, 15]
         });
 
         const popupHtml = `
           <div style="font-family:sans-serif; font-size:12px; line-height:1.4;">
-            <strong style="color:var(--text-main); font-size:13px;">${h.name}</strong><br/>
+            <strong style="color:var(--text-main); font-size:13px;">${h.name}</strong> ${isTagged ? '<span style="color:#f59e0b;">★ Tagged</span>' : ''}<br/>
             <span style="color:#9f1239; font-weight:bold;">${h.brand}</span> • ${h.badge}<br/>
             <span style="color:var(--text-muted);">📍 ${h.area} (${h.distanceKm} km away)</span><br/>
             <b style="color:var(--primary); font-size:14px;">${formatCurrency(h.priceUSD)}</b> / night<br/>
-            <div style="display:flex; gap:0.4rem; margin-top:0.4rem;">
+            <div style="display:flex; gap:0.4rem; margin-top:0.4rem; flex-wrap:wrap;">
+              <button onclick="handleToggleTag('${h.id}', 'hotel')" style="background:var(--pill-bg); border:1px solid var(--border); color:var(--text-main); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">${isTagged ? '★ Untag' : '⭐ Tag'}</button>
               <button onclick="handleEditItem('${h.id}', 'hotel')" style="background:var(--pill-bg); border:1px solid var(--border); color:var(--text-main); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">✏️ Edit</button>
               <button onclick="handleDeleteItem('${h.id}', 'hotel')" style="background:rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.3); color:var(--accent-rose); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">🗑️ Delete</button>
               <a href="${h.brandUrl}" target="_blank" style="color:#3b82f6; font-weight:600; text-decoration:none; margin-left:auto;">Book ↗</a>
@@ -630,20 +658,22 @@ function applyRadiusFilterAndRender(radiusKm) {
       if (s.lat && s.lon) {
         const isFood = s.type === "food";
         const isCustom = s.isCustom;
+        const isTagged = isItemTagged(s.id);
         const sightIcon = L.divIcon({
-          className: `custom-map-marker ${isCustom ? 'marker-custom' : isFood ? 'marker-food' : 'marker-sight'}`,
-          html: isCustom ? `📍` : isFood ? `🍜` : `🏛️`,
+          className: `custom-map-marker ${isTagged ? 'marker-tagged' : isCustom ? 'marker-custom' : isFood ? 'marker-food' : 'marker-sight'}`,
+          html: isTagged ? `⭐` : isCustom ? `📍` : isFood ? `🍜` : `🏛️`,
           iconSize: [30, 30],
           iconAnchor: [15, 15]
         });
 
         const popupHtml = `
           <div style="font-family:sans-serif; font-size:12px; line-height:1.4;">
-            <span style="background:${isFood ? 'rgba(244,63,94,0.15)':'rgba(59,130,246,0.15)'}; color:${isFood ? '#f43f5e':'#3b82f6'}; padding:2px 6px; border-radius:4px; font-weight:bold; font-size:10px;">${s.category}</span><br/>
+            <span style="background:${isFood ? 'rgba(244,63,94,0.15)':'rgba(59,130,246,0.15)'}; color:${isFood ? '#f43f5e':'#3b82f6'}; padding:2px 6px; border-radius:4px; font-weight:bold; font-size:10px;">${s.category}</span> ${isTagged ? '<span style="color:#f59e0b; font-weight:bold;">★ Tagged</span>' : ''}<br/>
             <strong style="color:var(--text-main); font-size:13px; margin-top:3px; display:inline-block;">${s.name}</strong><br/>
             <p style="color:var(--text-main); margin:4px 0;">${s.desc}</p>
             <span style="color:var(--text-muted);">📍 ${s.location} (${s.distanceKm} km away)</span><br/>
-            <div style="display:flex; gap:0.4rem; margin-top:0.4rem; align-items:center;">
+            <div style="display:flex; gap:0.4rem; margin-top:0.4rem; align-items:center; flex-wrap:wrap;">
+              <button onclick="handleToggleTag('${s.id}', 'sight')" style="background:var(--pill-bg); border:1px solid var(--border); color:var(--text-main); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">${isTagged ? '★ Untag' : '⭐ Tag'}</button>
               <button onclick="handleEditItem('${s.id}', 'sight')" style="background:var(--pill-bg); border:1px solid var(--border); color:var(--text-main); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">✏️ Edit</button>
               <button onclick="handleDeleteItem('${s.id}', 'sight')" style="background:rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.3); color:var(--accent-rose); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">🗑️ Delete</button>
               <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.query || s.name)}" target="_blank" style="color:#3b82f6; font-weight:600; text-decoration:none; margin-left:auto;">Maps ↗</a>
@@ -674,6 +704,7 @@ window.handleDeleteItem = function(id, itemType) {
   } else {
     allRawSights = allRawSights.filter(s => s.id !== id);
   }
+  taggedPlaces = taggedPlaces.filter(p => p.id !== id);
   applyRadiusFilterAndRender(currentRadiusKm);
 };
 
@@ -830,7 +861,7 @@ function generateDynamicFlightSchedule(originObj, destAirportObj, departDate, re
 }
 
 // ========================================================
-// 7. APPLICATION CONTROLLER & STATE
+// 7. APPLICATION CONTROLLER & STATE RENDERING
 // ========================================================
 let currentTripType = "roundtrip";
 let currentFlights = [];
@@ -848,6 +879,7 @@ let currentDepartDate = "";
 let currentReturnDate = "";
 let currentLeg2Date = "";
 let tripDays = 1;
+let travelersCount = 1;
 let activeBrandFilter = "all";
 let activeSightFilter = "all";
 
@@ -896,8 +928,8 @@ function sortAndRenderFlights(sortBy = "price") {
         </div>
 
         <div class="flight-price-col">
-          <span class="flight-price">${formatCurrency(f.priceUSD)}</span>
-          <span class="cabin-tag">${f.cabin}</span>
+          <span class="flight-price">${formatCurrency(f.priceUSD * travelersCount)}</span>
+          <span class="cabin-tag">${f.cabin} (${travelersCount} pax)</span>
           <div class="card-actions">
             <button class="select-btn ${isSelected ? 'btn-active' : ''}" onclick="handleSelectFlight('${f.id}')">
               ${isSelected ? 'Selected ✓' : 'Select Flight'}
@@ -945,12 +977,14 @@ function sortAndRenderHotels() {
 
   hotelListEl.innerHTML = filtered.map(h => {
     const isSelected = selectedHotel && selectedHotel.id === h.id;
+    const isTagged = isItemTagged(h.id);
     return `
-      <div class="hotel-card ${isSelected ? 'selected' : ''}" id="card-${h.id}">
+      <div class="hotel-card ${isSelected ? 'selected' : ''} ${isTagged ? 'tagged-card' : ''}" id="card-${h.id}">
         <div class="hotel-main">
           <div class="hotel-header-meta">
             <span class="brand-badge ${getBrandClass(h.brand)}">${h.brand}</span>
             <span class="hotel-tag">${h.badge}</span>
+            ${isTagged ? '<span class="tag-indicator-badge">★ Tagged Hotel</span>' : ''}
           </div>
           
           <h4 class="hotel-name">${h.name}</h4>
@@ -961,7 +995,10 @@ function sortAndRenderHotels() {
             <span class="rating-score">${h.rating} / 5.0</span>
           </div>
 
-          <div class="card-manage-bar" style="margin-top:0.35rem;">
+          <div class="card-manage-bar" style="margin-top:0.35rem; display:flex; gap:0.4rem; flex-wrap:wrap;">
+            <button class="btn-card-action ${isTagged ? 'btn-active-tag' : ''}" onclick="handleToggleTag('${h.id}', 'hotel')">
+              ${isTagged ? '★ Tagged' : '⭐ Tag Hotel'}
+            </button>
             <button class="btn-card-action" onclick="handleEditItem('${h.id}', 'hotel')">✏️ Edit</button>
             <button class="btn-card-action btn-card-delete" onclick="handleDeleteItem('${h.id}', 'hotel')">🗑️ Remove</button>
           </div>
@@ -1004,10 +1041,12 @@ function renderDestinationSights(sights, cityName) {
   sightsListEl.innerHTML = filtered.map(s => {
     const isFood = s.type === "food";
     const isCustom = s.isCustom;
+    const isTagged = isItemTagged(s.id);
     return `
-      <div class="sight-card ${isCustom ? 'custom-item' : isFood ? 'food-item' : 'sight-item'}" id="sight-card-${s.id}">
+      <div class="sight-card ${isCustom ? 'custom-item' : isFood ? 'food-item' : 'sight-item'} ${isTagged ? 'tagged-card' : ''}" id="sight-card-${s.id}">
         <div class="sight-category-row">
           <span class="sight-category-badge ${isCustom ? 'badge-custom' : isFood ? 'badge-food' : 'badge-sight'}">${s.category}</span>
+          ${isTagged ? '<span class="tag-indicator-badge">★ Tagged</span>' : ''}
           <span class="sight-location">📍 ${s.location} (${s.distanceKm} km)</span>
         </div>
         <h4 class="sight-name">${s.name}</h4>
@@ -1015,7 +1054,10 @@ function renderDestinationSights(sights, cityName) {
         
         <div class="sight-card-footer">
           <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.query || s.name)}" target="_blank" rel="noopener noreferrer" class="sight-maps-link">Explore ↗</a>
-          <div class="card-manage-bar">
+          <div class="card-manage-bar" style="display:flex; gap:0.35rem; flex-wrap:wrap;">
+            <button class="btn-card-action ${isTagged ? 'btn-active-tag' : ''}" onclick="handleToggleTag('${s.id}', 'sight')">
+              ${isTagged ? '★ Tagged' : '⭐ Tag'}
+            </button>
             <button class="btn-card-action" onclick="handleEditItem('${s.id}', 'sight')">✏️ Edit</button>
             <button class="btn-card-action btn-card-delete" onclick="handleDeleteItem('${s.id}', 'sight')">🗑️ Remove</button>
           </div>
@@ -1053,8 +1095,8 @@ function updateItineraryDrawer() {
   const drawerDailyTransit = document.getElementById("drawerDailyTransit");
   const drawerGoogleFlightsLink = document.getElementById("drawerGoogleFlightsLink");
 
-  const dailyFoodUSD = 60;
-  const dailyTransitUSD = 12;
+  const dailyFoodUSD = 60 * travelersCount;
+  const dailyTransitUSD = 12 * travelersCount;
   const totalLivingUSD = (dailyFoodUSD + dailyTransitUSD) * tripDays;
 
   let flightCostUSD = 0;
@@ -1062,14 +1104,14 @@ function updateItineraryDrawer() {
   let count = 0;
 
   if (selectedFlight) {
-    flightCostUSD = selectedFlight.priceUSD;
+    flightCostUSD = selectedFlight.priceUSD * travelersCount;
     count++;
     if (drawerFlight) {
       drawerFlight.className = "drawer-card";
       drawerFlight.innerHTML = `
         <strong>${selectedFlight.airline} (${selectedFlight.flightNum})</strong><br/>
         <small style="color:var(--text-muted);">${resolvedOriginObj ? resolvedOriginObj.code : ""} ➔ ${resolvedDestAirportObj ? resolvedDestAirportObj.code : ""} (${selectedFlight.durationText})</small><br/>
-        <b>${formatCurrency(selectedFlight.priceUSD)}</b> <span style="font-size:11px;color:var(--text-muted);">${selectedFlight.cabin}</span>
+        <b>${formatCurrency(selectedFlight.priceUSD)}</b> &times; ${travelersCount} traveler(s) = <b>${formatCurrency(flightCostUSD)}</b> <span style="font-size:11px;color:var(--text-muted);">${selectedFlight.cabin}</span>
       `;
     }
   } else if (drawerFlight) {
@@ -1094,10 +1136,10 @@ function updateItineraryDrawer() {
     drawerHotel.innerHTML = "<span>No hotel selected yet.</span>";
   }
 
-  if (drawerDailyFood) drawerDailyFood.textContent = `${formatCurrency(dailyFoodUSD)} / day`;
-  if (drawerDailyTransit) drawerDailyTransit.textContent = `${formatCurrency(dailyTransitUSD)} / day`;
+  if (drawerDailyFood) drawerDailyFood.textContent = `${formatCurrency(60 * travelersCount)} / day (${travelersCount} pax)`;
+  if (drawerDailyTransit) drawerDailyTransit.textContent = `${formatCurrency(12 * travelersCount)} / day (${travelersCount} pax)`;
   if (flightPriceEl) flightPriceEl.textContent = formatCurrency(flightCostUSD);
-  if (hotelLabelEl) hotelLabelEl.textContent = `Hotel Subtotal (${tripDays} night${tripDays > 1 ? 's' : ''}):`;
+  if (hotelLabelEl) hotelLabelEl.textContent = `Hotel Room (${tripDays} night${tripDays > 1 ? 's' : ''}):`;
   if (hotelPriceEl) hotelPriceEl.textContent = formatCurrency(hotelCostUSD);
   if (livingPriceEl) livingPriceEl.textContent = formatCurrency(totalLivingUSD);
   
@@ -1117,9 +1159,10 @@ function updateItineraryDrawer() {
     );
   }
 
-  if (count > 0 && badgeEl && badgeText) {
+  const totalTaggedCount = taggedPlaces.length;
+  if (count > 0 || totalTaggedCount > 0 && badgeEl && badgeText) {
     badgeEl.classList.remove("hidden");
-    badgeText.textContent = `${count} Item${count > 1 ? 's' : ''} Selected (${formatCurrency(flightCostUSD + hotelCostUSD)})`;
+    badgeText.textContent = `${count} Booked • ${totalTaggedCount} Tagged ⭐ (${travelersCount} Pax)`;
   } else if (badgeEl) {
     badgeEl.classList.add("hidden");
   }
@@ -1138,7 +1181,111 @@ function toggleDrawer(open) {
 }
 
 // ========================================================
-// 8. SAVED TRIPS MANAGER
+// 8. SMART DAILY ITINERARY GENERATOR (PROXIMITY ENGINE)
+// ========================================================
+function generateSmartDailyItinerary() {
+  const sightsOnly = taggedPlaces.filter(p => p.itemType === "sight" || !p.itemType);
+  if (sightsOnly.length === 0) {
+    alert("Please tag (⭐) at least a few sights or food spots first to generate your smart daily itinerary!");
+    return;
+  }
+
+  let anchorLat = resolvedVisitCityObj ? resolvedVisitCityObj.lat : targetCenterLat;
+  let anchorLon = resolvedVisitCityObj ? resolvedVisitCityObj.lon : targetCenterLon;
+  if (selectedHotel) {
+    anchorLat = selectedHotel.lat;
+    anchorLon = selectedHotel.lon;
+  }
+
+  let remainingSights = sightsOnly.map(s => ({
+    ...s,
+    distFromAnchor: haversineDistance(anchorLat, anchorLon, s.lat, s.lon)
+  })).sort((a, b) => a.distFromAnchor - b.distFromAnchor);
+
+  const daysCount = Math.max(1, tripDays);
+  let dailySchedules = Array.from({ length: daysCount }, () => []);
+
+  let currentDayIdx = 0;
+  while (remainingSights.length > 0) {
+    let currentSpot = remainingSights.shift();
+    dailySchedules[currentDayIdx].push(currentSpot);
+
+    for (let i = 0; i < 2 && remainingSights.length > 0; i++) {
+      remainingSights.sort((a, b) => haversineDistance(currentSpot.lat, currentSpot.lon, a.lat, a.lon) - haversineDistance(currentSpot.lat, currentSpot.lon, b.lat, b.lon));
+      let nextSpot = remainingSights.shift();
+      dailySchedules[currentDayIdx].push(nextSpot);
+      currentSpot = nextSpot;
+    }
+
+    currentDayIdx = (currentDayIdx + 1) % daysCount;
+  }
+
+  renderDailyItineraryModal(dailySchedules);
+}
+
+function renderDailyItineraryModal(dailySchedules) {
+  let modal = document.getElementById("smartItineraryModal");
+  if (!modal) {
+    const modalHtml = `
+      <div id="smartItineraryModalOverlay" class="modal-overlay"></div>
+      <div id="smartItineraryModal" class="modal-card" style="max-width: 720px; max-height: 85vh;">
+        <div class="modal-header">
+          <h3>🤖 AI Smart Daily Itinerary & Route Plan</h3>
+          <button id="closeSmartModalBtn" class="close-btn">✕</button>
+        </div>
+        <div id="smartItineraryBody" class="modal-body" style="display:flex; flex-direction:column; gap:1.25rem;"></div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML("beforeend", modalHtml);
+    document.getElementById("closeSmartModalBtn").addEventListener("click", closeSmartItineraryModal);
+    document.getElementById("smartItineraryModalOverlay").addEventListener("click", closeSmartItineraryModal);
+    modal = document.getElementById("smartItineraryModal");
+  }
+
+  const bodyEl = document.getElementById("smartItineraryBody");
+  const hotelName = selectedHotel ? selectedHotel.name : (resolvedVisitCityObj ? resolvedVisitCityObj.cityName + " Center" : "Hotel Anchor");
+
+  bodyEl.innerHTML = `
+    <p style="font-size:0.85rem; color:var(--text-muted);">Optimized geographic clustering departing from <strong>🏨 ${hotelName}</strong> for ${travelersCount} traveler(s) across your ${dailySchedules.length}-day trip.</p>
+  ` + dailySchedules.map((daySpots, idx) => {
+    if (daySpots.length === 0) return `<div class="drawer-card"><h4>Day ${idx + 1}</h4><p style="color:var(--text-muted);font-size:0.85rem;">Free day / flexible exploration.</p></div>`;
+    
+    const googleMapsRouteUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(hotelName)}&destination=${encodeURIComponent(hotelName)}&waypoints=${daySpots.map(s => encodeURIComponent(s.name)).join('|')}`;
+
+    return `
+      <div class="drawer-card" style="background:var(--card-bg); border:1px solid var(--border);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+          <h4 style="color:var(--primary); font-size:1rem; margin:0;">📅 Day ${idx + 1} Itinerary</h4>
+          <a href="${googleMapsRouteUrl}" target="_blank" class="btn-google-flights" style="text-decoration:none;">🗺️ Navigate Route ↗</a>
+        </div>
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:0.5rem; margin-top:0.5rem;">
+          <li style="font-size:0.85rem; color:var(--text-muted);">🌅 <strong>Morning Start:</strong> Depart from ${hotelName}</li>
+          ${daySpots.map((spot, sIdx) => `
+            <li style="font-size:0.88rem; padding:0.4rem 0.6rem; background:var(--pill-bg); border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <span style="font-weight:bold; color:var(--text-main);">${sIdx + 1}. ${spot.name}</span>
+                <div style="font-size:0.75rem; color:var(--text-muted);">${spot.category} • ${spot.distanceKm} km from base</div>
+              </div>
+              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.query || spot.name)}" target="_blank" style="font-size:0.75rem; color:var(--primary); text-decoration:none;">Map ↗</a>
+            </li>
+          `).join('')}
+          <li style="font-size:0.85rem; color:var(--text-muted);">🌙 <strong>Evening Return:</strong> Return to ${hotelName}</li>
+        </ul>
+      </div>
+    `;
+  }).join('');
+
+  modal.classList.remove("hidden");
+  document.getElementById("smartItineraryModalOverlay").classList.remove("hidden");
+}
+
+function closeSmartItineraryModal() {
+  document.getElementById("smartItineraryModal")?.classList.add("hidden");
+  document.getElementById("smartItineraryModalOverlay")?.classList.add("hidden");
+}
+
+// ========================================================
+// 9. SAVED TRIPS MANAGER
 // ========================================================
 const SAVED_TRIPS_KEY = "voyagesearch_saved_trips";
 
@@ -1174,7 +1321,9 @@ function saveTripToLocalStorage() {
     selectedHotel: selectedHotel,
     savedSights: allRawSights,
     savedHotels: allRawHotels,
+    taggedPlaces: taggedPlaces,
     tripDays: tripDays,
+    travelersCount: travelersCount,
     radiusKm: currentRadiusKm,
     createdAt: new Date().toLocaleDateString()
   };
@@ -1196,7 +1345,7 @@ function renderSavedTripsModal() {
 
   const trips = getSavedTrips();
   if (trips.length === 0) {
-    listEl.innerHTML = `<p class="empty-state-text">No itineraries saved yet. Select a flight and hotel, then click "Save Trip" in the drawer!</p>`;
+    listEl.innerHTML = `<p class="empty-state-text">No itineraries saved yet. Select a flight and hotel, tag locations, then click "Save Trip" in the drawer!</p>`;
     return;
   }
 
@@ -1205,7 +1354,7 @@ function renderSavedTripsModal() {
       <div class="saved-trip-info">
         <h4>${t.name}</h4>
         <p>${t.origin.city} (${t.origin.code}) ➔ ${t.destAirport.city} (${t.destAirport.code}) | Target: <strong>${t.visitCity.cityName}</strong></p>
-        <p style="font-size:11px; color:var(--text-muted); margin-top:2px;">Saved on ${t.createdAt} • ${t.tripDays} night(s) • ${t.radiusKm || 10} km radius</p>
+        <p style="font-size:11px; color:var(--text-muted); margin-top:2px;">Saved on ${t.createdAt} • ${t.tripDays} night(s) • ${t.travelersCount || 1} Traveler(s) • ${t.taggedPlaces ? t.taggedPlaces.length : 0} Tagged Spots</p>
       </div>
       <div class="saved-trip-actions">
         <button class="btn-load-trip" onclick="loadSavedTrip('${t.id}')">Load</button>
@@ -1226,6 +1375,9 @@ window.loadSavedTrip = function(tripId) {
   document.getElementById("departDate").value = trip.departDate;
   if (document.getElementById("returnDate")) document.getElementById("returnDate").value = trip.returnDate || "";
   if (document.getElementById("radiusSelect")) document.getElementById("radiusSelect").value = trip.radiusKm || "10";
+  if (document.getElementById("travelersCount")) document.getElementById("travelersCount").value = trip.travelersCount || 1;
+  
+  if (trip.taggedPlaces) taggedPlaces = trip.taggedPlaces;
 
   document.getElementById("savedTripsModal")?.classList.add("hidden");
   document.getElementById("savedTripsModalOverlay")?.classList.add("hidden");
@@ -1241,7 +1393,7 @@ window.deleteSavedTrip = function(tripId) {
 };
 
 // ========================================================
-// 9. DOM INITIALIZATION & EVENT LISTENERS
+// 10. DOM INITIALIZATION & EVENT LISTENERS
 // ========================================================
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
@@ -1431,6 +1583,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // Smart Itinerary Button in Drawer / Header
+  const drawerActionRow = document.querySelector(".drawer-action-row");
+  if (drawerActionRow && !document.getElementById("generateSmartItineraryBtn")) {
+    const smartBtnHtml = `
+      <div style="margin-top: 0.5rem;">
+        <button id="generateSmartItineraryBtn" class="btn-secondary drawer-btn" style="background: rgba(168,85,247,0.15); border-color: rgba(168,85,247,0.4); color: var(--accent-purple);">🤖 Generate AI Smart Itinerary</button>
+      </div>
+    `;
+    drawerActionRow.insertAdjacentHTML("afterend", smartBtnHtml);
+    document.getElementById("generateSmartItineraryBtn").addEventListener("click", generateSmartDailyItinerary);
+  }
+
   // Main Form Submit
   const form = document.getElementById("travelSearchForm");
   const loadingState = document.getElementById("loadingState");
@@ -1457,6 +1621,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const leg2OriginVal = document.getElementById("leg2Origin")?.value.trim();
       const leg2DestVal = document.getElementById("leg2Dest")?.value.trim();
       currentLeg2Date = leg2DateInput ? leg2DateInput.value : "";
+
+      travelersCount = parseInt(document.getElementById("travelersCount")?.value) || 1;
 
       const selectedBrands = Array.from(document.querySelectorAll('input[name="hotelBrand"]:checked')).map(cb => cb.value);
       if (selectedBrands.length === 0) {
@@ -1528,7 +1694,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (resolvedDestText) resolvedDestText.textContent = `${resolvedDestAirportObj.name} (${resolvedDestAirportObj.code})`;
       if (resolvedCityPill) resolvedCityPill.textContent = `📍 Target: ${resolvedVisitCityObj.cityName}`;
       if (resultsTitle) resultsTitle.textContent = `${resolvedOriginObj.name} to ${resolvedDestAirportObj.name} | Exploring ${resolvedVisitCityObj.cityName}`;
-      if (tripLengthSubtitle) tripLengthSubtitle.textContent = currentReturnDate && currentTripType === "roundtrip" ? `Trip Length: ${tripDays} night(s) stay` : `Point-to-point corridor search`;
+      if (tripLengthSubtitle) tripLengthSubtitle.textContent = currentReturnDate && currentTripType === "roundtrip" ? `Trip Length: ${tripDays} night(s) stay (${travelersCount} Traveler${travelersCount > 1 ? 's' : ''})` : `Point-to-point corridor search`;
 
       activeSightFilter = "all";
       document.querySelectorAll(".sight-filter-btn").forEach(b => {
