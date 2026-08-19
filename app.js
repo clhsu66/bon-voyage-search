@@ -22,6 +22,8 @@ const majorAirportCatalog = [
   { code: "BOS", name: "Boston Logan International", city: "Boston", country: "United States", airportLat: 42.3656, airportLon: -71.0096, cityLat: 42.3601, cityLon: -71.0589 },
   { code: "IAD", name: "Washington Dulles International", city: "Washington D.C.", country: "United States", airportLat: 38.9531, airportLon: -77.4565, cityLat: 38.9072, cityLon: -77.0369 },
   { code: "DCA", name: "Ronald Reagan Washington National", city: "Washington D.C.", country: "United States", airportLat: 38.8512, airportLon: -77.0402, cityLat: 38.9072, cityLon: -77.0369 },
+  { code: "PHL", name: "Philadelphia International", city: "Philadelphia", country: "United States", airportLat: 39.8722, airportLon: -75.2437, cityLat: 39.9526, cityLon: -75.1652 },
+  { code: "PIT", name: "Pittsburgh International", city: "Pittsburgh", country: "United States", airportLat: 40.4914, airportLon: -80.2329, cityLat: 40.4406, cityLon: -79.9959 },  
 
   // Canada
   { code: "YVR", name: "Vancouver International", city: "Vancouver", country: "Canada", airportLat: 49.1967, airportLon: -123.1815, cityLat: 49.2827, cityLon: -123.1207 },
@@ -339,6 +341,14 @@ const cityTransitGuidesMaster = {
     { title: "Taoyuan Airport MRT (Express Purple Line)", badge: "Airport Express", desc: "Purple Express train connects Terminal 1 & 2 directly to Taipei Main Station in 36 minutes with free onboard Wi-Fi.", route: "Taoyuan Airport ➔ Taipei Main Station (36 mins, NT$150)" },
     { title: "Taipei EasyCard / iPASS & Metro Network", badge: "Transit Card", desc: "Contactless card accepted across all Taipei MRT subway lines, city buses, YouBike 2.0 rentals, and convenience stores.", route: "Single ride NT$20–NT$65 / 24-hr Pass NT$180" }
   ],
+  PHILADELPHIA: [
+    { title: "SEPTA Airport Line Regional Rail", badge: "Airport Train", desc: "SEPTA regional rail connects Philadelphia International Airport (PHL) directly to Center City stations (Market East, Suburban, 30th St) every 30 minutes.", route: "PHL Airport ➔ Center City (25 mins, $6.75)" },
+    { title: "SEPTA Market-Frankford & Broad Street Subway", badge: "Subway Network", desc: "Rapid transit subway lines intersecting at City Hall, providing fast access to Old City, museums, and South Philly.", route: "Single Fare ($2.50 / SEPTA Key or Contactless Tap)" }
+  ],
+  PITTSBURGH: [
+    { title: "PRT 28X Airport Flyer Bus", badge: "Express Airport Bus", desc: "Pittsburgh Regional Transit 28X Airport Flyer connects Pittsburgh International Airport (PIT) directly to Downtown and Oakland/CMU/Pitt campuses every 30 minutes.", route: "PIT Airport ➔ Downtown / Oakland (35-45 mins, $2.75)" },
+    { title: "Pittsburgh Light Rail (The T) & Inclines", badge: "Light Rail", desc: "Free downtown subway zone ('The T') connecting Gateway, Wood Street, and Steel Plaza, plus historic Duquesne & Monongahela cable car inclines.", route: "Free within Downtown Zone / $2.75 inbound" }
+  ],
   SF: [
     { title: "BART (Bay Area Rapid Transit)", badge: "Airport & Regional Rail", desc: "Fast regional subway connecting SFO Airport directly to Downtown SF (Powell/Montgomery), Oakland, and Berkeley.", route: "SFO Airport ➔ Downtown SF (30 mins, $10.50 via Clipper)" }
   ]
@@ -360,6 +370,8 @@ function renderTransitGuide(airportCode, cityName) {
   else if (normCity.includes("lisbon") || normCode === "LIS") key = "LISBON";
   else if (normCity.includes("chicago") || normCode === "ORD" || normCode === "MDW") key = "CHI";
   else if (normCity.includes("taipei") || normCode === "TPE" || normCode === "TSA") key = "TPE";
+  else if (normCity.includes("philadelphia") || normCode === "PHL") key = "PHILADELPHIA";
+  else if (normCity.includes("pittsburgh") || normCode === "PIT") key = "PITTSBURGH";
   else if (normCity.includes("san francisco") || normCode === "SFO" || normCode === "SJC") key = "SF";
 
   const guides = cityTransitGuidesMaster[key] || [
@@ -419,7 +431,7 @@ async function fetchTargetCitySights(cityName, airportCode, centerLat, centerLon
   else if (normCity.includes("amsterdam") || normCode === "AMS") matchedKey = "AMSTERDAM";
   else if (normCity.includes("taichung") || normCode === "RMQ") matchedKey = "TAICHUNG";
   else if (normCity.includes("tainan") || normCode === "TNN") matchedKey = "TAINAN";
-  else if (normCity.includes("kaohsiung") || normCode === "KHH") matchedKey = "KHH";
+  else if (normCity.includes("kaohsiung") || normCode === "KHH") matchedKey = "KAOHSIUNG";
   else if (normCity.includes("tokyo") || normCode === "HND" || normCode === "NRT") matchedKey = "TOKYO";
   else if (normCity.includes("kyoto") || normCode === "KIX") matchedKey = "KYOTO";
   else if (normCity.includes("osaka") || normCode === "ITM") matchedKey = "OSAKA";
@@ -428,6 +440,8 @@ async function fetchTargetCitySights(cityName, airportCode, centerLat, centerLon
   else if (normCity.includes("singapore") || normCode === "SIN") matchedKey = "SINGAPORE";
   else if (normCity.includes("bangkok") || normCode === "BKK") matchedKey = "BANGKOK";
   else if (normCity.includes("sydney") || normCode === "SYD") matchedKey = "SYDNEY";
+  else if (normCity.includes("philadelphia") || normCity.includes("philly") || normCode === "PHL") matchedKey = "PHILADELPHIA";
+  else if (normCity.includes("pittsburgh") || normCode === "PIT") matchedKey = "PITTSBURGH";
 
   if (matchedKey && typeof MASTER_CURATED_CATALOG !== 'undefined' && MASTER_CURATED_CATALOG[matchedKey]) {
     return MASTER_CURATED_CATALOG[matchedKey].map((item, idx) => {
