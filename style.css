@@ -523,6 +523,26 @@ input[type="number"]:focus,
   margin-top: 0.25rem;
 }
 
+.btn-planner-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: rgba(59, 130, 246, 0.15);
+  color: var(--primary);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-planner-header:hover {
+  background-color: var(--primary);
+  color: #ffffff;
+}
+
 .view-mode-toggle {
   display: flex;
   gap: 0.35rem;
@@ -871,14 +891,16 @@ input[type="number"]:focus,
 .sights-grid::-webkit-scrollbar,
 .cards-stack::-webkit-scrollbar,
 .modal-body::-webkit-scrollbar,
-.drawer-content::-webkit-scrollbar {
+.drawer-content::-webkit-scrollbar,
+.planner-items-stack::-webkit-scrollbar {
   width: 6px;
 }
 
 .sights-grid::-webkit-scrollbar-thumb,
 .cards-stack::-webkit-scrollbar-thumb,
 .modal-body::-webkit-scrollbar-thumb,
-.drawer-content::-webkit-scrollbar-thumb {
+.drawer-content::-webkit-scrollbar-thumb,
+.planner-items-stack::-webkit-scrollbar-thumb {
   background-color: var(--border);
   border-radius: 3px;
 }
@@ -1013,10 +1035,28 @@ input[type="number"]:focus,
   text-decoration: underline;
 }
 
-/* Card Manage Buttons */
+/* Card Manage Buttons & Day Dropdown */
 .card-manage-bar {
   display: flex;
+  align-items: center;
   gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.card-day-select {
+  padding: 2px 6px;
+  font-size: 0.72rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background-color: var(--card-bg);
+  color: var(--primary);
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+}
+
+.card-day-select:focus {
+  border-color: var(--primary);
 }
 
 .btn-card-action {
@@ -1388,7 +1428,7 @@ input[type="number"]:focus,
 }
 
 /* ========================================================
-   MODALS (SAVED TRIPS & ADD/EDIT PLACE)
+   MODALS (SAVED TRIPS, ADD/EDIT & CUSTOM PLANNER)
    ======================================================== */
 .modal-overlay {
   position: fixed;
@@ -1405,7 +1445,7 @@ input[type="number"]:focus,
   transform: translate(-50%, -50%);
   width: 90%;
   max-width: 580px;
-  max-height: 80vh;
+  max-height: 85vh;
   background-color: var(--card-bg);
   border-radius: 12px;
   box-shadow: var(--shadow-lg);
@@ -1413,6 +1453,11 @@ input[type="number"]:focus,
   z-index: 2001;
   display: flex;
   flex-direction: column;
+}
+
+.modal-card-wide {
+  max-width: 960px;
+  width: 94%;
 }
 
 .modal-header {
@@ -1429,6 +1474,129 @@ input[type="number"]:focus,
   flex: 1;
 }
 
+/* ========================================================
+   CUSTOM DAILY PLANNER BOARD STYLING
+   ======================================================== */
+.planner-staging-tray {
+  background-color: var(--pill-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.planner-staging-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.planner-staging-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.planner-chip {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.4rem 0.65rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--text-main);
+}
+
+.planner-chip-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.planner-board-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.planner-day-col {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.planner-day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+
+.planner-day-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.planner-items-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 100px;
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.planner-card-item {
+  background-color: var(--pill-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+}
+
+.planner-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.planner-item-info strong {
+  color: var(--text-main);
+}
+
+.planner-item-info small {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.btn-item-reassign {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+
+/* Saved Trips Stack */
 .saved-trips-stack {
   display: flex;
   flex-direction: column;
@@ -1636,5 +1804,8 @@ input[type="number"]:focus,
     border-top: 1px solid var(--border);
     padding-left: 0;
     padding-top: 0.75rem;
+  }
+  .planner-board-grid {
+    grid-template-columns: 1fr;
   }
 }

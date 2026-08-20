@@ -192,6 +192,9 @@
         </div>
         
         <div class="sort-and-actions">
+          <button id="openCustomPlannerBtn" class="btn-planner-header" title="Manually assign places to days">
+            📅 Custom Day Planner
+          </button>
           <a id="googleFlightsLiveBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn-google-flights">
             ✈️ Open in Google Flights ↗
           </a>
@@ -371,14 +374,31 @@
         <div class="price-row total-row"><span>Grand Total Estimate:</span> <strong id="drawerTotalPrice" class="highlight-total">$0</strong></div>
       </div>
 
-      <div class="drawer-action-row">
-        <button id="saveTripToStorageBtn" class="btn-primary drawer-btn">💾 Save Itinerary Plan</button>
-      </div>
-      <div class="drawer-action-row" style="margin-top: 0.25rem;">
+      <div class="drawer-action-row" style="display:flex; flex-direction:column; gap:0.5rem;">
+        <button id="drawerCustomPlannerBtn" class="btn-primary drawer-btn" style="background: var(--primary);">📅 Build Custom Itinerary</button>
+        <button id="generateSmartItineraryBtn" class="btn-secondary drawer-btn" style="background: rgba(168,85,247,0.15); border-color: rgba(168,85,247,0.4); color: var(--accent-purple);">🤖 Generate AI Auto-Route</button>
+        <button id="saveTripToStorageBtn" class="btn-secondary drawer-btn">💾 Save Itinerary Plan</button>
         <a id="drawerGoogleFlightsLink" href="#" target="_blank" class="btn-secondary drawer-btn" style="display: block; text-align: center; text-decoration: none;">Open Google Flights ↗</a>
       </div>
     </div>
   </aside>
+
+  <!-- ========================================== -->
+  <!-- CUSTOM DAILY ITINERARY PLANNER MODAL       -->
+  <!-- ========================================== -->
+  <div id="customPlannerModalOverlay" class="modal-overlay hidden"></div>
+  <div id="customPlannerModal" class="modal-card modal-card-wide hidden">
+    <div class="modal-header">
+      <div>
+        <h3 style="display:flex; align-items:center; gap:0.5rem;">📅 Custom Daily Itinerary Planner</h3>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">Organize, assign, and arrange your tagged places across each day of your trip.</p>
+      </div>
+      <button id="closeCustomPlannerModalBtn" class="close-btn">✕</button>
+    </div>
+    <div id="customPlannerBody" class="modal-body">
+      <!-- Injected dynamically by app.js -->
+    </div>
+  </div>
 
   <!-- ========================================== -->
   <!-- SAVED TRIPS MODAL                          -->

@@ -543,7 +543,7 @@ async function fetchLiveTargetHotels(centerLat, centerLon, cityName, airportCode
 }
 
 // ========================================================
-// 5. TAGGING STATE & LEAFLET MAP & INTERACTIVE CONTROLS
+// 5. TAGGING & DAY ASSIGNMENT STATE & MAP CONTROLS
 // ========================================================
 let taggedPlaces = [];
 
@@ -559,16 +559,51 @@ window.handleToggleTag = function(id, itemType) {
       item = currentSights.find(s => s.id === id);
     }
     if (item) {
-      taggedPlaces.push({ ...item, itemType });
+      taggedPlaces.push({ ...item, itemType, assignedDay: 0 });
     }
   }
   sortAndRenderHotels();
   renderDestinationSights(currentSights, resolvedVisitCityObj ? resolvedVisitCityObj.cityName : "");
   updateItineraryDrawer();
+  renderCustomPlannerModal();
+};
+
+window.handleAssignDay = function(id, itemType, dayValue) {
+  const dayNum = parseInt(dayValue) || 0;
+  let taggedItem = taggedPlaces.find(p => p.id === id);
+
+  if (!taggedItem) {
+    let item = itemType === "hotel" ? currentHotels.find(h => h.id === id) : currentSights.find(s => s.id === id);
+    if (item) {
+      taggedItem = { ...item, itemType, assignedDay: dayNum };
+      taggedPlaces.push(taggedItem);
+    }
+  } else {
+    taggedItem.assignedDay = dayNum;
+  }
+
+  sortAndRenderHotels();
+  renderDestinationSights(currentSights, resolvedVisitCityObj ? resolvedVisitCityObj.cityName : "");
+  updateItineraryDrawer();
+  renderCustomPlannerModal();
 };
 
 function isItemTagged(id) {
   return taggedPlaces.some(p => p.id === id);
+}
+
+function getItemAssignedDay(id) {
+  const item = taggedPlaces.find(p => p.id === id);
+  return item && item.assignedDay !== undefined ? item.assignedDay : 0;
+}
+
+function generateDaySelectOptions(currentAssigned = 0) {
+  const daysCount = Math.max(1, tripDays);
+  let html = `<option value="0" ${currentAssigned === 0 ? 'selected' : ''}>Unassigned</option>`;
+  for (let d = 1; d <= daysCount; d++) {
+    html += `<option value="${d}" ${currentAssigned === d ? 'selected' : ''}>Day ${d}</option>`;
+  }
+  return html;
 }
 
 let leafletMapInstance = null;
@@ -633,9 +668,10 @@ function applyRadiusFilterAndRender(radiusKm) {
     filteredHotels.forEach(h => {
       if (h.lat && h.lon) {
         const isTagged = isItemTagged(h.id);
+        const assignedDay = getItemAssignedDay(h.id);
         const hotelIcon = L.divIcon({
           className: `custom-map-marker marker-hotel ${isTagged ? 'marker-tagged' : ''}`,
-          html: isTagged ? `⭐` : `🏨`,
+          html: isTagged ? (assignedDay > 0 ? `D${assignedDay}` : `⭐`) : `🏨`,
           iconSize: [30, 30],
           iconAnchor: [15, 15]
         });
@@ -646,8 +682,11 @@ function applyRadiusFilterAndRender(radiusKm) {
             <span style="color:#9f1239; font-weight:bold;">${h.brand}</span> • ${h.badge}<br/>
             <span style="color:var(--text-muted);">📍 ${h.area} (${h.distanceKm} km away)</span><br/>
             <b style="color:var(--primary); font-size:14px;">${formatCurrency(h.priceUSD)}</b> / night<br/>
-            <div style="display:flex; gap:0.4rem; margin-top:0.4rem; flex-wrap:wrap;">
+            <div style="display:flex; gap:0.4rem; margin-top:0.4rem; align-items:center; flex-wrap:wrap;">
               <button onclick="handleToggleTag('${h.id}', 'hotel')" style="background:var(--pill-bg); border:1px solid var(--border); color:var(--text-main); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">${isTagged ? '★ Untag' : '⭐ Tag'}</button>
+              <select onchange="handleAssignDay('${h.id}', 'hotel', this.value)" style="background:var(--pill-bg); border:1px solid var(--border); color:var(--primary); font-size:11px; padding:2px; border-radius:4px;">
+                ${generateDaySelectOptions(assignedDay)}
+              </select>
               <button onclick="handleEditItem('${h.id}', 'hotel')" style="background:var(--pill-bg); border:1px solid var(--border); color:var(--text-main); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">✏️ Edit</button>
               <button onclick="handleDeleteItem('${h.id}', 'hotel')" style="background:rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.3); color:var(--accent-rose); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">🗑️ Delete</button>
               <a href="${h.brandUrl}" target="_blank" style="color:#3b82f6; font-weight:600; text-decoration:none; margin-left:auto;">Book ↗</a>
@@ -663,9 +702,10 @@ function applyRadiusFilterAndRender(radiusKm) {
         const isFood = s.type === "food";
         const isCustom = s.isCustom;
         const isTagged = isItemTagged(s.id);
+        const assignedDay = getItemAssignedDay(s.id);
         const sightIcon = L.divIcon({
           className: `custom-map-marker ${isTagged ? 'marker-tagged' : isCustom ? 'marker-custom' : isFood ? 'marker-food' : 'marker-sight'}`,
-          html: isTagged ? `⭐` : isCustom ? `📍` : isFood ? `🍜` : `🏛️`,
+          html: isTagged ? (assignedDay > 0 ? `D${assignedDay}` : `⭐`) : isCustom ? `📍` : isFood ? `🍜` : `🏛️`,
           iconSize: [30, 30],
           iconAnchor: [15, 15]
         });
@@ -678,6 +718,9 @@ function applyRadiusFilterAndRender(radiusKm) {
             <span style="color:var(--text-muted);">📍 ${s.location} (${s.distanceKm} km away)</span><br/>
             <div style="display:flex; gap:0.4rem; margin-top:0.4rem; align-items:center; flex-wrap:wrap;">
               <button onclick="handleToggleTag('${s.id}', 'sight')" style="background:var(--pill-bg); border:1px solid var(--border); color:var(--text-main); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">${isTagged ? '★ Untag' : '⭐ Tag'}</button>
+              <select onchange="handleAssignDay('${s.id}', 'sight', this.value)" style="background:var(--pill-bg); border:1px solid var(--border); color:var(--primary); font-size:11px; padding:2px; border-radius:4px;">
+                ${generateDaySelectOptions(assignedDay)}
+              </select>
               <button onclick="handleEditItem('${s.id}', 'sight')" style="background:var(--pill-bg); border:1px solid var(--border); color:var(--text-main); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">✏️ Edit</button>
               <button onclick="handleDeleteItem('${s.id}', 'sight')" style="background:rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.3); color:var(--accent-rose); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">🗑️ Delete</button>
               <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.query || s.name)}" target="_blank" style="color:#3b82f6; font-weight:600; text-decoration:none; margin-left:auto;">Maps ↗</a>
@@ -710,6 +753,7 @@ window.handleDeleteItem = function(id, itemType) {
   }
   taggedPlaces = taggedPlaces.filter(p => p.id !== id);
   applyRadiusFilterAndRender(currentRadiusKm);
+  renderCustomPlannerModal();
 };
 
 window.handleEditItem = function(id, itemType) {
@@ -769,7 +813,6 @@ function closeCustomPlaceModal() {
   document.getElementById("placeModal")?.classList.add("hidden");
   document.getElementById("placeModalOverlay")?.classList.add("hidden");
 }
-
 // ========================================================
 // 6. FLIGHT SCHEDULE GENERATOR
 // ========================================================
@@ -985,13 +1028,14 @@ function sortAndRenderHotels() {
   hotelListEl.innerHTML = filtered.map(h => {
     const isSelected = selectedHotel && selectedHotel.id === h.id;
     const isTagged = isItemTagged(h.id);
+    const assignedDay = getItemAssignedDay(h.id);
     return `
       <div class="hotel-card ${isSelected ? 'selected' : ''} ${isTagged ? 'tagged-card' : ''}" id="card-${h.id}">
         <div class="hotel-main">
           <div class="hotel-header-meta">
             <span class="brand-badge ${getBrandClass(h.brand)}">${h.brand}</span>
             <span class="hotel-tag">${h.badge}</span>
-            ${isTagged ? '<span class="tag-indicator-badge">★ Tagged Hotel</span>' : ''}
+            ${isTagged ? `<span class="tag-indicator-badge">★ ${assignedDay > 0 ? 'Day ' + assignedDay : 'Tagged'}</span>` : ''}
           </div>
           
           <h4 class="hotel-name">${h.name}</h4>
@@ -1002,10 +1046,15 @@ function sortAndRenderHotels() {
             <span class="rating-score">${h.rating} / 5.0</span>
           </div>
 
-          <div class="card-manage-bar" style="margin-top:0.35rem; display:flex; gap:0.4rem; flex-wrap:wrap;">
+          <div class="card-manage-bar" style="margin-top:0.35rem;">
             <button class="btn-card-action ${isTagged ? 'btn-active-tag' : ''}" onclick="handleToggleTag('${h.id}', 'hotel')">
               ${isTagged ? '★ Tagged' : '⭐ Tag Hotel'}
             </button>
+            ${isTagged ? `
+              <select class="card-day-select" onchange="handleAssignDay('${h.id}', 'hotel', this.value)" title="Assign Day">
+                ${generateDaySelectOptions(assignedDay)}
+              </select>
+            ` : ''}
             <button class="btn-card-action" onclick="handleEditItem('${h.id}', 'hotel')">✏️ Edit</button>
             <button class="btn-card-action btn-card-delete" onclick="handleDeleteItem('${h.id}', 'hotel')">🗑️ Remove</button>
           </div>
@@ -1049,11 +1098,12 @@ function renderDestinationSights(sights, cityName) {
     const isFood = s.type === "food";
     const isCustom = s.isCustom;
     const isTagged = isItemTagged(s.id);
+    const assignedDay = getItemAssignedDay(s.id);
     return `
       <div class="sight-card ${isCustom ? 'custom-item' : isFood ? 'food-item' : 'sight-item'} ${isTagged ? 'tagged-card' : ''}" id="sight-card-${s.id}">
         <div class="sight-category-row">
           <span class="sight-category-badge ${isCustom ? 'badge-custom' : isFood ? 'badge-food' : 'badge-sight'}">${s.category}</span>
-          ${isTagged ? '<span class="tag-indicator-badge">★ Tagged</span>' : ''}
+          ${isTagged ? `<span class="tag-indicator-badge">★ ${assignedDay > 0 ? 'Day ' + assignedDay : 'Tagged'}</span>` : ''}
           <span class="sight-location">📍 ${s.location} (${s.distanceKm} km)</span>
         </div>
         <h4 class="sight-name">${s.name}</h4>
@@ -1061,10 +1111,15 @@ function renderDestinationSights(sights, cityName) {
         
         <div class="sight-card-footer">
           <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.query || s.name)}" target="_blank" rel="noopener noreferrer" class="sight-maps-link">Explore ↗</a>
-          <div class="card-manage-bar" style="display:flex; gap:0.35rem; flex-wrap:wrap;">
+          <div class="card-manage-bar">
             <button class="btn-card-action ${isTagged ? 'btn-active-tag' : ''}" onclick="handleToggleTag('${s.id}', 'sight')">
               ${isTagged ? '★ Tagged' : '⭐ Tag'}
             </button>
+            ${isTagged ? `
+              <select class="card-day-select" onchange="handleAssignDay('${s.id}', 'sight', this.value)" title="Assign Day">
+                ${generateDaySelectOptions(assignedDay)}
+              </select>
+            ` : ''}
             <button class="btn-card-action" onclick="handleEditItem('${s.id}', 'sight')">✏️ Edit</button>
             <button class="btn-card-action btn-card-delete" onclick="handleDeleteItem('${s.id}', 'sight')">🗑️ Remove</button>
           </div>
@@ -1188,8 +1243,93 @@ function toggleDrawer(open) {
 }
 
 // ========================================================
-// 8. SMART DAILY ITINERARY GENERATOR (PROXIMITY ENGINE)
+// 8. CUSTOM & AI DAILY ITINERARY PLANNERS
 // ========================================================
+function openCustomPlannerModal() {
+  renderCustomPlannerModal();
+  document.getElementById("customPlannerModal")?.classList.remove("hidden");
+  document.getElementById("customPlannerModalOverlay")?.classList.remove("hidden");
+}
+
+function closeCustomPlannerModal() {
+  document.getElementById("customPlannerModal")?.classList.add("hidden");
+  document.getElementById("customPlannerModalOverlay")?.classList.add("hidden");
+}
+
+function renderCustomPlannerModal() {
+  const bodyEl = document.getElementById("customPlannerBody");
+  if (!bodyEl) return;
+
+  const daysCount = Math.max(1, tripDays);
+  const hotelName = selectedHotel ? selectedHotel.name : (resolvedVisitCityObj ? resolvedVisitCityObj.cityName + " Center" : "Hotel Anchor");
+  const unassignedPlaces = taggedPlaces.filter(p => !p.assignedDay || p.assignedDay === 0);
+
+  let html = `
+    <!-- Staging Tray: Tagged but unassigned places -->
+    <div class="planner-staging-tray">
+      <div class="planner-staging-title">
+        <span>⭐ Tagged Places Tray (${unassignedPlaces.length} unassigned)</span>
+        <small style="color:var(--text-muted); font-weight:normal;">Assign places to specific days using the dropdown or click below</small>
+      </div>
+      <div class="planner-staging-chips">
+        ${unassignedPlaces.length === 0 ? `<span style="font-size:0.8rem; color:var(--text-muted);">All tagged places are assigned to daily buckets!</span>` : ''}
+        ${unassignedPlaces.map(p => `
+          <div class="planner-chip">
+            <span>${p.name}</span>
+            <span class="planner-chip-tag">${p.category}</span>
+            <select class="card-day-select" onchange="handleAssignDay('${p.id}', '${p.itemType || 'sight'}', this.value)">
+              ${generateDaySelectOptions(p.assignedDay || 0)}
+            </select>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <!-- Day-by-Day Board Grid -->
+    <div class="planner-board-grid">
+  `;
+
+  for (let d = 1; d <= daysCount; d++) {
+    const dayItems = taggedPlaces.filter(p => p.assignedDay === d);
+    const waypointsParam = dayItems.map(s => encodeURIComponent(s.name)).join('|');
+    const googleMapsRouteUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(hotelName)}&destination=${encodeURIComponent(hotelName)}${waypointsParam ? `&waypoints=${waypointsParam}` : ''}`;
+
+    html += `
+      <div class="planner-day-col">
+        <div class="planner-day-header">
+          <div>
+            <span class="planner-day-title">📅 Day ${d}</span>
+            <small style="display:block; color:var(--text-muted); font-size:0.75rem;">${dayItems.length} place(s)</small>
+          </div>
+          ${dayItems.length > 0 ? `
+            <a href="${googleMapsRouteUrl}" target="_blank" class="btn-google-flights" style="text-decoration:none; font-size:0.7rem; padding:2px 6px;">
+              🗺️ Route ↗
+            </a>
+          ` : ''}
+        </div>
+
+        <div class="planner-items-stack">
+          ${dayItems.length === 0 ? `<p style="font-size:0.8rem; color:var(--text-muted); font-style:italic; padding:1rem 0; text-align:center;">No places assigned to Day ${d}.</p>` : ''}
+          ${dayItems.map((item, idx) => `
+            <div class="planner-card-item">
+              <div class="planner-item-info">
+                <strong>${idx + 1}. ${item.name}</strong>
+                <small>${item.category} • ${item.location}</small>
+              </div>
+              <select class="card-day-select" onchange="handleAssignDay('${item.id}', '${item.itemType || 'sight'}', this.value)">
+                ${generateDaySelectOptions(item.assignedDay || 0)}
+              </select>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  html += `</div>`;
+  bodyEl.innerHTML = html;
+}
+
 function generateSmartDailyItinerary() {
   const sightsOnly = taggedPlaces.filter(p => p.itemType === "sight" || !p.itemType);
   if (sightsOnly.length === 0) {
@@ -1509,12 +1649,19 @@ document.addEventListener("DOMContentLoaded", () => {
     closeCustomPlaceModal();
     applyRadiusFilterAndRender(currentRadiusKm);
     updateItineraryDrawer();
+    renderCustomPlannerModal();
   });
 
   document.getElementById("openAddPlaceMapBtn")?.addEventListener("click", () => openCustomPlaceModal());
   document.getElementById("openAddPlaceListBtn")?.addEventListener("click", () => openCustomPlaceModal());
   document.getElementById("closePlaceModalBtn")?.addEventListener("click", closeCustomPlaceModal);
   document.getElementById("placeModalOverlay")?.addEventListener("click", closeCustomPlaceModal);
+
+  // Custom Day Planner Triggers
+  document.getElementById("openCustomPlannerBtn")?.addEventListener("click", openCustomPlannerModal);
+  document.getElementById("drawerCustomPlannerBtn")?.addEventListener("click", openCustomPlannerModal);
+  document.getElementById("closeCustomPlannerModalBtn")?.addEventListener("click", closeCustomPlannerModal);
+  document.getElementById("customPlannerModalOverlay")?.addEventListener("click", closeCustomPlannerModal);
 
   // Tabs
   document.querySelectorAll(".tab-btn").forEach(btn => {
@@ -1649,17 +1796,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Smart Itinerary Button in Drawer / Header
-  const drawerActionRow = document.querySelector(".drawer-action-row");
-  if (drawerActionRow && !document.getElementById("generateSmartItineraryBtn")) {
-    const smartBtnHtml = `
-      <div style="margin-top: 0.5rem;">
-        <button id="generateSmartItineraryBtn" class="btn-secondary drawer-btn" style="background: rgba(168,85,247,0.15); border-color: rgba(168,85,247,0.4); color: var(--accent-purple);">🤖 Generate AI Smart Itinerary</button>
-      </div>
-    `;
-    drawerActionRow.insertAdjacentHTML("afterend", smartBtnHtml);
-    document.getElementById("generateSmartItineraryBtn").addEventListener("click", generateSmartDailyItinerary);
-  }
+  // AI Smart Itinerary Trigger
+  document.getElementById("generateSmartItineraryBtn")?.addEventListener("click", generateSmartDailyItinerary);
 
   // Main Form Submit
   const form = document.getElementById("travelSearchForm");
