@@ -274,9 +274,56 @@ function renderDropdownItems(list, input, dropdown, linkToVisitCityId = null) {
 }
 
 // ========================================================
-// 2. THEME & CURRENCY CONVERTER ENGINES
+// 2. THEME, CURRENCY & GITHUB AUTO-VERSION ENGINES
 // ========================================================
 const THEME_STORAGE_KEY = "voyagesearch_theme";
+
+// Optional manual repo setting: if left empty, auto-detects from GitHub Pages domain/path
+const GITHUB_REPO_OVERRIDE = ""; 
+
+async function initGitHubVersionBadge() {
+  const badgeEl = document.getElementById("appVersionBadge");
+  if (!badgeEl) return;
+
+  const currentYear = new Date().getFullYear();
+  let repoPath = GITHUB_REPO_OVERRIDE;
+
+  // Auto-detect GitHub user and repo from GitHub Pages URL (e.g. username.github.io/repo-name/)
+  if (!repoPath && window.location.hostname.includes("github.io")) {
+    const owner = window.location.hostname.split(".")[0];
+    const pathParts = window.location.pathname.split("/").filter(Boolean);
+    const repo = pathParts.length > 0 ? pathParts[0] : "";
+    if (owner && repo) {
+      repoPath = `${owner}/${repo}`;
+    }
+  }
+
+  if (!repoPath) {
+    const todayStr = new Date().toISOString().split("T")[0];
+    badgeEl.textContent = `v5.0 • Build ${todayStr}`;
+    return;
+  }
+
+  try {
+    const res = await fetchWithTimeout(`https://api.github.com/repos/${repoPath}/commits?per_page=1`, {}, 3000);
+    if (res && res.ok) {
+      const commits = await res.json();
+      if (commits && commits.length > 0) {
+        const latestCommit = commits[0];
+        const rawDate = latestCommit.commit.author.date || latestCommit.commit.committer.date;
+        const commitDate = new Date(rawDate);
+        const formattedDate = commitDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+        const shortSha = latestCommit.sha.substring(0, 7);
+
+        badgeEl.innerHTML = `🟢 v5.0 • Updated ${formattedDate} (<span style="font-family:monospace;">${shortSha}</span>)`;
+        badgeEl.setAttribute("title", `Latest commit: "${latestCommit.commit.message}" (${rawDate})`);
+        return;
+      }
+    }
+  } catch (err) {}
+
+  badgeEl.textContent = `v5.0 • Active Build ${currentYear}`;
+}
 
 function initTheme() {
   const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || "dark";
@@ -294,7 +341,7 @@ function toggleTheme() {
   if (leafletMapInstance && baseTileLayer) {
     leafletMapInstance.removeLayer(baseTileLayer);
     const tileUrl = newTheme === "dark" 
-      ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+      ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
       : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
     baseTileLayer = L.tileLayer(tileUrl, { maxZoom: 19, attribution: '© OpenStreetMap © CARTO' }).addTo(leafletMapInstance);
   }
@@ -1085,8 +1132,8 @@ window.handleToggleTag = function(id, itemType) {
       taggedPlaces.push({ ...item, itemType, assignedDay: 0 });
     }
   }
-  sortAndRenderHotels();
-  renderDestinationSights(currentSights, resolvedVisitCityObj ? resolvedVisitCityObj.cityName : "");
+  // Immediately update map markers dynamically without changing zoom
+  applyRadiusFilterAndRender(currentRadiusKm, false);
   updateItineraryDrawer();
   renderCustomPlannerModal();
 };
@@ -1105,8 +1152,8 @@ window.handleAssignDay = function(id, itemType, dayValue) {
     taggedItem.assignedDay = dayNum;
   }
 
-  sortAndRenderHotels();
-  renderDestinationSights(currentSights, resolvedVisitCityObj ? resolvedVisitCityObj.cityName : "");
+  // Immediately update map markers dynamically without changing zoom
+  applyRadiusFilterAndRender(currentRadiusKm, false);
   updateItineraryDrawer();
   renderCustomPlannerModal();
 };
@@ -1152,7 +1199,7 @@ function initLeafletMap(centerLat, centerLon, sights, hotels, radiusKm) {
 
   const currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
   const tileUrl = currentTheme === "dark" 
-    ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+    ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
     : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
   if (!leafletMapInstance) {
@@ -1163,10 +1210,10 @@ function initLeafletMap(centerLat, centerLon, sights, hotels, radiusKm) {
     leafletMapInstance.setView([centerLat, centerLon], 13);
   }
 
-  applyRadiusFilterAndRender(currentRadiusKm);
+  applyRadiusFilterAndRender(currentRadiusKm, true);
 }
 
-function applyRadiusFilterAndRender(radiusKm) {
+function applyRadiusFilterAndRender(radiusKm, shouldFitBounds = true) {
   currentRadiusKm = radiusKm;
 
   const filteredSights = allRawSights.filter(s => (s.distanceKm !== undefined ? s.distanceKm : 0) <= currentRadiusKm);
@@ -1179,11 +1226,11 @@ function applyRadiusFilterAndRender(radiusKm) {
   if (leafletMapInstance) {
     mapRadiusCircle = L.circle([targetCenterLat, targetCenterLon], {
       radius: currentRadiusKm * 1000,
-      color: '#3b82f6',
+      color: '#60a5fa',
       fillColor: '#3b82f6',
-      fillOpacity: 0.08,
-      weight: 2,
-      dashArray: '4, 6'
+      fillOpacity: 0.12,
+      weight: 2.5,
+      dashArray: '6, 8'
     }).addTo(leafletMapInstance);
 
     mapMarkersLayer.clearLayers();
@@ -1195,8 +1242,8 @@ function applyRadiusFilterAndRender(radiusKm) {
         const hotelIcon = L.divIcon({
           className: `custom-map-marker marker-hotel ${isTagged ? 'marker-tagged' : ''}`,
           html: isTagged ? (assignedDay > 0 ? `D${assignedDay}` : `⭐`) : `🏨`,
-          iconSize: [30, 30],
-          iconAnchor: [15, 15]
+          iconSize: [32, 32],
+          iconAnchor: [16, 16]
         });
 
         const popupHtml = `
@@ -1229,8 +1276,8 @@ function applyRadiusFilterAndRender(radiusKm) {
         const sightIcon = L.divIcon({
           className: `custom-map-marker ${isTagged ? 'marker-tagged' : isCustom ? 'marker-custom' : isFood ? 'marker-food' : 'marker-sight'}`,
           html: isTagged ? (assignedDay > 0 ? `D${assignedDay}` : `⭐`) : isCustom ? `📍` : isFood ? `🍜` : `🏛️`,
-          iconSize: [30, 30],
-          iconAnchor: [15, 15]
+          iconSize: [32, 32],
+          iconAnchor: [16, 16]
         });
 
         const popupHtml = `
@@ -1254,7 +1301,9 @@ function applyRadiusFilterAndRender(radiusKm) {
       }
     });
 
-    leafletMapInstance.fitBounds(mapRadiusCircle.getBounds(), { padding: [30, 30] });
+    if (shouldFitBounds) {
+      leafletMapInstance.fitBounds(mapRadiusCircle.getBounds(), { padding: [30, 30] });
+    }
     setTimeout(() => leafletMapInstance.invalidateSize(), 300);
   }
 
@@ -1275,7 +1324,7 @@ window.handleDeleteItem = function(id, itemType) {
     allRawSights = allRawSights.filter(s => s.id !== id);
   }
   taggedPlaces = taggedPlaces.filter(p => p.id !== id);
-  applyRadiusFilterAndRender(currentRadiusKm);
+  applyRadiusFilterAndRender(currentRadiusKm, false);
   renderCustomPlannerModal();
 };
 
@@ -2102,6 +2151,7 @@ window.deleteSavedTrip = function(tripId) {
 // ========================================================
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
+  initGitHubVersionBadge();
   document.getElementById("themeToggleBtn")?.addEventListener("click", toggleTheme);
 
   const today = new Date().toISOString().split("T")[0];
@@ -2225,7 +2275,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     closeCustomPlaceModal();
-    applyRadiusFilterAndRender(currentRadiusKm);
+    applyRadiusFilterAndRender(currentRadiusKm, false);
     updateItineraryDrawer();
     renderCustomPlannerModal();
   });
@@ -2271,13 +2321,13 @@ document.addEventListener("DOMContentLoaded", () => {
   radiusSelect?.addEventListener("change", (e) => {
     const val = parseInt(e.target.value);
     if (mapRadiusSelect) mapRadiusSelect.value = val;
-    if (leafletMapInstance) applyRadiusFilterAndRender(val);
+    if (leafletMapInstance) applyRadiusFilterAndRender(val, true);
   });
 
   mapRadiusSelect?.addEventListener("change", (e) => {
     const val = parseInt(e.target.value);
     if (radiusSelect) radiusSelect.value = val;
-    if (leafletMapInstance) applyRadiusFilterAndRender(val);
+    if (leafletMapInstance) applyRadiusFilterAndRender(val, true);
   });
 
   // Currency
