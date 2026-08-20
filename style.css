@@ -1942,6 +1942,170 @@ input[type="number"]:focus,
 }
 
 /* ========================================================
+   SHARE ITINERARY & QR CODE MODAL
+   ======================================================== */
+.qr-code-wrapper {
+  background-color: #ffffff;
+  padding: 1.25rem;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  margin: 0.5rem 0;
+}
+
+#qrcode img, #qrcode canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.copy-success-msg {
+  font-size: 0.78rem;
+  color: var(--accent-green);
+  font-weight: 700;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* ========================================================
+   JET LAG & CIRCADIAN ADJUSTMENT PLANNER
+   ======================================================== */
+.jetlag-summary-hero {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(168, 85, 247, 0.12));
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.jetlag-hero-info h4 {
+  font-size: 1.15rem;
+  color: var(--text-main);
+  margin-bottom: 0.25rem;
+}
+
+.jetlag-hero-info p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.jetlag-shift-badge {
+  background-color: var(--pill-bg);
+  border: 1px solid var(--border);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent-amber);
+}
+
+.circadian-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.circadian-day-card {
+  background-color: var(--pill-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.circadian-day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.circadian-day-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.circadian-phase-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.phase-prep {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: var(--primary);
+}
+
+.phase-transit {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: var(--accent-amber);
+}
+
+.phase-adapt {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: var(--accent-green);
+}
+
+.circadian-protocol-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+}
+
+.circadian-protocol-item {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.circadian-protocol-item .proto-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.proto-light { color: var(--accent-amber); }
+.proto-dark { color: #818cf8; }
+.proto-caffeine { color: #f97316; }
+.proto-sleep { color: var(--accent-purple); }
+
+.circadian-protocol-item .proto-val {
+  font-size: 0.82rem;
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.circadian-protocol-item .proto-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+/* ========================================================
    HOW IT WORKS & VISUAL GUIDE MODAL STYLING
    ======================================================== */
 .guide-steps-grid {

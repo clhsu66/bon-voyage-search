@@ -501,6 +501,7 @@ window.handleTravelerPassportChange = function(index, newCode) {
   if (resolvedDestAirportObj && resolvedVisitCityObj) {
     evaluateAndRenderVisaRequirements(resolvedDestAirportObj, resolvedVisitCityObj);
   }
+  syncUrlHashLive();
 };
 
 function normalizeDestinationCountry(destCountryStr, destCityStr) {
@@ -1152,7 +1153,6 @@ async function fetchDestinationWeather(lat, lon, cityName, departDate, returnDat
     }
   } catch (err) {}
 
-  // Fallback Climatological Model if network or dates beyond forecast window
   const fallbackDays = [];
   const start = departDate ? new Date(departDate) : new Date();
   for (let i = 0; i < 7; i++) {
@@ -1226,7 +1226,6 @@ function renderWeatherForecast(daily) {
     `;
   }
 
-  // Generate Smart Packing Advice
   let advice = "💡 <strong>Packing Advice:</strong> Comfortable walking shoes, breathable clothing, and a light jacket for evenings.";
   if (minObservedF < 45) {
     advice = "🧥 <strong>Packing Alert:</strong> Cold temperatures expected. Bring a thermal layer, warm winter jacket, and gloves.";
@@ -1391,8 +1390,267 @@ function renderEtiquetteGuide(destCountryCode, cityName) {
     </div>
   `;
 }
+
 // ========================================================
-// 8. TAGGING & DAY ASSIGNMENT STATE & MAP CONTROLS
+// 8. CIRCADIAN RHYTHM & JET LAG ADVISOR ENGINE
+// ========================================================
+function calculateCircadianJetLagPlan(originObj, destAirportObj, departDate) {
+  let tzDiffHours = Math.round((destAirportObj.airportLon - originObj.airportLon) / 15);
+  
+  if (tzDiffHours > 12) tzDiffHours -= 24;
+  if (tzDiffHours < -12) tzDiffHours += 24;
+
+  const isEastward = tzDiffHours > 0;
+  const absDiff = Math.abs(tzDiffHours);
+  const directionStr = isEastward ? "Eastward (Phase Advance)" : "Westward (Phase Delay)";
+  
+  const flightDeparture = selectedFlight ? selectedFlight.departTime : "Evening";
+  const flightArrival = selectedFlight ? selectedFlight.arriveTime : "Next Day";
+
+  const departureDateObj = departDate ? new Date(departDate + "T12:00:00") : new Date();
+  const scheduleDays = [];
+
+  const dayMinus2 = new Date(departureDateObj);
+  dayMinus2.setDate(dayMinus2.getDate() - 2);
+  scheduleDays.push({
+    title: `Day -2 (${dayMinus2.toLocaleDateString(undefined, { weekday: 'short', month: 'numeric', day: 'numeric' })}) — Early Preparation`,
+    phase: "Phase 1: Pre-Shift",
+    phaseClass: "phase-prep",
+    light: isEastward ? "☀️ Seek bright light 7:00 AM – 10:00 AM" : "☀️ Seek afternoon light 2:00 PM – 6:00 PM",
+    dark: isEastward ? "🕶️ Dim lights & wear blue-blockers after 8:30 PM" : "🕶️ Avoid early morning bright lights before 8:00 AM",
+    caffeine: "☕ Cut off all caffeine by 1:00 PM",
+    sleep: isEastward ? "🌙 Shift bedtime 45 mins earlier (Target: 10:15 PM)" : "🌙 Shift bedtime 45 mins later (Target: 11:45 PM)"
+  });
+
+  const dayMinus1 = new Date(departureDateObj);
+  dayMinus1.setDate(dayMinus1.getDate() - 1);
+  scheduleDays.push({
+    title: `Day -1 (${dayMinus1.toLocaleDateString(undefined, { weekday: 'short', month: 'numeric', day: 'numeric' })}) — Flight Eve Shifting`,
+    phase: "Phase 2: Alignment",
+    phaseClass: "phase-prep",
+    light: isEastward ? "☀️ Seek morning outdoor sunlight 6:30 AM – 9:30 AM" : "☀️ Seek sunset light exposure 4:00 PM – 7:30 PM",
+    dark: isEastward ? "🕶️ Dim screens completely by 8:00 PM" : "🕶️ Wear sunglasses if waking up early in morning",
+    caffeine: "☕ No caffeine after 12:00 PM (Noon)",
+    sleep: isEastward ? "🌙 Shift bedtime 1.5 hrs earlier (Target: 9:30 PM)" : "🌙 Shift bedtime 1.5 hrs later (Target: 12:30 AM)"
+  });
+
+  scheduleDays.push({
+    title: `Day 0 (${departureDateObj.toLocaleDateString(undefined, { weekday: 'short', month: 'numeric', day: 'numeric' })}) — Departure & In-Flight Strategy`,
+    phase: "Phase 3: Transit Sync",
+    phaseClass: "phase-transit",
+    light: `✈️ Match cabin lights to ${destAirportObj.city} time upon boarding (${flightDeparture} ➔ ${flightArrival})`,
+    dark: isEastward ? "🕶️ Wear eye mask for second half of flight" : "🕶️ Wear eye mask for first 4 hours of flight",
+    caffeine: "💧 High hydration (1 cup water/hr); strict zero alcohol/coffee in-flight",
+    sleep: isEastward ? "🌙 Take 2–3 hour nap in flight during destination night window" : "🌙 Stay awake during destination daylight hours on plane"
+  });
+
+  const dayPlus1 = new Date(departureDateObj);
+  dayPlus1.setDate(dayPlus1.getDate() + 1);
+  scheduleDays.push({
+    title: `Day +1 (${dayPlus1.toLocaleDateString(undefined, { weekday: 'short', month: 'numeric', day: 'numeric' })}) — Landing & Ground Anchoring`,
+    phase: "Phase 4: Target Lock",
+    phaseClass: "phase-adapt",
+    light: isEastward ? `☀️ Critical: Get 45 mins of outdoor sunlight before 11:00 AM in ${destAirportObj.city}` : `☀️ Critical: Walk outside in afternoon sun 1:00 PM – 5:00 PM in ${destAirportObj.city}`,
+    dark: "🕶️ Wear sunglasses if outdoors during biological night",
+    caffeine: "☕ 1 cup coffee allowed strictly before 11:00 AM local time",
+    sleep: `🌙 Anchor bedtime strictly at 10:30 PM local ${destAirportObj.city} time (No long daytime naps!)`
+  });
+
+  const dayPlus2 = new Date(departureDateObj);
+  dayPlus2.setDate(dayPlus2.getDate() + 2);
+  scheduleDays.push({
+    title: `Day +2 (${dayPlus2.toLocaleDateString(undefined, { weekday: 'short', month: 'numeric', day: 'numeric' })}) — Circadian Rhythm Synchronized`,
+    phase: "Phase 5: Full Sync",
+    phaseClass: "phase-adapt",
+    light: "☀️ Normal outdoor daylight exposure throughout day",
+    dark: "🕶️ Dim bedroom lights 30 mins before sleep",
+    caffeine: "☕ Standard morning coffee allowed",
+    sleep: "🌙 Wake up at 7:30 AM local time feeling refreshed and energized"
+  });
+
+  return {
+    tzDiffHours,
+    absDiff,
+    isEastward,
+    directionStr,
+    scheduleDays
+  };
+}
+
+function renderJetLagModal() {
+  const bodyEl = document.getElementById("jetLagBody");
+  const subtitleEl = document.getElementById("jetLagHeaderSubtitle");
+  if (!bodyEl || !resolvedOriginObj || !resolvedDestAirportObj) return;
+
+  const plan = calculateCircadianJetLagPlan(resolvedOriginObj, resolvedDestAirportObj, currentDepartDate);
+
+  if (subtitleEl) {
+    subtitleEl.textContent = `Optimized schedule for ${resolvedOriginObj.city} (${resolvedOriginObj.code}) ➔ ${resolvedDestAirportObj.city} (${resolvedDestAirportObj.code})`;
+  }
+
+  bodyEl.innerHTML = `
+    <div class="jetlag-summary-hero">
+      <div class="jetlag-hero-info">
+        <h4>${plan.absDiff === 0 ? 'Same Time Zone' : `${plan.absDiff} Hours ${plan.isEastward ? 'Ahead (+)' : 'Behind (-)'}`}</h4>
+        <p>Flight Corridor: <strong>${resolvedOriginObj.code} ➔ ${resolvedDestAirportObj.code}</strong> • Direction: <strong>${plan.directionStr}</strong></p>
+      </div>
+      <div class="jetlag-shift-badge">
+        ${plan.absDiff <= 2 ? 'Minimal Jet Lag Expected' : plan.isEastward ? '⚠️ Phase Advance (Seek Morning Light)' : 'ℹ️ Phase Delay (Seek Afternoon Light)'}
+      </div>
+    </div>
+
+    <div class="circadian-timeline">
+      ${plan.scheduleDays.map(day => `
+        <div class="circadian-day-card">
+          <div class="circadian-day-header">
+            <span class="circadian-day-title">${day.title}</span>
+            <span class="circadian-phase-tag ${day.phaseClass}">${day.phase}</span>
+          </div>
+
+          <div class="circadian-protocol-grid">
+            <div class="circadian-protocol-item">
+              <span class="proto-label proto-light">☀️ Light Seeking</span>
+              <span class="proto-desc">${day.light}</span>
+            </div>
+
+            <div class="circadian-protocol-item">
+              <span class="proto-label proto-dark">🕶️ Light Avoidance</span>
+              <span class="proto-desc">${day.dark}</span>
+            </div>
+
+            <div class="circadian-protocol-item">
+              <span class="proto-label proto-caffeine">☕ Caffeine Protocol</span>
+              <span class="proto-desc">${day.caffeine}</span>
+            </div>
+
+            <div class="circadian-protocol-item">
+              <span class="proto-label proto-sleep">🌙 Target Sleep</span>
+              <span class="proto-desc">${day.sleep}</span>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function openJetLagModal() {
+  renderJetLagModal();
+  document.getElementById("jetLagModal")?.classList.remove("hidden");
+  document.getElementById("jetLagModalOverlay")?.classList.remove("hidden");
+}
+
+function closeJetLagModal() {
+  document.getElementById("jetLagModal")?.classList.add("hidden");
+  document.getElementById("jetLagModalOverlay")?.classList.add("hidden");
+}
+
+// ========================================================
+// 9. ULTRA-COMPACT SHAREABLE URL & QR CODE ENGINE
+// ========================================================
+let qrcodeInstance = null;
+
+function encodeTripStateToUrlHash() {
+  if (!resolvedOriginObj || !resolvedDestAirportObj || !resolvedVisitCityObj) return "";
+
+  // Highly compact schema to keep QR code footprint lightweight (<350 chars)
+  const compactPayload = {
+    o: resolvedOriginObj.code,
+    d: resolvedDestAirportObj.code,
+    c: resolvedVisitCityObj.cityName,
+    dd: currentDepartDate,
+    rd: currentReturnDate,
+    tt: currentTripType,
+    pax: travelersCount,
+    p: travelerPassports,
+    r: currentRadiusKm,
+    fl: selectedFlight ? selectedFlight.id : null,
+    ht: selectedHotel ? selectedHotel.id : null,
+    t: taggedPlaces.map(p => {
+      if (p.isCustom) {
+        return { id: p.id, n: p.name, ty: p.type || 'sight', cat: p.category, loc: p.location, lat: p.lat, lon: p.lon, day: p.assignedDay || 0, cust: 1 };
+      }
+      return { id: p.id, day: p.assignedDay || 0 };
+    })
+  };
+
+  try {
+    const jsonStr = JSON.stringify(compactPayload);
+    return btoa(encodeURIComponent(jsonStr));
+  } catch (e) {
+    return "";
+  }
+}
+
+function getShareableTripUrl() {
+  const hashVal = encodeTripStateToUrlHash();
+  const baseUrl = window.location.origin + window.location.pathname;
+  return hashVal ? `${baseUrl}#trip=${hashVal}` : baseUrl;
+}
+
+function syncUrlHashLive() {
+  const shareUrl = getShareableTripUrl();
+  window.history.replaceState(null, '', shareUrl);
+}
+
+function openShareTripModal() {
+  const modal = document.getElementById("shareTripModal");
+  const overlay = document.getElementById("shareTripModalOverlay");
+  const urlInput = document.getElementById("shareTripUrlInput");
+  const qrContainer = document.getElementById("qrcode");
+  const copyMsg = document.getElementById("copySuccessMsg");
+
+  if (!modal || !overlay || !urlInput || !qrContainer) return;
+
+  const shareUrl = getShareableTripUrl();
+  urlInput.value = shareUrl;
+  if (copyMsg) copyMsg.classList.add("hidden");
+
+  // Render Crisp High-Contrast QR Code
+  qrContainer.innerHTML = "";
+  if (typeof QRCode !== 'undefined') {
+    qrcodeInstance = new QRCode(qrContainer, {
+      text: shareUrl,
+      width: 190,
+      height: 190,
+      colorDark: "#0b0f19",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  } else {
+    qrContainer.innerHTML = `<p style="font-size:12px; color:var(--text-muted);">QR Code Engine Loading...</p>`;
+  }
+
+  modal.classList.remove("hidden");
+  overlay.classList.remove("hidden");
+}
+
+function closeShareTripModal() {
+  document.getElementById("shareTripModal")?.classList.add("hidden");
+  document.getElementById("shareTripModalOverlay")?.classList.add("hidden");
+}
+
+function copyShareTripUrl() {
+  const urlInput = document.getElementById("shareTripUrlInput");
+  const copyMsg = document.getElementById("copySuccessMsg");
+  if (!urlInput) return;
+
+  urlInput.select();
+  urlInput.setSelectionRange(0, 99999);
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(urlInput.value).then(() => {
+      if (copyMsg) copyMsg.classList.remove("hidden");
+      setTimeout(() => copyMsg?.classList.add("hidden"), 3000);
+    });
+  } else {
+    document.execCommand("copy");
+    if (copyMsg) copyMsg.classList.remove("hidden");
+    setTimeout(() => copyMsg?.classList.add("hidden"), 3000);
+  }
+}
+// ========================================================
+// 10. TAGGING & DAY ASSIGNMENT STATE & MAP CONTROLS
 // ========================================================
 let taggedPlaces = [];
 
@@ -1411,10 +1669,10 @@ window.handleToggleTag = function(id, itemType) {
       taggedPlaces.push({ ...item, itemType, assignedDay: 0 });
     }
   }
-  // Immediately update map markers dynamically without changing zoom or bounds
   applyRadiusFilterAndRender(currentRadiusKm, false);
   updateItineraryDrawer();
   renderCustomPlannerModal();
+  syncUrlHashLive();
 };
 
 window.handleAssignDay = function(id, itemType, dayValue) {
@@ -1431,10 +1689,10 @@ window.handleAssignDay = function(id, itemType, dayValue) {
     taggedItem.assignedDay = dayNum;
   }
 
-  // Immediately update map markers dynamically without changing zoom or bounds
   applyRadiusFilterAndRender(currentRadiusKm, false);
   updateItineraryDrawer();
   renderCustomPlannerModal();
+  syncUrlHashLive();
 };
 
 function isItemTagged(id) {
@@ -1605,6 +1863,7 @@ window.handleDeleteItem = function(id, itemType) {
   taggedPlaces = taggedPlaces.filter(p => p.id !== id);
   applyRadiusFilterAndRender(currentRadiusKm, false);
   renderCustomPlannerModal();
+  syncUrlHashLive();
 };
 
 window.handleEditItem = function(id, itemType) {
@@ -1666,7 +1925,7 @@ function closeCustomPlaceModal() {
 }
 
 // ========================================================
-// 9. FLIGHT SCHEDULE GENERATOR
+// 11. FLIGHT SCHEDULE GENERATOR
 // ========================================================
 function formatMinutesToDuration(mins) {
   const h = Math.floor(mins / 60);
@@ -1760,7 +2019,7 @@ function generateDynamicFlightSchedule(originObj, destAirportObj, departDate, re
 }
 
 // ========================================================
-// 10. APPLICATION CONTROLLER & STATE RENDERING
+// 12. APPLICATION CONTROLLER & STATE RENDERING
 // ========================================================
 let currentTripType = "roundtrip";
 let currentFlights = [];
@@ -1986,6 +2245,7 @@ window.handleSelectFlight = function(flightId) {
   selectedFlight = selectedFlight && selectedFlight.id === flightId ? null : fl;
   sortAndRenderFlights(document.getElementById("flightSort")?.value || "price");
   updateItineraryDrawer();
+  syncUrlHashLive();
 };
 
 window.handleSelectHotel = function(hotelId) {
@@ -1993,6 +2253,7 @@ window.handleSelectHotel = function(hotelId) {
   selectedHotel = selectedHotel && selectedHotel.id === hotelId ? null : ht;
   sortAndRenderHotels();
   updateItineraryDrawer();
+  syncUrlHashLive();
 };
 
 function updateItineraryDrawer() {
@@ -2095,7 +2356,7 @@ function toggleDrawer(open) {
 }
 
 // ========================================================
-// 11. HOW IT WORKS & VISUAL GUIDE MODAL LOGIC
+// 13. HOW IT WORKS & VISUAL GUIDE MODAL LOGIC
 // ========================================================
 const HOW_IT_WORKS_KEY = "voyagesearch_has_seen_guide";
 
@@ -2120,7 +2381,7 @@ function initHowItWorksGuide() {
 }
 
 // ========================================================
-// 12. CUSTOM & AI DAILY ITINERARY PLANNERS
+// 14. CUSTOM & AI DAILY ITINERARY PLANNERS
 // ========================================================
 function openCustomPlannerModal() {
   renderCustomPlannerModal();
@@ -2142,7 +2403,6 @@ function renderCustomPlannerModal() {
   const unassignedPlaces = taggedPlaces.filter(p => !p.assignedDay || p.assignedDay === 0);
 
   let html = `
-    <!-- Staging Tray: Tagged but unassigned places -->
     <div class="planner-staging-tray">
       <div class="planner-staging-title">
         <span>⭐ Tagged Places Tray (${unassignedPlaces.length} unassigned)</span>
@@ -2162,7 +2422,6 @@ function renderCustomPlannerModal() {
       </div>
     </div>
 
-    <!-- Day-by-Day Board Grid -->
     <div class="planner-board-grid">
   `;
 
@@ -2191,7 +2450,7 @@ function renderCustomPlannerModal() {
             <div class="planner-card-item">
               <div class="planner-item-info">
                 <strong>${idx + 1}. ${item.name}</strong>
-                <small>${item.category} • ${item.location}</small>
+                <small>${item.category} • ${item.location || item.area || ''}</small>
               </div>
               <select class="card-day-select" onchange="handleAssignDay('${item.id}', '${item.itemType || 'sight'}', this.value)">
                 ${generateDaySelectOptions(item.assignedDay || 0)}
@@ -2309,7 +2568,7 @@ function closeSmartItineraryModal() {
 }
 
 // ========================================================
-// 13. SAVED TRIPS MANAGER
+// 15. SAVED TRIPS MANAGER
 // ========================================================
 const SAVED_TRIPS_KEY = "voyagesearch_saved_trips";
 
@@ -2411,10 +2670,13 @@ window.loadSavedTrip = function(tripId) {
   renderTravelerNationalityDropdowns(travelersCount);
 
   if (trip.taggedPlaces) taggedPlaces = trip.taggedPlaces;
+  if (trip.selectedFlight) selectedFlight = trip.selectedFlight;
+  if (trip.selectedHotel) selectedHotel = trip.selectedHotel;
 
   document.getElementById("savedTripsModal")?.classList.add("hidden");
   document.getElementById("savedTripsModalOverlay")?.classList.add("hidden");
-  document.getElementById("travelSearchForm")?.dispatchEvent(new Event("submit"));
+  
+  executeTravelSearch(true);
 };
 
 window.deleteSavedTrip = function(tripId) {
@@ -2426,18 +2688,259 @@ window.deleteSavedTrip = function(tripId) {
 };
 
 // ========================================================
-// 14. DOM INITIALIZATION & EVENT LISTENERS
+// 16. CORE SEARCH EXECUTION & RESTORATION ENGINE
+// ========================================================
+async function executeTravelSearch(preserveState = false, restoreConfig = {}) {
+  const loadingState = document.getElementById("loadingState");
+  const resultsSection = document.getElementById("resultsSection");
+  const resultsTitle = document.getElementById("resultsTitle");
+  const resolvedOriginText = document.getElementById("resolvedOriginText");
+  const resolvedDestText = document.getElementById("resolvedDestText");
+  const resolvedCityPill = document.getElementById("resolvedCityPill");
+  const tripLengthSubtitle = document.getElementById("tripLengthSubtitle");
+  const googleFlightsLiveBtn = document.getElementById("googleFlightsLiveBtn");
+  const radiusSelect = document.getElementById("radiusSelect");
+  const departInput = document.getElementById("departDate");
+  const returnInput = document.getElementById("returnDate");
+  const leg2DateInput = document.getElementById("leg2Date");
+  const travelersCountInput = document.getElementById("travelersCount");
+
+  const originInputVal = document.getElementById("origin").value.trim();
+  const destAirportInputVal = document.getElementById("destination").value.trim();
+  const visitCityInputVal = document.getElementById("visitCity").value.trim();
+  const chosenRadiusKm = parseInt(radiusSelect ? radiusSelect.value : 10);
+
+  currentDepartDate = departInput.value;
+  currentReturnDate = returnInput ? returnInput.value : "";
+  
+  const leg2OriginVal = document.getElementById("leg2Origin")?.value.trim();
+  const leg2DestVal = document.getElementById("leg2Dest")?.value.trim();
+  currentLeg2Date = leg2DateInput ? leg2DateInput.value : "";
+
+  travelersCount = parseInt(travelersCountInput ? travelersCountInput.value : 1) || 1;
+
+  const selectedBrands = Array.from(document.querySelectorAll('input[name="hotelBrand"]:checked')).map(cb => cb.value);
+  if (selectedBrands.length === 0) {
+    alert("Please select at least one hotel brand.");
+    return;
+  }
+
+  if (currentDepartDate && currentReturnDate && currentTripType === "roundtrip") {
+    const d1 = new Date(currentDepartDate);
+    const d2 = new Date(currentReturnDate);
+    tripDays = Math.max(1, Math.ceil(Math.abs(d2 - d1) / (1000 * 60 * 60 * 24)));
+  } else {
+    tripDays = 1;
+  }
+
+  if (!preserveState) {
+    selectedFlight = null;
+    selectedHotel = null;
+    taggedPlaces = [];
+  }
+
+  resultsSection?.classList.add("hidden");
+  loadingState?.classList.remove("hidden");
+
+  resolvedOriginObj = await resolveAirportHub(originInputVal);
+  resolvedDestAirportObj = await resolveAirportHub(destAirportInputVal);
+  resolvedVisitCityObj = await resolveVisitCityLocation(visitCityInputVal, resolvedDestAirportObj);
+
+  if (currentTripType === "multicity" && leg2OriginVal && leg2DestVal) {
+    resolvedLeg2OriginObj = await resolveAirportHub(leg2OriginVal);
+    resolvedLeg2DestObj = await resolveAirportHub(leg2DestVal);
+  } else {
+    resolvedLeg2OriginObj = null;
+    resolvedLeg2DestObj = null;
+  }
+
+  evaluateAndRenderVisaRequirements(resolvedDestAirportObj, resolvedVisitCityObj);
+
+  const rawSights = await fetchTargetCitySights(
+    resolvedVisitCityObj.cityName,
+    resolvedDestAirportObj.code,
+    resolvedVisitCityObj.lat,
+    resolvedVisitCityObj.lon
+  );
+
+  const rawHotels = await fetchLiveTargetHotels(
+    resolvedVisitCityObj.lat,
+    resolvedVisitCityObj.lon,
+    resolvedVisitCityObj.cityName,
+    resolvedDestAirportObj.code,
+    selectedBrands,
+    currentDepartDate,
+    currentReturnDate
+  );
+
+  currentFlights = generateDynamicFlightSchedule(resolvedOriginObj, resolvedDestAirportObj, currentDepartDate, currentReturnDate, currentTripType);
+  if (googleFlightsLiveBtn) {
+    googleFlightsLiveBtn.href = buildGoogleFlightsUrl(
+      currentTripType,
+      resolvedOriginObj.code,
+      resolvedDestAirportObj.code,
+      currentDepartDate,
+      currentReturnDate,
+      resolvedLeg2OriginObj ? resolvedLeg2OriginObj.code : "",
+      resolvedLeg2DestObj ? resolvedLeg2DestObj.code : "",
+      currentLeg2Date
+    );
+  }
+
+  const destCountryCode = normalizeDestinationCountry(resolvedVisitCityObj.country || resolvedDestAirportObj.country, resolvedVisitCityObj.cityName);
+  fetchDestinationWeather(resolvedVisitCityObj.lat, resolvedVisitCityObj.lon, resolvedVisitCityObj.cityName, currentDepartDate, currentReturnDate);
+  renderEtiquetteGuide(destCountryCode, resolvedVisitCityObj.cityName);
+
+  // Restore Flight, Hotel & Tagged Places if requested by URL hash or saved loader
+  if (preserveState && restoreConfig) {
+    if (restoreConfig.flId) {
+      const flMatch = currentFlights.find(f => f.id === restoreConfig.flId);
+      if (flMatch) selectedFlight = flMatch;
+    }
+    if (restoreConfig.htId) {
+      const htMatch = rawHotels.find(h => h.id === restoreConfig.htId);
+      if (htMatch) selectedHotel = htMatch;
+    }
+    if (restoreConfig.taggedList && Array.isArray(restoreConfig.taggedList)) {
+      taggedPlaces = [];
+      restoreConfig.taggedList.forEach(tItem => {
+        if (tItem.cust) {
+          const customSight = {
+            id: tItem.id,
+            name: tItem.n,
+            type: tItem.ty,
+            category: tItem.cat,
+            location: tItem.loc,
+            lat: tItem.lat,
+            lon: tItem.lon,
+            distanceKm: parseFloat(haversineDistance(resolvedVisitCityObj.lat, resolvedVisitCityObj.lon, tItem.lat, tItem.lon).toFixed(1)),
+            assignedDay: tItem.day || 0,
+            isCustom: true
+          };
+          rawSights.unshift(customSight);
+          taggedPlaces.push(customSight);
+        } else {
+          const foundSight = rawSights.find(s => s.id === tItem.id);
+          const foundHotel = rawHotels.find(h => h.id === tItem.id);
+          if (foundSight) {
+            taggedPlaces.push({ ...foundSight, itemType: 'sight', assignedDay: tItem.day || 0 });
+          } else if (foundHotel) {
+            taggedPlaces.push({ ...foundHotel, itemType: 'hotel', assignedDay: tItem.day || 0 });
+          }
+        }
+      });
+    }
+  }
+
+  loadingState?.classList.add("hidden");
+
+  if (resolvedOriginText) resolvedOriginText.textContent = `${resolvedOriginObj.name} (${resolvedOriginObj.code})`;
+  if (resolvedDestText) resolvedDestText.textContent = `${resolvedDestAirportObj.name} (${resolvedDestAirportObj.code})`;
+  if (resolvedCityPill) resolvedCityPill.textContent = `📍 Target: ${resolvedVisitCityObj.cityName}`;
+  if (resultsTitle) resultsTitle.textContent = `${resolvedOriginObj.name} to ${resolvedDestAirportObj.name} | Exploring ${resolvedVisitCityObj.cityName}`;
+  if (tripLengthSubtitle) tripLengthSubtitle.textContent = currentReturnDate && currentTripType === "roundtrip" ? `Trip Length: ${tripDays} night(s) stay (${travelersCount} Traveler${travelersCount > 1 ? 's' : ''})` : `Point-to-point corridor search`;
+
+  activeSightFilter = "all";
+  document.querySelectorAll(".sight-filter-btn").forEach(b => {
+    b.classList.toggle("active", b.getAttribute("data-filter") === "all");
+  });
+
+  activeBrandFilter = "all";
+  document.querySelectorAll(".hotel-pill-btn").forEach(b => {
+    b.classList.toggle("active", b.getAttribute("data-brand") === "all");
+  });
+
+  renderTransitGuide(resolvedDestAirportObj.code, resolvedVisitCityObj.cityName);
+
+  const flightSortEl = document.getElementById("flightSort");
+  const hotelSortEl = document.getElementById("hotelSort");
+  if (flightSortEl) flightSortEl.value = "price";
+  if (hotelSortEl) hotelSortEl.value = "rating";
+  
+  sortAndRenderFlights("price");
+  initLeafletMap(resolvedVisitCityObj.lat, resolvedVisitCityObj.lon, rawSights, rawHotels, chosenRadiusKm);
+  updateItineraryDrawer();
+
+  resultsSection?.classList.remove("hidden");
+  syncUrlHashLive();
+}
+
+async function restoreTripStateFromUrlHash() {
+  const hash = window.location.hash;
+  if (!hash || !hash.includes("#trip=")) return;
+
+  try {
+    const rawEncoded = hash.replace("#trip=", "");
+    const jsonStr = decodeURIComponent(atob(rawEncoded));
+    const state = JSON.parse(jsonStr);
+
+    if (state && state.o && state.d) {
+      document.getElementById("origin").value = state.o;
+      document.getElementById("destination").value = state.d;
+      if (state.c && document.getElementById("visitCity")) {
+        document.getElementById("visitCity").value = state.c;
+      }
+      if (state.dd && document.getElementById("departDate")) {
+        document.getElementById("departDate").value = state.dd;
+      }
+      if (state.rd && document.getElementById("returnDate")) {
+        document.getElementById("returnDate").value = state.rd;
+      }
+      if (state.r && document.getElementById("radiusSelect")) {
+        document.getElementById("radiusSelect").value = state.r;
+      }
+      if (state.pax && document.getElementById("travelersCount")) {
+        document.getElementById("travelersCount").value = state.pax;
+        travelersCount = state.pax;
+      }
+      if (state.p && Array.isArray(state.p)) {
+        travelerPassports = state.p;
+      }
+      renderTravelerNationalityDropdowns(travelersCount);
+
+      if (state.tt) {
+        currentTripType = state.tt;
+        document.querySelectorAll(".tab-btn").forEach(b => {
+          b.classList.toggle("active", b.getAttribute("data-type") === state.tt);
+        });
+        const returnGroup = document.getElementById("returnDateGroup");
+        if (state.tt === "roundtrip") returnGroup?.classList.remove("hidden");
+        else returnGroup?.classList.add("hidden");
+      }
+
+      await executeTravelSearch(true, {
+        flId: state.fl,
+        htId: state.ht,
+        taggedList: state.t
+      });
+    }
+  } catch (e) {
+    console.error("Could not parse shared trip hash URL:", e);
+  }
+}
+
+// ========================================================
+// 17. DOM INITIALIZATION & EVENT LISTENERS
 // ========================================================
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
   initGitHubVersionBadge();
   document.getElementById("themeToggleBtn")?.addEventListener("click", toggleTheme);
 
-  // Weather Temperature Unit Toggle Buttons
   document.getElementById("tempUnitFBtn")?.addEventListener("click", () => handleSetTempUnit("F"));
   document.getElementById("tempUnitCBtn")?.addEventListener("click", () => handleSetTempUnit("C"));
 
-  // Debounced Window Resize Handler to dynamically adapt Leaflet Map
+  document.getElementById("openShareModalBtn")?.addEventListener("click", openShareTripModal);
+  document.getElementById("drawerShareBtn")?.addEventListener("click", openShareTripModal);
+  document.getElementById("closeShareTripModalBtn")?.addEventListener("click", closeShareTripModal);
+  document.getElementById("shareTripModalOverlay")?.addEventListener("click", closeShareTripModal);
+  document.getElementById("copyShareTripUrlBtn")?.addEventListener("click", copyShareTripUrl);
+
+  document.getElementById("openJetLagBtn")?.addEventListener("click", openJetLagModal);
+  document.getElementById("drawerJetLagBtn")?.addEventListener("click", openJetLagModal);
+  document.getElementById("closeJetLagModalBtn")?.addEventListener("click", closeJetLagModal);
+  document.getElementById("jetLagModalOverlay")?.addEventListener("click", closeJetLagModal);
+
   let resizeDebounceTimer = null;
   window.addEventListener("resize", () => {
     clearTimeout(resizeDebounceTimer);
@@ -2458,7 +2961,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (returnInput) returnInput.setAttribute("min", today);
   if (leg2DateInput) leg2DateInput.setAttribute("min", today);
 
-  // Initialize Traveler Passport Dropdowns
   const initialTravelerCount = parseInt(travelersCountInput ? travelersCountInput.value : 1) || 1;
   renderTravelerNationalityDropdowns(initialTravelerCount);
 
@@ -2467,10 +2969,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const count = Math.max(1, parseInt(e.target.value) || 1);
       travelersCount = count;
       renderTravelerNationalityDropdowns(count);
+      syncUrlHashLive();
     });
   }
 
-  // How It Works Modal Bindings & First-Time Check
   initHowItWorksGuide();
   document.getElementById("openHowItWorksBtn")?.addEventListener("click", openHowItWorksModal);
   document.getElementById("closeHowItWorksModalBtn")?.addEventListener("click", closeHowItWorksModal);
@@ -2484,7 +2986,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   updateSavedTripsCountBadge();
 
-  // Custom Place Form
+  // Restore Shared Trip URL if hash parameter exists
+  restoreTripStateFromUrlHash();
+
   document.getElementById("customPlaceForm")?.addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -2572,21 +3076,19 @@ document.addEventListener("DOMContentLoaded", () => {
     applyRadiusFilterAndRender(currentRadiusKm, false);
     updateItineraryDrawer();
     renderCustomPlannerModal();
+    syncUrlHashLive();
   });
 
   document.getElementById("openAddPlaceMapBtn")?.addEventListener("click", () => openCustomPlaceModal());
   document.getElementById("openAddPlaceListBtn")?.addEventListener("click", () => openCustomPlaceModal());
-  document.getElementById("closePlaceModalBtn")?.addEventListener("closePlaceModal", closeCustomPlaceModal);
   document.getElementById("closePlaceModalBtn")?.addEventListener("click", closeCustomPlaceModal);
   document.getElementById("placeModalOverlay")?.addEventListener("click", closeCustomPlaceModal);
 
-  // Custom Day Planner Triggers
   document.getElementById("openCustomPlannerBtn")?.addEventListener("click", openCustomPlannerModal);
   document.getElementById("drawerCustomPlannerBtn")?.addEventListener("click", openCustomPlannerModal);
   document.getElementById("closeCustomPlannerModalBtn")?.addEventListener("click", closeCustomPlannerModal);
   document.getElementById("customPlannerModalOverlay")?.addEventListener("click", closeCustomPlannerModal);
 
-  // Tabs
   document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.addEventListener("click", (e) => {
       document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
@@ -2606,10 +3108,10 @@ document.addEventListener("DOMContentLoaded", () => {
         returnGroup?.classList.add("hidden");
         multiCityFields?.classList.remove("hidden");
       }
+      syncUrlHashLive();
     });
   });
 
-  // Radius Selectors Sync
   const radiusSelect = document.getElementById("radiusSelect");
   const mapRadiusSelect = document.getElementById("mapRadiusSelect");
 
@@ -2617,15 +3119,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const val = parseInt(e.target.value);
     if (mapRadiusSelect) mapRadiusSelect.value = val;
     if (leafletMapInstance) applyRadiusFilterAndRender(val, true);
+    syncUrlHashLive();
   });
 
   mapRadiusSelect?.addEventListener("change", (e) => {
     const val = parseInt(e.target.value);
     if (radiusSelect) radiusSelect.value = val;
     if (leafletMapInstance) applyRadiusFilterAndRender(val, true);
+    syncUrlHashLive();
   });
 
-  // Currency
   document.getElementById("currencySelect")?.addEventListener("change", (e) => {
     currentCurrency = e.target.value;
     if (currentFlights.length > 0) {
@@ -2635,7 +3138,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // View Mode
   const toggleListViewBtn = document.getElementById("toggleListViewBtn");
   const toggleMapViewBtn = document.getElementById("toggleMapViewBtn");
   const mapSection = document.getElementById("mapSection");
@@ -2667,7 +3169,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Saved Trips Modal
   document.getElementById("openSavedTripsBtn")?.addEventListener("click", () => {
     renderSavedTripsModal();
     document.getElementById("savedTripsModal")?.classList.remove("hidden");
@@ -2686,7 +3187,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("saveTripToStorageBtn")?.addEventListener("click", saveTripToLocalStorage);
 
-  // Drawer
   document.getElementById("viewDrawerBtn")?.addEventListener("click", () => toggleDrawer(true));
   document.getElementById("closeDrawerBtn")?.addEventListener("click", () => toggleDrawer(false));
   document.getElementById("itineraryOverlay")?.addEventListener("click", () => toggleDrawer(false));
@@ -2694,10 +3194,11 @@ document.addEventListener("DOMContentLoaded", () => {
   if (departInput && returnInput) {
     departInput.addEventListener("change", (e) => {
       returnInput.setAttribute("min", e.target.value);
+      syncUrlHashLive();
     });
+    returnInput.addEventListener("change", () => syncUrlHashLive());
   }
 
-  // Sorters & Category Filters
   document.getElementById("flightSort")?.addEventListener("change", (e) => sortAndRenderFlights(e.target.value));
   document.getElementById("hotelSort")?.addEventListener("change", () => sortAndRenderHotels());
 
@@ -2719,141 +3220,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // AI Smart Itinerary Trigger
   document.getElementById("generateSmartItineraryBtn")?.addEventListener("click", generateSmartDailyItinerary);
 
-  // Main Form Submit
   const form = document.getElementById("travelSearchForm");
-  const loadingState = document.getElementById("loadingState");
-  const resultsSection = document.getElementById("resultsSection");
-  const resultsTitle = document.getElementById("resultsTitle");
-  const resolvedOriginText = document.getElementById("resolvedOriginText");
-  const resolvedDestText = document.getElementById("resolvedDestText");
-  const resolvedCityPill = document.getElementById("resolvedCityPill");
-  const tripLengthSubtitle = document.getElementById("tripLengthSubtitle");
-  const googleFlightsLiveBtn = document.getElementById("googleFlightsLiveBtn");
-
   if (form) {
-    form.addEventListener("submit", async (e) => {
+    form.addEventListener("submit", (e) => {
       e.preventDefault();
-
-      const originInputVal = document.getElementById("origin").value.trim();
-      const destAirportInputVal = document.getElementById("destination").value.trim();
-      const visitCityInputVal = document.getElementById("visitCity").value.trim();
-      const chosenRadiusKm = parseInt(radiusSelect ? radiusSelect.value : 10);
-
-      currentDepartDate = departInput.value;
-      currentReturnDate = returnInput ? returnInput.value : "";
-      
-      const leg2OriginVal = document.getElementById("leg2Origin")?.value.trim();
-      const leg2DestVal = document.getElementById("leg2Dest")?.value.trim();
-      currentLeg2Date = leg2DateInput ? leg2DateInput.value : "";
-
-      travelersCount = parseInt(travelersCountInput ? travelersCountInput.value : 1) || 1;
-
-      const selectedBrands = Array.from(document.querySelectorAll('input[name="hotelBrand"]:checked')).map(cb => cb.value);
-      if (selectedBrands.length === 0) {
-        alert("Please select at least one hotel brand.");
-        return;
-      }
-
-      if (currentDepartDate && currentReturnDate && currentTripType === "roundtrip") {
-        const d1 = new Date(currentDepartDate);
-        const d2 = new Date(currentReturnDate);
-        tripDays = Math.max(1, Math.ceil(Math.abs(d2 - d1) / (1000 * 60 * 60 * 24)));
-      } else {
-        tripDays = 1;
-      }
-
-      // Reset selections and tagged places for the new corridor search
-      selectedFlight = null;
-      selectedHotel = null;
-      taggedPlaces = [];
-      updateItineraryDrawer();
-
-      resultsSection?.classList.add("hidden");
-      loadingState?.classList.remove("hidden");
-
-      resolvedOriginObj = await resolveAirportHub(originInputVal);
-      resolvedDestAirportObj = await resolveAirportHub(destAirportInputVal);
-      resolvedVisitCityObj = await resolveVisitCityLocation(visitCityInputVal, resolvedDestAirportObj);
-
-      if (currentTripType === "multicity" && leg2OriginVal && leg2DestVal) {
-        resolvedLeg2OriginObj = await resolveAirportHub(leg2OriginVal);
-        resolvedLeg2DestObj = await resolveAirportHub(leg2DestVal);
-      } else {
-        resolvedLeg2OriginObj = null;
-        resolvedLeg2DestObj = null;
-      }
-
-      // Evaluate Visa & Entry Requirements for all individual travelers
-      evaluateAndRenderVisaRequirements(resolvedDestAirportObj, resolvedVisitCityObj);
-
-      const rawSights = await fetchTargetCitySights(
-        resolvedVisitCityObj.cityName,
-        resolvedDestAirportObj.code,
-        resolvedVisitCityObj.lat,
-        resolvedVisitCityObj.lon
-      );
-
-      const rawHotels = await fetchLiveTargetHotels(
-        resolvedVisitCityObj.lat,
-        resolvedVisitCityObj.lon,
-        resolvedVisitCityObj.cityName,
-        resolvedDestAirportObj.code,
-        selectedBrands,
-        currentDepartDate,
-        currentReturnDate
-      );
-
-      currentFlights = generateDynamicFlightSchedule(resolvedOriginObj, resolvedDestAirportObj, currentDepartDate, currentReturnDate, currentTripType);
-      if (googleFlightsLiveBtn) {
-        googleFlightsLiveBtn.href = buildGoogleFlightsUrl(
-          currentTripType,
-          resolvedOriginObj.code,
-          resolvedDestAirportObj.code,
-          currentDepartDate,
-          currentReturnDate,
-          resolvedLeg2OriginObj ? resolvedLeg2OriginObj.code : "",
-          resolvedLeg2DestObj ? resolvedLeg2DestObj.code : "",
-          currentLeg2Date
-        );
-      }
-
-      // Fetch Weather Forecast & Local Tipping/Power/Etiquette Guide
-      const destCountryCode = normalizeDestinationCountry(resolvedVisitCityObj.country || resolvedDestAirportObj.country, resolvedVisitCityObj.cityName);
-      fetchDestinationWeather(resolvedVisitCityObj.lat, resolvedVisitCityObj.lon, resolvedVisitCityObj.cityName, currentDepartDate, currentReturnDate);
-      renderEtiquetteGuide(destCountryCode, resolvedVisitCityObj.cityName);
-
-      loadingState?.classList.add("hidden");
-
-      if (resolvedOriginText) resolvedOriginText.textContent = `${resolvedOriginObj.name} (${resolvedOriginObj.code})`;
-      if (resolvedDestText) resolvedDestText.textContent = `${resolvedDestAirportObj.name} (${resolvedDestAirportObj.code})`;
-      if (resolvedCityPill) resolvedCityPill.textContent = `📍 Target: ${resolvedVisitCityObj.cityName}`;
-      if (resultsTitle) resultsTitle.textContent = `${resolvedOriginObj.name} to ${resolvedDestAirportObj.name} | Exploring ${resolvedVisitCityObj.cityName}`;
-      if (tripLengthSubtitle) tripLengthSubtitle.textContent = currentReturnDate && currentTripType === "roundtrip" ? `Trip Length: ${tripDays} night(s) stay (${travelersCount} Traveler${travelersCount > 1 ? 's' : ''})` : `Point-to-point corridor search`;
-
-      activeSightFilter = "all";
-      document.querySelectorAll(".sight-filter-btn").forEach(b => {
-        b.classList.toggle("active", b.getAttribute("data-filter") === "all");
-      });
-
-      activeBrandFilter = "all";
-      document.querySelectorAll(".hotel-pill-btn").forEach(b => {
-        b.classList.toggle("active", b.getAttribute("data-brand") === "all");
-      });
-
-      renderTransitGuide(resolvedDestAirportObj.code, resolvedVisitCityObj.cityName);
-
-      const flightSortEl = document.getElementById("flightSort");
-      const hotelSortEl = document.getElementById("hotelSort");
-      if (flightSortEl) flightSortEl.value = "price";
-      if (hotelSortEl) hotelSortEl.value = "rating";
-      
-      sortAndRenderFlights("price");
-      initLeafletMap(resolvedVisitCityObj.lat, resolvedVisitCityObj.lon, rawSights, rawHotels, chosenRadiusKm);
-
-      resultsSection?.classList.remove("hidden");
+      executeTravelSearch(false);
     });
   }
 });

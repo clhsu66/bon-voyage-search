@@ -210,6 +210,12 @@
         </div>
         
         <div class="sort-and-actions">
+          <button id="openShareModalBtn" class="btn-planner-header" title="Share Trip Link & QR Code">
+            🔗 Share & QR
+          </button>
+          <button id="openJetLagBtn" class="btn-planner-header" title="Circadian Sleep & Jet Lag Advisor">
+            ⚡ Jet Lag Plan
+          </button>
           <button id="openCustomPlannerBtn" class="btn-planner-header" title="Manually assign places to days">
             📅 Custom Day Planner
           </button>
@@ -289,9 +295,7 @@
               <button type="button" id="tempUnitCBtn" class="unit-btn">°C</button>
             </div>
           </div>
-          <div id="weatherForecastContainer" class="weather-grid">
-            <!-- Dynamically populated in app.js -->
-          </div>
+          <div id="weatherForecastContainer" class="weather-grid"></div>
         </div>
 
         <!-- Tipping, Plugs & Etiquette Guide Card -->
@@ -302,9 +306,7 @@
               <span id="etiquetteSubtitle" class="transit-subtitle">Tipping etiquette, electrical sockets, emergency contacts, and social norms</span>
             </div>
           </div>
-          <div id="etiquetteContainer" class="etiquette-grid">
-            <!-- Dynamically populated in app.js -->
-          </div>
+          <div id="etiquetteContainer" class="etiquette-grid"></div>
         </div>
       </div>
 
@@ -440,6 +442,8 @@
       </div>
 
       <div class="drawer-action-row" style="display:flex; flex-direction:column; gap:0.5rem;">
+        <button id="drawerShareBtn" class="btn-secondary drawer-btn" style="background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.4); color: var(--primary);">🔗 Share Itinerary & QR Code</button>
+        <button id="drawerJetLagBtn" class="btn-secondary drawer-btn" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: var(--accent-amber);">⚡ Circadian Jet Lag Plan</button>
         <button id="drawerCustomPlannerBtn" class="btn-primary drawer-btn" style="background: var(--primary);">📅 Build Custom Itinerary</button>
         <button id="generateSmartItineraryBtn" class="btn-secondary drawer-btn" style="background: rgba(168,85,247,0.15); border-color: rgba(168,85,247,0.4); color: var(--accent-purple);">🤖 Generate AI Auto-Route</button>
         <button id="saveTripToStorageBtn" class="btn-secondary drawer-btn">💾 Save Itinerary Plan</button>
@@ -447,6 +451,56 @@
       </div>
     </div>
   </aside>
+
+  <!-- ========================================== -->
+  <!-- SHARE ITINERARY & QR CODE MODAL            -->
+  <!-- ========================================== -->
+  <div id="shareTripModalOverlay" class="modal-overlay hidden"></div>
+  <div id="shareTripModal" class="modal-card hidden" style="max-width: 520px;">
+    <div class="modal-header">
+      <h3 style="display:flex; align-items:center; gap:0.5rem;">🔗 Share Trip & Mobile QR Code</h3>
+      <button id="closeShareTripModalBtn" class="close-btn">✕</button>
+    </div>
+    <div class="modal-body" style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+      <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">
+        Scan this QR code with your smartphone camera to load this exact itinerary, selected hotels, flights, and tagged spots.
+      </p>
+
+      <div id="shareQrCodeContainer" class="qr-code-wrapper">
+        <div id="qrcode"></div>
+      </div>
+
+      <div class="input-group" style="width: 100%; text-align: left;">
+        <label for="shareTripUrlInput">Direct Trip Link:</label>
+        <div style="display: flex; gap: 0.5rem; width: 100%;">
+          <input type="text" id="shareTripUrlInput" readonly style="font-size: 0.8rem; font-family: monospace; flex: 1;" />
+          <button id="copyShareTripUrlBtn" class="btn-primary" style="width: auto; padding: 0 1rem; font-size: 0.85rem;">
+            📋 Copy
+          </button>
+        </div>
+        <span id="copySuccessMsg" class="copy-success-msg hidden">✓ Link copied to clipboard!</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- JET LAG & CIRCADIAN ADJUSTMENT MODAL       -->
+  <!-- ========================================== -->
+  <div id="jetLagModalOverlay" class="modal-overlay hidden"></div>
+  <div id="jetLagModal" class="modal-card modal-card-wide hidden">
+    <div class="modal-header">
+      <div>
+        <h3 style="display:flex; align-items:center; gap:0.5rem;">⚡ Circadian Jet Lag & Sleep Optimizer</h3>
+        <p id="jetLagHeaderSubtitle" style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">
+          Personalized circadian light-exposure, sleep shifting, and caffeine schedule based on your flight.
+        </p>
+      </div>
+      <button id="closeJetLagModalBtn" class="close-btn">✕</button>
+    </div>
+    <div id="jetLagBody" class="modal-body">
+      <!-- Populated dynamically in app.js -->
+    </div>
+  </div>
 
   <!-- ========================================== -->
   <!-- HOW IT WORKS & VISUAL GUIDE MODAL          -->
@@ -461,7 +515,6 @@
       <button id="closeHowItWorksModalBtn" class="close-btn">✕</button>
     </div>
     <div class="modal-body">
-      <!-- 4-Step Interactive Workflow Diagram -->
       <div class="guide-steps-grid">
         <div class="guide-step-card">
           <div class="guide-step-num">1</div>
@@ -492,7 +545,6 @@
         </div>
       </div>
 
-      <!-- Core Differentiators & Values -->
       <div class="guide-badges-row">
         <div class="guide-badge-item">
           <span class="guide-badge-icon">🔒</span>
@@ -517,7 +569,6 @@
         </div>
       </div>
 
-      <!-- Dismiss Button -->
       <div style="margin-top: 1.5rem; text-align: center;">
         <button id="dismissHowItWorksBtn" class="btn-primary" style="max-width: 240px; margin: 0 auto;">
           🚀 Got It, Let's Explore!
@@ -538,9 +589,7 @@
       </div>
       <button id="closeCustomPlannerModalBtn" class="close-btn">✕</button>
     </div>
-    <div id="customPlannerBody" class="modal-body">
-      <!-- Injected dynamically by app.js -->
-    </div>
+    <div id="customPlannerBody" class="modal-body"></div>
   </div>
 
   <!-- ========================================== -->
@@ -552,9 +601,7 @@
       <h3>📑 Saved Itinerary Plans</h3>
       <button id="closeSavedTripsModalBtn" class="close-btn">✕</button>
     </div>
-    <div id="savedTripsList" class="modal-body">
-      <!-- Injected dynamically -->
-    </div>
+    <div id="savedTripsList" class="modal-body"></div>
   </div>
 
   <!-- ========================================== -->
@@ -612,6 +659,9 @@
   <!-- Leaflet Map Engine -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   
+  <!-- Standalone QR Code Generator Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
   <!-- Master Curated Database Module -->
   <script src="destinations.js?v=5.0"></script>
   
