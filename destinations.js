@@ -1,10 +1,8 @@
 // ========================================================
-// MASTER CURATED TIER 1 DESTINATIONS CATALOG (39 METROS)
+// MASTER CURATED TIER 1 DESTINATIONS CATALOG (38 METROS)
+// PART 1: NORTH AMERICA (METROS 1 - 18)
 // ========================================================
 const MASTER_CURATED_CATALOG = {
-  // ======================================================
-  // 1. NORTH AMERICA (16 METROS)
-  // ======================================================
 
   // 1. NEW YORK CITY (20 Items)
   NYC: [
@@ -147,7 +145,7 @@ const MASTER_CURATED_CATALOG = {
     { id: "sd_15", type: "food", name: "Oscar's Mexican Seafood (Smoked Fish Tacos)", category: "Artisan Fish Tacos", location: "Pacific Beach / Hillcrest", lat: 32.7985, lon: -117.2560, desc: "Famous for smoked fish tacos, spicy grilled octopus, and fresh fisherman ceviches.", query: "Oscars Mexican Seafood San Diego" },
     { id: "sd_16", type: "food", name: "Juniper & Ivy (Chef Richard Blais)", category: "Modern California Dining", location: "Little Italy", lat: 32.7240, lon: -117.1705, desc: "Innovative California cuisine in an expansive warehouse with rotating seasonal local ingredients.", query: "Juniper and Ivy San Diego" },
     { id: "sd_17", type: "food", name: "Tacos El Gordo (Authentic Tijuana Adobada)", category: "Tijuana Street Tacos", location: "Chula Vista / Downtown", lat: 32.6105, lon: -117.0780, desc: "Authentic Tijuana tacos carved directly from vertical trompos with spiced adobada and guacamole.", query: "Tacos El Gordo San Diego" },
-    { id: "sd_18", type: "food", name: "Hodad's (Ocean Beach Giant Burgers)", category: "Historic Beach Burgers", location: "Ocean Beach (Broadway)", lat: 32.7485, lon: -122.2505, desc: "Famous license-plate covered burger joint serving massive bacon-wrapped burger baskets.", query: "Hodads Ocean Beach San Diego" },
+    { id: "sd_18", type: "food", name: "Hodad's (Ocean Beach Giant Burgers)", category: "Historic Beach Burgers", location: "Ocean Beach (Broadway)", lat: 32.7485, lon: -117.2505, desc: "Famous license-plate covered burger joint serving massive bacon-wrapped burger baskets.", query: "Hodads Ocean Beach San Diego" },
     { id: "sd_19", type: "food", name: "Extraordinary Desserts (Chef Karen Krasne)", category: "Artisan Pastry & Cakes", location: "Little Italy / Bankers Hill", lat: 32.7230, lon: -117.1685, desc: "Stunning gourmet cakes decorated with fresh edible flowers, gold leaf, and Valrhona chocolate.", query: "Extraordinary Desserts San Diego" },
     { id: "sd_20", type: "food", name: "Born & Raised (Little Italy Rooftop Steakhouse)", category: "Luxury Rooftop Dining", location: "Little Italy (India St)", lat: 32.7218, lon: -117.1687, desc: "Mid-century modern steakhouse with tableside tartare cart service and panoramic rooftop views.", query: "Born and Raised Little Italy San Diego" }
   ],
@@ -169,7 +167,7 @@ const MASTER_CURATED_CATALOG = {
     { id: "las_13", type: "food", name: "Gordon Ramsay Hell's Kitchen", category: "Celebrity Dining", location: "Caesars Palace Forecourt", lat: 36.1160, lon: -115.1740, desc: "Serving Ramsay's signature Beef Wellington, pan-seared scallops, and sticky toffee pudding.", query: "Gordon Ramsay Hells Kitchen Las Vegas" },
     { id: "las_14", type: "food", name: "Best Friend by Roy Choi (Park MGM)", category: "Korean BBQ & Mexican", location: "Park MGM", lat: 36.1045, lon: -115.1760, desc: "LA street food bodega storefront opening into a dining room with Kogi short rib tacos and kimchi rice.", query: "Best Friend Roy Choi Las Vegas" },
     { id: "las_15", type: "food", name: "Momofuku Las Vegas (Chef David Chang)", category: "Modern Asian", location: "The Cosmopolitan", lat: 36.1098, lon: -115.1745, desc: "Overlooking the Strip, famous for pork belly buns, spicy pork ramen, and crispy whole duck.", query: "Momofuku Cosmopolitan Las Vegas" },
-    { id: "las_16", type: "food", name: "Secret Pizza (Hidden Speakeasy Slice)", category: "Hidden Pizza Counter", location: "The Cosmopolitan (3rd Floor)", lat: 40.7306, lon: -74.0021, desc: "Unmarked vinyl-record hallway leading to a New York thin-crust pizza counter.", query: "Secret Pizza Cosmopolitan Las Vegas" },
+    { id: "las_16", type: "food", name: "Secret Pizza (Hidden Speakeasy Slice)", category: "Hidden Pizza Counter", location: "The Cosmopolitan (3rd Floor)", lat: 36.1098, lon: -115.1745, desc: "Unmarked vinyl-record hallway leading to a New York thin-crust pizza counter.", query: "Secret Pizza Cosmopolitan Las Vegas" },
     { id: "las_17", type: "food", name: "Tacos El Gordo (Las Vegas Strip)", category: "Tijuana Tacos", location: "North Strip", lat: 36.1340, lon: -115.1610, desc: "Legendary handmade tacos topped with spiced pork adobada sliced straight from the vertical spit.", query: "Tacos El Gordo Strip Las Vegas" },
     { id: "las_18", type: "food", name: "Bazaar Meat by José Andrés", category: "Avant-Garde Steakhouse", location: "The Sahara Las Vegas", lat: 36.1420, lon: -115.1570, desc: "Celebration of the carnivore: wood-fired Spanish suckling pig, wagyu beef tartare, and cotton candy foie gras.", query: "Bazaar Meat Jose Andres Las Vegas" },
     { id: "las_19", type: "food", name: "Mon Ami Gabi (French Strip Terrace)", category: "Classic French Bistro", location: "Paris Las Vegas", lat: 36.1128, lon: -115.1725, desc: "Prime outdoor patio dining with direct front-row views of the Bellagio fountains while enjoying steak frites.", query: "Mon Ami Gabi Las Vegas" },
@@ -392,11 +390,59 @@ const MASTER_CURATED_CATALOG = {
     { id: "yul_20", type: "food", name: "Beauty's Luncheonette (Classic 1942 Diner)", category: "Historic Jewish Diner", location: "Mont-Royal / Saint-Urbain", lat: 45.5175, lon: -73.5840, desc: "Home of the famous 'Mish-Mash' omelet and 'The Beautys Special' bagel with lox and cream cheese.", query: "Beautys Luncheonette Montreal" }
   ],
 
+  // 17. PHILADELPHIA, PA (20 Verified Items)
+  PHILADELPHIA: [
+    { id: "phl_1", type: "sight", name: "Liberty Bell Center & Independence Hall", category: "National Historic Landmark", location: "Independence National Historical Park", lat: 39.9496, lon: -75.1503, desc: "Historic home of the Liberty Bell and the birthplace of the Declaration of Independence and U.S. Constitution.", query: "Liberty Bell Philadelphia" },
+    { id: "phl_2", type: "sight", name: "Philadelphia Museum of Art & Rocky Steps", category: "World-Class Museum", location: "Fairmount Park", lat: 39.9656, lon: -75.1809, desc: "Grand art museum housing extensive European masterpieces, fronted by the iconic Rocky Balboa bronze statue and steps.", query: "Philadelphia Museum of Art Rocky Steps" },
+    { id: "phl_3", type: "sight", name: "Reading Terminal Market", category: "Historic Public Market", location: "Center City", lat: 39.9531, lon: -75.1587, desc: "America's oldest continuously operating farmer's market (since 1893) packed with Amish bakeries and roast pork sandwich counters.", query: "Reading Terminal Market Philadelphia" },
+    { id: "phl_4", type: "sight", name: "Eastern State Penitentiary", category: "Historic Prison Museum", location: "Fairmount", lat: 39.9676, lon: -75.1723, desc: "Pioneering 1829 radial prison once housing notorious figures like Al Capone, now an atmospheric historic museum.", query: "Eastern State Penitentiary Philadelphia" },
+    { id: "phl_5", type: "sight", name: "The Barnes Foundation", category: "Fine Art Collection", location: "Benjamin Franklin Parkway", lat: 39.9583, lon: -75.1741, desc: "World-renowned post-impressionist and modern art collection featuring hundreds of works by Renoir, Cézanne, and Matisse.", query: "The Barnes Foundation Philadelphia" },
+    { id: "phl_6", type: "sight", name: "Betsy Ross House", category: "Historic Revolutionary Site", location: "Old City", lat: 39.9515, lon: -75.1462, desc: "Historic 1740s townhouse believed to be the home where Betsy Ross sewed the first American flag.", query: "Betsy Ross House Philadelphia" },
+    { id: "phl_7", type: "sight", name: "Independence Seaport Museum & Cruiser Olympia", category: "Maritime Heritage", location: "Penn's Landing / Waterfront", lat: 39.9463, lon: -75.1425, desc: "Waterfront museum featuring the historic 1892 Spanish-American War cruiser USS Olympia.", query: "Independence Seaport Museum Philadelphia" },
+    { id: "phl_8", type: "sight", name: "Mütter Museum", category: "Medical History Museum", location: "Rittenhouse Square", lat: 39.9535, lon: -75.1824, desc: "Fascinating medical museum displaying historical anatomical specimens, models, and antique medical equipment.", query: "Mutter Museum Philadelphia" },
+    { id: "phl_9", type: "sight", name: "Fairmount Park & Boathouse Row", category: "Historic Park & River", location: "Schuylkill River", lat: 39.9723, lon: -75.1914, desc: "Iconic 19th-century Victorian rowing club boathouses glowing with lights along the Schuylkill River.", query: "Boathouse Row Philadelphia" },
+    { id: "phl_10", type: "sight", name: "Philadelphia's Magic Gardens", category: "Mosaic Art Environment", location: "South Street", lat: 39.9431, lon: -75.1574, desc: "Immersive indoor/outdoor mosaic labyrinth created by artist Isaiah Zagar using tiles, glass, and bicycle wheels.", query: "Philadelphia Magic Gardens" },
+    { id: "phl_11", type: "food", name: "Pat's King of Steaks vs. Geno's Steaks", category: "Original Cheesesteak Rivals", location: "South Philadelphia (9th & Passyunk)", lat: 39.9332, lon: -75.1593, desc: "The legendary 24/7 rivalry where Pat's invented the cheesesteak in 1930 and Geno's defends the corner.", query: "Pats King of Steaks Philadelphia" },
+    { id: "phl_12", type: "food", name: "John's Roast Pork", category: "Historic Roast Pork Sandwich", location: "South Philadelphia (Moyamensing Ave)", lat: 39.9205, lon: -75.1481, desc: "Family-run institution since 1930 serving slow-roasted pork shoulder with sharp provolone and broccoli rabe.", query: "Johns Roast Pork Philadelphia" },
+    { id: "phl_13", type: "food", name: "Dalessandro's Steaks", category: "Neighborhood Cheesesteak", location: "Roxborough", lat: 40.0338, lon: -75.2343, desc: "Beloved neighborhood counter known for finely chopped ribeye, melted cheese, and long lines.", query: "Dalessandros Steaks Philadelphia" },
+    { id: "phl_14", type: "food", name: "Federal Donuts (Korean Fried Chicken & Donuts)", category: "Artisan Donuts & Chicken", location: "Center City / South Philly", lat: 39.9475, lon: -75.1590, desc: "Famous pairing of twice-fried Korean spicy chicken with fancy glazed artisan cake donuts.", query: "Federal Donuts Philadelphia" },
+    { id: "phl_15", type: "food", name: "Di Bruno Bros. (Italian Market Flagship)", category: "Artisan Cheesemonger", location: "Italian Market (9th St)", lat: 39.9372, lon: -75.1578, desc: "Historic 1939 Italian market specialty food store stocked with imported cheeses and charcuterie.", query: "Di Bruno Bros 9th Street Philadelphia" },
+    { id: "phl_16", type: "food", name: "Jim's South Street (Classic Cheesesteaks)", category: "Center City Cheesesteaks", location: "South Street", lat: 39.9423, lon: -75.1512, desc: "Bustling corner grill serving classic sliced ribeye cheesesteaks smothered in Cheez Whiz.", query: "Jims South Street Philadelphia" },
+    { id: "phl_17", type: "food", name: "Zahav (Chef Michael Solomonov Modern Israeli)", category: "Award-Winning Israeli Dining", location: "Society Hill", lat: 39.9465, lon: -75.1472, desc: "James Beard Award-winning restaurant serving charcoal-grilled meats and warm Jerusalem pomegranate-glazed lamb.", query: "Zahav Restaurant Philadelphia" },
+    { id: "phl_18", type: "food", name: "Franklin Fountain", category: "Vintage Ice Cream Parlor", location: "Old City (Market St)", lat: 39.9502, lon: -75.1448, desc: "Turn-of-the-century soda fountain serving homemade ice cream sundaes in sodapop glasses.", query: "Franklin Fountain Philadelphia" },
+    { id: "phl_19", type: "food", name: "Termini Brothers Bakery (Italian Pastries)", category: "Historic Italian Bakery", location: "Italian Market / Reading Terminal", lat: 39.9328, lon: -75.1590, desc: "Historic 1921 South Philly bakery famous for hand-filled cannoli, sfogliatelle, and pignoli cookies.", query: "Termini Brothers Bakery Philadelphia" },
+    { id: "phl_20", type: "food", name: "Talula's Garden", category: "Farm-to-Table Dining", location: "Washington Square", lat: 39.9472, lon: -75.1525, desc: "Romantic garden-themed restaurant serving seasonal farm-to-table American gastronomy.", query: "Talulas Garden Philadelphia" }
+  ],
+
+  // 18. PITTSBURGH, PA (20 Verified Items)
+  PITTSBURGH: [
+    { id: "pit_1", type: "sight", name: "Duquesne Incline & Mount Washington Overlook", category: "Historic Cable Car", location: "Mount Washington", lat: 40.4402, lon: -80.0125, desc: "Historic 1877 wooden cable car climbing Mount Washington to provide the ultimate panoramic view of downtown's Three Rivers.", query: "Duquesne Incline Pittsburgh" },
+    { id: "pit_2", type: "sight", name: "Carnegie Museum of Art & Natural History", category: "World-Class Museum", location: "Oakland", lat: 40.4439, lon: -79.9477, desc: "Founded by Andrew Carnegie, featuring one of the world's finest dinosaur fossil collections and fine art galleries.", query: "Carnegie Museum of Natural History Pittsburgh" },
+    { id: "pit_3", type: "sight", name: "The Andy Warhol Museum", category: "Pop Art Museum", location: "North Shore", lat: 40.4475, lon: -80.0035, desc: "The largest museum in North America dedicated to a single artist, housing extensive works by pop icon Andy Warhol.", query: "The Andy Warhol Museum Pittsburgh" },
+    { id: "pit_4", type: "sight", name: "Phipps Conservatory and Botanical Gardens", category: "Victorian Glasshouse", location: "Schenley Park / Oakland", lat: 40.4415, lon: -79.9461, desc: "Historic 1893 Victorian glasshouse and botanical gardens featuring seasonal flower shows and tropical biomes.", query: "Phipps Conservatory Pittsburgh" },
+    { id: "pit_5", type: "sight", name: "Point State Park & The Three Rivers Fountain", category: "Historic Riverfront Park", location: "Downtown Point", lat: 40.4429, lon: -80.0094, desc: "36-acre waterfront park at the confluence of the Allegheny, Monongahela, and Ohio rivers marked by a giant fountain.", query: "Point State Park Pittsburgh" },
+    { id: "pit_6", type: "sight", name: "Senator John Heinz History Center", category: "Regional History Museum", location: "Strip District", lat: 40.4473, lon: -79.9922, desc: "Smithsonian-affiliated museum showcasing Western Pennsylvania history, sports heritage, and Mr. Rogers' Neighborhood.", query: "Heinz History Center Pittsburgh" },
+    { id: "pit_7", type: "sight", name: "PPG Paints Arena & North Shore Stadiums", category: "Sports Architecture", location: "North Shore / Uptown", lat: 40.4395, lon: -79.9880, desc: "State-of-the-art home of the Pittsburgh Penguins hockey team near Heinz Field and PNC Park.", query: "PPG Paints Arena Pittsburgh" },
+    { id: "pit_8", type: "sight", name: "National Aviary", category: "Indoor Bird Sanctuary", location: "North Side", lat: 40.4532, lon: -80.0122, desc: "America's only independent indoor aviary housing over 500 birds across immersive walkthrough habitats.", query: "National Aviary Pittsburgh" },
+    { id: "pit_9", type: "sight", name: "Cathedral of Learning (Nationality Rooms)", category: "Architectural Landmark", location: "University of Pittsburgh / Oakland", lat: 40.4443, lon: -79.9532, desc: "535-foot neo-Gothic academic tower featuring 31 ornate classrooms designed to reflect different ethnic cultures.", query: "Cathedral of Learning Pittsburgh" },
+    { id: "pit_10", type: "sight", name: "Monongahela Incline", category: "Historic Cable Railway", location: "Station Square / Mount Washington", lat: 40.4358, lon: -80.0040, desc: "The oldest continuously operating funicular railway in the United States, operating since 1870.", query: "Monongahela Incline Pittsburgh" },
+    { id: "pit_11", type: "food", name: "Primanti Bros. Flagship (Strip District)", category: "Iconic Pittsburgh Sandwich", location: "Strip District (Smallman St)", lat: 40.4502, lon: -79.9868, desc: "Legendary sandwich piled high with grilled meat, melted cheese, French fries, and cole slaw right between Italian bread.", query: "Primanti Bros Strip District Pittsburgh" },
+    { id: "pit_12", type: "food", name: "S&D Polish Deli", category: "Traditional Polish Fare", location: "Strip District", lat: 40.4510, lon: -79.9855, desc: "Authentic Polish market and cafe serving handmade pierogies, kielbasa, and stuffed cabbage rolls.", query: "SD Polish Deli Pittsburgh" },
+    { id: "pit_13", type: "food", name: "Pamela's Diner (Famous Crêpe-Style Pancakes)", category: "Historic Diner Breakfast", location: "Strip District / Oakland", lat: 40.4485, lon: -79.9890, desc: "Beloved local diner famous for crispy-edged, thin crêpe-style pancakes loaded with butter and syrup.", query: "Pamelas Diner Strip District Pittsburgh" },
+    { id: "pit_14", type: "food", name: "Church Brew Works", category: "Brewpub in Historic Church", location: "Lawrenceville", lat: 40.4655, lon: -79.9605, desc: "Stunning 1902 former church converted into a craft microbrewery serving peerless beer under stained-glass windows.", query: "Church Brew Works Pittsburgh" },
+    { id: "pit_15", type: "food", name: "Gaucho Parrilla Argentina", category: "Wood-Fired Argentine Grill", location: "Downtown / Cultural District", lat: 40.4425, lon: -79.9985, desc: "Wood-fired Argentine grill famous for smoky hanger steaks, empanadas, and chimichurri sauces.", query: "Gaucho Parrilla Argentina Pittsburgh" },
+    { id: "pit_16", type: "food", name: "Bigham Tavern (Mount Washington Wings)", category: "Neighborhood Tavern", location: "Mount Washington", lat: 40.4305, lon: -80.0090, desc: "Award-winning neighborhood tavern renowned for creative specialty chicken wings and pub burgers.", query: "Bigham Tavern Pittsburgh" },
+    { id: "pit_17", type: "food", name: "DeLuca's Diner (Strip District Breakfast)", category: "Classic Diner", location: "Strip District", lat: 40.4495, lon: -79.9875, desc: "Bustling historic diner serving massive omelets, hash browns, and Italian breakfast classics.", query: "DeLucas Diner Pittsburgh" },
+    { id: "pit_18", type: "food", name: "MP Brewery & Pittsburgh Salad Spots", category: "Local Culinary Tradition", location: "South Side", lat: 40.4285, lon: -79.9750, desc: "Discovering the classic Pittsburgh tradition of topping hefty steak or chicken salads with french fries.", query: "Pittsburgh Salad" },
+    { id: "pit_19", type: "food", name: "Betis Bakery (Strip District Biscotti)", category: "Artisan Italian Bakery", location: "Strip District", lat: 40.4500, lon: -79.9860, desc: "Generations-old bakery offering fresh Italian bread, biscotti, and sweet treats in the Strip District.", query: "Bettis Bakery Pittsburgh" },
+    { id: "pit_20", type: "food", name: "Fat Head's Saloon (Headwiches)", category: "South Side Pub", location: "South Side", lat: 40.4290, lon: -79.9755, desc: "Legendary South Side pub famous for giant overstuffed 'Headwich' sandwiches and craft beers on tap.", query: "Fat Heads Saloon Pittsburgh" }
+  ],
+
   // ======================================================
-  // 2. EUROPE (9 METROS - INCLUDING LISBON)
+  // 2. EUROPE (8 METROS)
   // ======================================================
 
-  // 17. LONDON & WINDSOR (20 Items)
+  // 19. LONDON & WINDSOR (20 Items)
   LONDON: [
     { id: "lon_1", type: "sight", name: "Tower of London & Crown Jewels", category: "Royal Historic Fortress", location: "Tower Hill / Thames", lat: 51.5081, lon: -0.0759, desc: "Nearly 1,000-year-old castle and former prison housing the sparkling Crown Jewels and historic Yeoman Warders.", query: "Tower of London" },
     { id: "lon_2", type: "sight", name: "The British Museum", category: "World-Class Museum", location: "Bloomsbury", lat: 51.5194, lon: -0.1270, desc: "Over 8 million historic works of world culture under the Great Court glass dome, including the Rosetta Stone.", query: "The British Museum London" },
@@ -406,7 +452,7 @@ const MASTER_CURATED_CATALOG = {
     { id: "lon_6", type: "sight", name: "Tower Bridge & High-Level Glass Floor", category: "Victorian Engineering", location: "River Thames", lat: 51.5055, lon: -0.0754, desc: "Victorian bascule bridge with glass walkways 42 meters above the river offering views of London.", query: "Tower Bridge London" },
     { id: "lon_7", type: "sight", name: "St Paul's Cathedral & Whispering Gallery", category: "Baroque Masterpiece", location: "City of London", lat: 51.5138, lon: -0.0984, desc: "Sir Christopher Wren's iconic dome, scene of royal weddings and state funerals with sweeping dome climbs.", query: "St Pauls Cathedral London" },
     { id: "lon_8", type: "sight", name: "Natural History Museum & Victoria and Albert Museum", category: "Museum Quarter", location: "South Kensington", lat: 51.4967, lon: -0.1764, desc: "Spectacular Romanesque palace of science with blue whale skeleton and world-leading art and design collections.", query: "Natural History Museum London" },
-    { id: "lon_9", type: "sight", name: "Hyde Park & Kensington Palace", location: "Kensington", lat: 51.5073, lon: -0.1696, desc: "350-acre royal park featuring Serpentine Lake, Diana Memorial Fountain, and Kensington Palace gardens.", query: "Kensington Palace Hyde Park" },
+    { id: "lon_9", type: "sight", name: "Hyde Park & Kensington Palace", category: "Royal Park", location: "Kensington", lat: 51.5073, lon: -0.1696, desc: "350-acre royal park featuring Serpentine Lake, Diana Memorial Fountain, and Kensington Palace gardens.", query: "Kensington Palace Hyde Park" },
     { id: "lon_10", type: "sight", name: "Windsor Castle (21 mi west)", category: "Royal Castle Residence", location: "Windsor, Berkshire", lat: 51.4839, lon: -0.6044, desc: "The oldest and largest occupied castle in the world, serving as a royal residence for nearly 1,000 years.", query: "Windsor Castle" },
     { id: "lon_11", type: "sight", name: "Greenwich Royal Observatory & Prime Meridian (6 mi east)", category: "Astronomy & Maritime", location: "Greenwich", lat: 51.4769, lon: -0.0005, desc: "Stand on the Prime Meridian line (Longitude 0°) overlooking the Cutty Sark ship and the River Thames.", query: "Royal Observatory Greenwich" },
     { id: "lon_12", type: "food", name: "Borough Market (Artisan Gourmet Market)", category: "Historic Food Market", location: "Southwark / London Bridge", lat: 51.5055, lon: -0.0910, desc: "Historic food market serving Swiss raclette, duck confit sandwiches, sausage rolls, and artisan cheeses.", query: "Borough Market London" },
@@ -420,7 +466,7 @@ const MASTER_CURATED_CATALOG = {
     { id: "lon_20", type: "food", name: "Beigel Bake (Brick Lane Salt Beef)", category: "24/7 Jewish Bakery", location: "Brick Lane / Shoreditch", lat: 51.5240, lon: -0.0718, desc: "Open 24/7 boiling fresh bagels filled with thick hot salt beef, English mustard, and sour pickles.", query: "Beigel Bake Brick Lane" }
   ],
 
-  // 18. PARIS & VERSAILLES (20 Items)
+  // 20. PARIS & VERSAILLES (20 Items)
   PARIS: [
     { id: "par_1", type: "sight", name: "Eiffel Tower & Champ de Mars", category: "Iconic Monument", location: "7th Arrondissement", lat: 48.8584, lon: 2.2945, desc: "Gustave Eiffel's 330-meter wrought-iron lattice masterpiece offering spectacular views and glittering hourly light shows.", query: "Eiffel Tower Paris" },
     { id: "par_2", type: "sight", name: "Louvre Museum & Glass Pyramid", category: "World-Class Museum", location: "1st Arrondissement", lat: 48.8606, lon: 2.3376, desc: "World's largest art museum holding the Mona Lisa, Venus de Milo, and Winged Victory of Samothrace in a former royal palace.", query: "Louvre Museum Paris" },
@@ -444,7 +490,7 @@ const MASTER_CURATED_CATALOG = {
     { id: "par_20", type: "food", name: "Cédric Grolet Opéra (Sculpted Fruit Pastries)", category: "Viral High Pâtisserie", location: "Avenue de l'Opéra", lat: 48.8680, lon: 2.3330, desc: "Master pastry chef famous for hyper-realistic trompe-l'œil sculpted fruits and flaky giant croissants.", query: "Cedric Grolet Opera Paris" }
   ],
 
-  // 19. ROME & VATICAN (20 Items)
+  // 21. ROME & VATICAN (20 Items)
   ROME: [
     { id: "rom_1", type: "sight", name: "The Colosseum & Roman Forum", category: "Ancient World Wonder", location: "Piazza del Colosseo", lat: 41.8902, lon: 12.4922, desc: "Nearly 2,000-year-old stone amphitheater where gladiators fought, paired with the ancient center of Roman civic life.", query: "Colosseum Rome" },
     { id: "rom_2", type: "sight", name: "Pantheon & Piazza della Rotonda", category: "Ancient Architectural Wonder", location: "Central Historic District", lat: 41.8986, lon: 12.4769, desc: "Best-preserved Roman monument featuring an open oculus dome that remains the largest unreinforced concrete dome in the world.", query: "Pantheon Rome" },
@@ -468,7 +514,7 @@ const MASTER_CURATED_CATALOG = {
     { id: "rom_20", type: "food", name: "Giolitti Gelateria (Since 1900)", category: "Historic Gelato", location: "Via Uffici del Vicario", lat: 41.8991, lon: 12.4788, desc: "Rome's oldest and most famous gelateria serving artisanal gelato with fresh whipped cream in a 1900s salon setting.", query: "Giolitti Gelato Rome" }
   ],
 
-  // 20. FLORENCE (20 Items)
+  // 22. FLORENCE (20 Items)
   FLORENCE: [
     { id: "flr_1", type: "sight", name: "Cathedral of Santa Maria del Fiore (Duomo)", category: "Renaissance Marvel", location: "Piazza del Duomo", lat: 43.7731, lon: 11.2560, desc: "Monumental terracotta-tiled dome engineered by Filippo Brunelleschi and Giotto's Bell Tower.", query: "Duomo Florence" },
     { id: "flr_2", type: "sight", name: "Uffizi Gallery (Galleria degli Uffizi)", category: "World-Class Museum", location: "Piazzale degli Uffizi", lat: 43.7678, lon: 11.2553, desc: "Houses Botticelli's Birth of Venus, Leonardo da Vinci's Annunciation, and Caravaggio.", query: "Uffizi Gallery Florence" },
@@ -492,7 +538,7 @@ const MASTER_CURATED_CATALOG = {
     { id: "flr_20", type: "food", name: "Caffè Gilli (Since 1733)", category: "Historic Grand Cafe", location: "Piazza della Repubblica", lat: 43.7715, lon: 11.2545, desc: "Oldest operating cafe in Florence serving Italian espresso and pastries under chandeliers.", query: "Caffe Gilli Florence" }
   ],
 
-  // 21. BARCELONA (20 Items)
+  // 23. BARCELONA (20 Items)
   BARCELONA: [
     { id: "bcn_1", type: "sight", name: "Basílica de la Sagrada Família", category: "Gaudí Masterpiece", location: "Eixample", lat: 41.4036, lon: 2.1744, desc: "Antoni Gaudí's monumental unfinished basilica featuring forest-like stone pillars and stained glass.", query: "Sagrada Familia Barcelona" },
     { id: "bcn_2", type: "sight", name: "Park Güell & Mosaic Dragon Stairway", category: "Mosaic Park", location: "Gràcia", lat: 41.4145, lon: 2.1527, desc: "Enchanting park filled with colorful mosaic benches and gingerbread gatehouses.", query: "Park Guell Barcelona" },
@@ -516,14 +562,14 @@ const MASTER_CURATED_CATALOG = {
     { id: "bcn_20", type: "food", name: "Disfrutar Barcelona (3-Star Michelin)", category: "Avant-Garde Gastronomy", location: "Eixample", lat: 41.3880, lon: 2.1550, desc: "Pioneering culinary temple creating revolutionary multi-course Mediterranean dishes.", query: "Disfrutar Barcelona" }
   ],
 
-  // 22. MADRID (20 Items)
+  // 24. MADRID (20 Items)
   MADRID: [
     { id: "mad_1", type: "sight", name: "Prado National Museum", category: "World-Class Museum", location: "Paseo del Prado", lat: 40.4138, lon: -3.6921, desc: "Houses masterworks by Velázquez (Las Meninas), Goya, El Greco, and Bosch.", query: "Museo del Prado Madrid" },
     { id: "mad_2", type: "sight", name: "Royal Palace of Madrid & Sabatini Gardens", category: "Royal Residence", location: "Palacio", lat: 40.4180, lon: -3.7143, desc: "Largest operational royal palace in Western Europe with 3,418 opulent frescoed rooms.", query: "Royal Palace of Madrid" },
     { id: "mad_3", type: "sight", name: "El Retiro Park & Crystal Palace", category: "UNESCO Royal Park", location: "Retiro", lat: 40.4153, lon: -3.6845, desc: "300-acre park featuring a boating lake, rose gardens, and glass Palacio de Cristal.", query: "El Retiro Park Madrid" },
     { id: "mad_4", type: "sight", name: "Plaza Mayor & Philip III Statue", category: "Central Plaza", location: "Centro", lat: 40.4155, lon: -3.7074, desc: "Historic 1619 grand arcaded square with red-brick facades and outdoor terraces.", query: "Plaza Mayor Madrid" },
     { id: "mad_5", type: "sight", name: "Puerta del Sol & Kilometer Zero", category: "Civic Square", location: "Sol", lat: 40.4169, lon: -3.7036, desc: "Heart of Madrid featuring the Bear and Strawberry Tree statue and radial center of Spain.", query: "Puerta del Sol Madrid" },
-    { id: "mad_6", type: "sight", name: "Reina Sofía Museum (Picasso's Guernica)", category: "Modern Art", location: "Aтоcha", lat: 40.4079, lon: -3.6946, desc: "Houses Picasso's anti-war masterpiece Guernica and Salvador Dalí collections.", query: "Reina Sofia Museum Madrid" },
+    { id: "mad_6", type: "sight", name: "Reina Sofía Museum (Picasso's Guernica)", category: "Modern Art", location: "Atocha", lat: 40.4079, lon: -3.6946, desc: "Houses Picasso's anti-war masterpiece Guernica and Salvador Dalí collections.", query: "Reina Sofia Museum Madrid" },
     { id: "mad_7", type: "sight", name: "Gran Vía Promenade", category: "Grand Avenue", location: "Gran Vía", lat: 40.4200, lon: -3.7015, desc: "Madrid's bustling avenue lined with early-20th-century theaters and flagships.", query: "Gran Via Madrid" },
     { id: "mad_8", type: "sight", name: "Temple of Debod", category: "Ancient Egyptian Monument", location: "Parque del Oeste", lat: 40.4240, lon: -3.7178, desc: "2nd-century BC Egyptian temple gifted to Spain, offering premier sunset views.", query: "Temple of Debod Madrid" },
     { id: "mad_9", type: "sight", name: "Thyssen-Bornemisza National Museum", category: "Golden Art Triangle", location: "Paseo del Prado", lat: 40.4160, lon: -3.6948, desc: "Traces 800 years of European painting from Italian Gothic to Pop Art.", query: "Thyssen Bornemisza Museum Madrid" },
@@ -540,7 +586,7 @@ const MASTER_CURATED_CATALOG = {
     { id: "mad_20", type: "food", name: "La Mallorquina (Pastry Since 1894)", category: "Sol Pâtisserie", location: "Puerta del Sol", lat: 40.4170, lon: -3.7040, desc: "Famous corner bakery at Sol serving fresh napolitanas de crema and truffles.", query: "La Mallorquina Puerta del Sol Madrid" }
   ],
 
-  // 23. LISBON (20 Items)
+  // 25. LISBON (20 Items)
   LISBON: [
     { id: "lis_1", type: "sight", name: "Torre de Belém (Belém Tower)", category: "UNESCO World Heritage", location: "Belém Waterfront", lat: 38.6916, lon: -9.2160, desc: "16th-century Manueline fortified tower on the Tagus River marking Portugal's Age of Discovery.", query: "Belem Tower Lisbon" },
     { id: "lis_2", type: "sight", name: "Mosteiro dos Jerónimos", category: "Manueline Masterpiece", location: "Belém", lat: 38.6979, lon: -9.2067, desc: "Monumental monastery with carved limestone cloisters and the tomb of Vasco da Gama.", query: "Jeronimos Monastery Lisbon" },
@@ -564,7 +610,7 @@ const MASTER_CURATED_CATALOG = {
     { id: "lis_20", type: "food", name: "Solar dos Presuntos", category: "Heritage Gastronomy", location: "Lavra", lat: 38.7180, lon: -9.1415, desc: "Serving rich seafood rice (arroz de marisco), roasted suckling pig, and Iberian ham.", query: "Solar dos Presuntos Lisbon" }
   ],
 
-  // 24. AMSTERDAM (20 Items)
+  // 26. AMSTERDAM (20 Items)
   AMSTERDAM: [
     { id: "ams_1", type: "sight", name: "Rijksmuseum (Dutch Masters)", category: "World-Class Museum", location: "Museumplein", lat: 52.3599, lon: 4.8852, desc: "Houses Rembrandt's Night Watch, Vermeer's The Milkmaid, and 8,000 national art treasures.", query: "Rijksmuseum Amsterdam" },
     { id: "ams_2", type: "sight", name: "Van Gogh Museum", category: "Masterpiece Art Gallery", location: "Museumplein", lat: 52.3584, lon: 4.8811, desc: "The world's largest collection of artworks by Vincent van Gogh including Sunflowers.", query: "Van Gogh Museum Amsterdam" },
@@ -592,7 +638,7 @@ const MASTER_CURATED_CATALOG = {
   // 3. ASIA & OCEANIA (12 METROS)
   // ======================================================
 
-  // 25. TAIPEI & NORTHERN TAIWAN (21 Items)
+  // 27. TAIPEI & NORTHERN TAIWAN (21 Items)
   TPE: [
     { id: "tpe_1", type: "sight", name: "Taipei 101 & Skyline Observatory", category: "Iconic Skyscraper", location: "Xinyi District", lat: 25.0339, lon: 121.5645, desc: "508-meter engineering marvel featuring the world's fastest elevators and 360-degree views.", query: "Taipei 101 Observatory" },
     { id: "tpe_2", type: "sight", name: "National Palace Museum (Imperial Treasures)", category: "World-Class Museum", location: "Shilin District", lat: 25.1024, lon: 121.5485, desc: "Houses nearly 700,000 ancient Chinese imperial artifacts, including the Jadeite Cabbage.", query: "National Palace Museum Taipei" },
@@ -617,14 +663,14 @@ const MASTER_CURATED_CATALOG = {
     { id: "tpe_21", type: "food", name: "Smoothie House (Mango Shaved Ice)", category: "Summer Dessert", location: "Yongkang Street", lat: 25.0331, lon: 121.5295, desc: "Fluffy snowflake shaved ice loaded with fresh sweet Irwin mangoes and condensed milk.", query: "Smoothie House Yongkang Taipei" }
   ],
 
-  // 26. TAICHUNG (20 Items)
+  // 28. TAICHUNG (20 Items)
   TAICHUNG: [
     { id: "txg_1", type: "sight", name: "National Taichung Theater", category: "Architectural Marvel", location: "Xitun District", lat: 24.1628, lon: 120.6405, desc: "Futuristic curved sound-cave opera house designed by Pritzker laureate Toyo Ito.", query: "National Taichung Theater" },
     { id: "txg_2", type: "sight", name: "Rainbow Village", category: "Cultural Landmark", location: "Nantun District", lat: 24.1337, lon: 120.6098, desc: "Vibrant military dependents' village preserved with colorful folk art murals by Grandpa Rainbow.", query: "Rainbow Village Taichung" },
     { id: "txg_3", type: "sight", name: "Gaomei Wetlands & Boardwalk Windmills", category: "Coastal Nature Reserve", location: "Qingshui", lat: 24.3122, lon: 120.5501, desc: "Vast tidal mudflats with wooden walkway, wind turbines, and world-class sunset reflections.", query: "Gaomei Wetlands Taichung" },
     { id: "txg_4", type: "sight", name: "Painted Animation Lane", category: "Pop Culture Murals", location: "West District", lat: 24.1388, lon: 120.6710, desc: "Charming alleyway filled with detailed hand-painted Japanese and global anime murals.", query: "Painted Animation Lane Taichung" },
     { id: "txg_5", type: "sight", name: "National Museum of Natural Science", category: "Science Museum", location: "North District", lat: 24.1575, lon: 120.6660, desc: "Major 22-acre science complex with Space Theater, dinosaur exhibits, and botanical garden.", query: "National Museum Natural Science Taichung" },
-    { id: "txg_6", type: "sight", name: "Taichung Park & Historic Pavilion", category: "Historic Park", location: "Central District", lat: 40.7738, lon: -73.9708, desc: "Taichung's oldest park (1903) featuring the iconic double-eaved wooden lake pavilion and boating.", query: "Taichung Park" },
+    { id: "txg_6", type: "sight", name: "Taichung Park & Historic Pavilion", category: "Historic Park", location: "Central District", lat: 24.1438, lon: 120.6836, desc: "Taichung's oldest park (1903) featuring the iconic double-eaved wooden lake pavilion and boating.", query: "Taichung Park" },
     { id: "txg_7", type: "sight", name: "Shen Ji New Village (Auditor House)", category: "Artisan Cultural Cluster", location: "West District", lat: 24.1455, lon: 120.6635, desc: "Former government dormitories revitalized into indie craft stalls, cafes, and dessert studios.", query: "Shen Ji New Village Taichung" },
     { id: "txg_8", type: "sight", name: "Luce Memorial Chapel (Tunghai University)", category: "Architectural Icon", location: "Xitun District", lat: 24.1790, lon: 120.6005, desc: "Tent-like reinforced concrete chapel designed by I. M. Pei and Chi-kuan Chen on a grassy campus.", query: "Luce Memorial Chapel Taichung" },
     { id: "txg_9", type: "sight", name: "Wufeng Lin Family Garden (Historic Mansion)", category: "Qing Dynasty Heritage", location: "Wufeng District", lat: 24.0645, lon: 120.6975, desc: "Largest traditional residential complex in Taiwan with ornate opera stage and courtyards.", query: "Wufeng Lin Family Mansion Taichung" },
@@ -641,7 +687,7 @@ const MASTER_CURATED_CATALOG = {
     { id: "txg_20", type: "food", name: "Fulu Shou Stinky Tofu (Crispy Tofu)", category: "Crispy Stinky Tofu", location: "Yizhong / Central", lat: 24.1475, lon: 120.6840, desc: "Ultra-crispy cubed tofu stuffed with raw garlic sauce, pickled Taiwanese cabbage, and chili.", query: "Taichung Stinky Tofu" }
   ],
 
-  // 27. TAINAN (20 Items)
+  // 29. TAINAN (20 Items)
   TAINAN: [
     { id: "tnn_1", type: "sight", name: "Chimei Museum & Western Classical Palace", category: "World-Class Museum", location: "Rende District", lat: 22.9348, lon: 120.2260, desc: "Neoclassical palace surrounded by Olympus bridge statues, housing Western fine art and violins.", query: "Chimei Museum Tainan" },
     { id: "tnn_2", type: "sight", name: "Anping Old Fort (Fort Zeelandia)", category: "Dutch Heritage", location: "Anping District", lat: 23.0016, lon: 120.1607, desc: "1624 Dutch fortress that served as the center of Dutch East India Company trade in Formosa.", query: "Fort Zeelandia Anping Tainan" },
@@ -665,7 +711,7 @@ const MASTER_CURATED_CATALOG = {
     { id: "tnn_20", type: "food", name: "Tai-Cheng Fruit Shop (Melon Shaved Ice)", category: "Historic Fruit Shop", location: "Zhengxing Street", lat: 22.9940, lon: 120.1970, desc: "Fresh hollowed-out sweet cantaloupes filled with handmade fruit sorbet balls.", query: "Tai Cheng Fruit Shop Tainan" }
   ],
 
-  // 28. KAOHSIUNG (20 Items)
+  // 30. KAOHSIUNG (20 Items)
   KAOHSIUNG: [
     { id: "khh_1", type: "sight", name: "The Pier-2 Art Center & Great Harbor Bridge", category: "Harbor Cultural District", location: "Yancheng / Harbor", lat: 22.6199, lon: 120.2818, desc: "Restored sugar warehouses turned into open-air contemporary galleries and rotating bridge.", query: "Pier-2 Art Center Kaohsiung" },
     { id: "khh_2", type: "sight", name: "Lotus Pond & Dragon and Tiger Pagodas", category: "Scenic Temple Lake", location: "Zuoying District", lat: 22.6804, lon: 120.2917, desc: "Scenic lake with twin pagodas entered through the dragon's mouth and exited from tiger's jaws.", query: "Dragon and Tiger Pagodas Kaohsiung" },
@@ -689,7 +735,7 @@ const MASTER_CURATED_CATALOG = {
     { id: "khh_20", type: "food", name: "Daitenghu Shabu Shabu (Premier Hotpot)", category: "Gourmet Hotpot", location: "Xinxing / Qianjin", lat: 22.6280, lon: 120.2980, desc: "Japanese-style stone pot shabu shabu with prime American beef slices and sweet bonito broth.", query: "Daitenghu Hotpot Kaohsiung" }
   ],
 
-  // 29. TOKYO (20 Items)
+  // 31. TOKYO (20 Items)
   TOKYO: [
     { id: "tyo_1", type: "sight", name: "Sensō-ji Temple & Nakamise-dori", category: "Historic Temple", location: "Asakusa", lat: 35.7148, lon: 139.7967, desc: "Tokyo's oldest Buddhist temple founded in 645 AD featuring the giant red Kaminarimon lantern.", query: "Senso-ji Asakusa Tokyo" },
     { id: "tyo_2", type: "sight", name: "Meiji Jingu Shrine & Forest", category: "Shinto Shrine", location: "Shibuya / Harajuku", lat: 35.6764, lon: 139.6993, desc: "Tranquil 170-acre evergreen forest sanctuary dedicated to Emperor Meiji with massive Torii gates.", query: "Meiji Jingu Tokyo" },
@@ -713,7 +759,7 @@ const MASTER_CURATED_CATALOG = {
     { id: "tyo_20", type: "food", name: "Afuri Ramen (Yuzu Shio Broth)", category: "Yuzu Craft Ramen", location: "Ebisu / Harajuku", lat: 35.6465, lon: 139.7100, desc: "Light chicken broth infused with aromatic yuzu citrus, charcoal-grilled chashu, and thin noodles.", query: "Afuri Ramen Tokyo" }
   ],
 
-  // 30. KYOTO (20 Items)
+  // 32. KYOTO (20 Items)
   KYOTO: [
     { id: "kyo_1", type: "sight", name: "Fushimi Inari-Taisha (10,000 Torii Gates)", category: "Sacred Shinto Shrine", location: "Fushimi", lat: 34.9671, lon: 135.7727, desc: "Mountain trails lined with thousands of bright vermilion Torii gates through sacred cedar forests.", query: "Fushimi Inari Taisha Kyoto" },
     { id: "kyo_2", type: "sight", name: "Kinkaku-ji (The Golden Pavilion)", category: "Zen Temple", location: "Kita Ward", lat: 35.0394, lon: 135.7292, desc: "Top two floors covered in pure gold leaf, reflecting across the Mirror Pond.", query: "Kinkaku-ji Golden Pavilion Kyoto" },
@@ -737,7 +783,7 @@ const MASTER_CURATED_CATALOG = {
     { id: "kyo_20", type: "food", name: "Kura Sushi Kyoto (Conveyor Belt Sushi)", category: "Conveyor Belt Sushi", location: "Kyoto Station Area", lat: 34.9820, lon: 135.7550, desc: "Touchscreen revolving sushi counter with salmon nigiri, tuna rolls, and capsule toy games.", query: "Kura Sushi Kyoto" }
   ],
 
-  // 31. OSAKA (20 Items)
+  // 33. OSAKA (20 Items)
   OSAKA: [
     { id: "osa_1", type: "sight", name: "Dotonbori Canal & Glico Running Man", category: "Neon Entertainment Strip", location: "Namba / Minami", lat: 34.6687, lon: 135.5013, desc: "Vibrant neon canal lined with giant animatronic signs, takoyaki stands, and river cruises.", query: "Dotonbori Glico Man Osaka" },
     { id: "osa_2", type: "sight", name: "Osaka Castle & Castle Park", category: "Samurai Castle", location: "Chuo Ward", lat: 34.6873, lon: 135.5262, desc: "16th-century fortress encircled by massive stone moats and cherry blossom orchards.", query: "Osaka Castle" },
@@ -745,7 +791,7 @@ const MASTER_CURATED_CATALOG = {
     { id: "osa_4", type: "sight", name: "Universal Studios Japan (USJ & Super Nintendo World)", category: "World-Class Theme Park", location: "Konohana Ward", lat: 34.6654, lon: 135.4323, desc: "Theme park featuring Super Nintendo World, Wizarding World of Harry Potter, and Mario Kart.", query: "Universal Studios Japan" },
     { id: "osa_5", type: "sight", name: "Umeda Sky Building & Floating Garden", category: "Architectural Marvel", location: "Kita Ward / Umeda", lat: 34.7059, lon: 135.4903, desc: "Twin 40-story towers connected at the top by a circular open-air sky bridge 173m up.", query: "Umeda Sky Building Osaka" },
     { id: "osa_6", type: "sight", name: "Kuromon Ichiba Market (Osaka's Kitchen)", category: "Seafood Market", location: "Nippombashi", lat: 34.6653, lon: 135.5070, desc: "Covered market serving grilled king crab legs, uni sea urchin, wagyu skewers, and oysters.", query: "Kuromon Market Osaka" },
-    { id: "osa_7", type: "sight", name: "Shinsaibashi-suji Shopping Arcade", category: "Mega Covered Arcade", location: "Chuo Ward", lat: 40.7738, lon: -73.9708, desc: "600-meter covered shopping street connecting major department stores, boutiques, and bakeries.", query: "Shinsaibashi Shopping Street Osaka" },
+    { id: "osa_7", type: "sight", name: "Shinsaibashi-suji Shopping Arcade", category: "Mega Covered Arcade", location: "Chuo Ward", lat: 34.6710, lon: 135.5015, desc: "600-meter covered shopping street connecting major department stores, boutiques, and bakeries.", query: "Shinsaibashi Shopping Street Osaka" },
     { id: "osa_8", type: "sight", name: "Abeno Harukas 300 (Japan's Tallest Skyscraper)", category: "Observation Deck", location: "Tennoji", lat: 34.6458, lon: 135.5140, desc: "300-meter skyscraper offering 360-degree glass floor views extending to Kobe and Kyoto.", query: "Abeno Harukas 300 Osaka" },
     { id: "osa_9", type: "sight", name: "Osaka Aquarium Kaiyukan", category: "Giant Aquarium", location: "Tempozan Harbor", lat: 34.6545, lon: 135.4290, desc: "One of the world's largest public aquariums featuring a massive 9-meter tank holding whale sharks.", query: "Kaiyukan Aquarium Osaka" },
     { id: "osa_10", type: "sight", name: "Shitennō-ji (Japan's Oldest Buddhist Temple)", category: "Ancient 593 AD Temple", location: "Tennoji", lat: 34.6535, lon: 135.5165, desc: "Founded in 593 AD by Prince Shotoku, featuring a 5-story pagoda and turtle pond gardens.", query: "Shitennoji Temple Osaka" },
@@ -755,13 +801,13 @@ const MASTER_CURATED_CATALOG = {
     { id: "osa_14", type: "food", name: "Rikuro Ojisan (Warm Fresh Souffle Cheesecake)", category: "Jiggly Cheesecake", location: "Namba", lat: 34.6640, lon: 135.5010, desc: "Fluffy, jiggly, oven-fresh Japanese soufflé cheesecakes stamped with the Uncle Rikuro logo.", query: "Rikuro Ojisan Cheesecake Namba" },
     { id: "osa_15", type: "food", name: "Harukoma Sushi (Tenma Historic Sushi Bar)", category: "Local Sushi Counter", location: "Tenjinbashi-suji Arcade", lat: 34.7065, lon: 135.5115, desc: "High-value sushi counter serving thick-cut fatty tuna, grilled unagi eel, and salmon belly.", query: "Harukoma Sushi Osaka" },
     { id: "osa_16", type: "food", name: "Kinryu Ramen (Giant 3D Golden Dragon)", category: "Late-Night Ramen", location: "Dotonbori", lat: 34.6685, lon: 135.5030, desc: "Tatami-mat outdoor counter serving tonkotsu ramen with unlimited spicy garlic chives and kimchi.", query: "Kinryu Ramen Dotonbori" },
-    { id: "osa_17", type: "food", name: "Ajinoya Okonomiyaki (Namba)", category: "Craft Okonomiyaki", location: "Namba", lat: 40.7738, lon: -73.9708, desc: "Award-winning okonomiyaki and yakisoba noodles stir-fried with squid and sweet pork belly.", query: "Ajinoya Okonomiyaki Osaka" },
+    { id: "osa_17", type: "food", name: "Ajinoya Okonomiyaki (Namba)", category: "Craft Okonomiyaki", location: "Namba", lat: 34.6675, lon: 135.5020, desc: "Award-winning okonomiyaki and yakisoba noodles stir-fried with squid and sweet pork belly.", query: "Ajinoya Okonomiyaki Osaka" },
     { id: "osa_18", type: "food", name: "551 Horai (Steamed Pork Buns Butaman)", category: "Iconic Pork Buns", location: "Namba / Osaka Station", lat: 34.6650, lon: 135.5015, desc: "Osaka's most popular sweet-dough steamed buns stuffed with juicy minced pork and onions.", query: "551 Horai Butaman Osaka" },
     { id: "osa_19", type: "food", name: "Gyukatsu Motomura Namba", category: "Wagyu Beef Cutlet", location: "Namba", lat: 34.6645, lon: 135.5020, desc: "Medium-rare panko breaded beef cutlet grilled on individual stone burners.", query: "Gyukatsu Motomura Namba Osaka" },
     { id: "osa_20", type: "food", name: "Kani Doraku (Giant Moving Crab Flagship)", category: "Crab Feast Restaurant", location: "Dotonbori", lat: 34.6688, lon: 135.5010, desc: "Under the giant mechanical crab sign: multi-course crab sashimi, grilled crab legs, and crab hotpot.", query: "Kani Doraku Dotonbori" }
   ],
 
-  // 32. HONG KONG (20 Items)
+  // 34. HONG KONG (20 Items)
   HKG: [
     { id: "hkg_1", type: "sight", name: "Victoria Peak & Historic Peak Tram", category: "Iconic Panorama", location: "Hong Kong Island", lat: 22.2759, lon: 114.1455, desc: "Funicular railway climbing to the peak for views of Victoria Harbour skyscrapers.", query: "Victoria Peak Hong Kong" },
     { id: "hkg_2", type: "sight", name: "Tian Tan Big Buddha & Ngong Ping 360", category: "Bronze Sanctuary", location: "Lantau Island", lat: 22.2540, lon: 113.9050, desc: "34-meter seated bronze Buddha statue reached by glass-bottom crystal cable car.", query: "Tian Tan Big Buddha Lantau" },
@@ -785,7 +831,7 @@ const MASTER_CURATED_CATALOG = {
     { id: "hkg_20", type: "food", name: "Sister Wah Beef Brisket (Tin Hau)", category: "Bib Gourmand Brisket", location: "Tin Hau (Electric Rd)", lat: 22.2828, lon: 114.1925, desc: "Clear radish beef brisket soup with handmade flat rice noodles and chili oil.", query: "Sister Wah Beef Brisket Hong Kong" }
   ],
 
-  // 33. SINGAPORE (20 Verified Items)
+  // 35. SINGAPORE (20 Verified Items)
   SINGAPORE: [
     { id: "sin_1", type: "sight", name: "Gardens by the Bay & Supertree Grove", category: "Futuristic Botanical Oasis", location: "Marina South", lat: 1.2816, lon: 103.8636, desc: "250-acre park featuring vertical Supertree gardens, Cloud Forest mist dome, and OCBC Skyway.", query: "Gardens by the Bay Singapore" },
     { id: "sin_2", type: "sight", name: "Marina Bay Sands & SkyPark Observation Deck", category: "Iconic Skyscraper Resort", location: "Marina Bay", lat: 1.2834, lon: 103.8607, desc: "Triple-tower cantilevered ship structure 200m high offering panoramic views over Singapore Strait.", query: "Marina Bay Sands SkyPark" },
@@ -809,7 +855,7 @@ const MASTER_CURATED_CATALOG = {
     { id: "sin_20", type: "food", name: "Birds of Paradise Gelato Boutique", category: "Botanical Gelato", location: "Katong / Jewel Changi", lat: 1.3055, lon: 103.9045, desc: "Gelato infused with Southeast Asian herbs and fruits: white chrysanthemum, spiced ginger, and pandan.", query: "Birds of Paradise Gelato Singapore" }
   ],
 
-  // 34. BANGKOK (20 Verified Items)
+  // 36. BANGKOK (20 Verified Items)
   BANGKOK: [
     { id: "bkk_1", type: "sight", name: "The Grand Palace & Wat Phra Kaew (Emerald Buddha)", category: "Royal Sacred Sanctuary", location: "Phra Nakhon", lat: 13.7500, lon: 100.4915, desc: "1782 royal residence with golden chedis, mother-of-pearl throne halls, and Emerald Buddha.", query: "Grand Palace Wat Phra Kaew Bangkok" },
     { id: "bkk_2", type: "sight", name: "Wat Arun (Temple of Dawn)", category: "Chao Phraya River Landmark", location: "Bangkok Yai (West Bank)", lat: 13.7437, lon: 100.4888, desc: "82-meter towering central prang encrusted in colorful Chinese porcelain mosaics on the river.", query: "Wat Arun Temple of Dawn Bangkok" },
@@ -833,10 +879,10 @@ const MASTER_CURATED_CATALOG = {
     { id: "bkk_20", type: "food", name: "After You Dessert Cafe (Shibuya Honey Toast & Kakigori)", category: "Artisan Dessert Cafe", location: "Siam Paragon / Thong Lo", lat: 13.7460, lon: 100.5350, desc: "Warm buttery Shibuya thick honey toast with vanilla ice cream and Thai tea shaved ice kakigori.", query: "After You Dessert Cafe Bangkok" }
   ],
 
-  // 35. SYDNEY (20 Verified Items)
+  // 37. SYDNEY (20 Verified Items)
   SYDNEY: [
     { id: "syd_1", type: "sight", name: "Sydney Opera House & Forecourt", category: "UNESCO World Icon", location: "Bennelong Point", lat: -33.8568, lon: 151.2153, desc: "Jørn Utzon's architectural masterpiece with sail-like roofs on Sydney Harbour.", query: "Sydney Opera House" },
-    { id: "syd_2", type: "sight", name: "Sydney Harbour Bridge & BridgeClimb", category: "Monumental Steel Arch", location: "Sydney Harbour", lat: -33.8523, lon: -151.2108, desc: "'The Coathanger' arch bridge offering pedestrian walkways and climbs 134m above the harbor.", query: "Sydney Harbour Bridge Climb" },
+    { id: "syd_2", type: "sight", name: "Sydney Harbour Bridge & BridgeClimb", category: "Monumental Steel Arch", location: "Sydney Harbour", lat: -33.8523, lon: 151.2108, desc: "'The Coathanger' arch bridge offering pedestrian walkways and climbs 134m above the harbor.", query: "Sydney Harbour Bridge Climb" },
     { id: "syd_3", type: "sight", name: "Bondi to Coogee Coastal Walk", category: "Spectacular Ocean Walk", location: "Bondi Beach to Coogee", lat: -33.8915, lon: 151.2767, desc: "6 km cliffside trail passing Bondi Beach, Tamarama, Bronte rock pools, and ocean views.", query: "Bondi to Coogee Coastal Walk" },
     { id: "syd_4", type: "sight", name: "Taronga Zoo & Harbour Viewpoint", category: "Wildlife Sanctuary with View", location: "Mosman / Harbour", lat: -33.8433, lon: 151.2413, desc: "Ferry-accessed zoo with koalas, kangaroos, and giraffes framing the Sydney skyline.", query: "Taronga Zoo Sydney" },
     { id: "syd_5", type: "sight", name: "The Rocks Historic Colonial Quarter", category: "Colonial Heritage", location: "The Rocks", lat: -33.8598, lon: 151.2090, desc: "Oldest colonial settlement in Australia with cobblestone laneways, weekend markets, and historic pubs.", query: "The Rocks Sydney" },
@@ -857,7 +903,7 @@ const MASTER_CURATED_CATALOG = {
     { id: "syd_20", type: "food", name: "The Grounds of Alexandria (Garden Cafe & Roastery)", category: "Immersive Garden Dining", location: "Alexandria (Huntley St)", lat: -33.9110, lon: 151.1945, desc: "Former 1920s pie factory transformed into a whimsical garden sanctuary with bakery and specialty coffee roastery.", query: "The Grounds of Alexandria Sydney" }
   ],
 
-  // 36. SEOUL (20 Verified Items)
+  // 38. SEOUL (20 Verified Items)
   SEOUL: [
     { id: "icn_1", type: "sight", name: "Gyeongbokgung Palace & Royal Guard Change", category: "Royal Joseon Palace", location: "Jongno District", lat: 37.5796, lon: 126.9770, desc: "Grand 1395 royal palace with mountain backdrop, Gyeonghoeru pavilion, and guard changing ceremony.", query: "Gyeongbokgung Palace Seoul" },
     { id: "icn_2", type: "sight", name: "Bukchon Hanok Village", category: "Historic Traditional Village", location: "Jongno District", lat: 37.5826, lon: 126.9835, desc: "Preserved neighborhood of hundreds of traditional Joseon-era tiled hanok houses and craft studios.", query: "Bukchon Hanok Village Seoul" },
@@ -879,53 +925,5 @@ const MASTER_CURATED_CATALOG = {
     { id: "icn_18", type: "food", name: "Kyochon Chicken (Korean Fried Chicken & Beer)", category: "Chimaek", location: "Dongdaemun / Hongdae", lat: 37.5710, lon: 127.0115, desc: "Double-fried crunchy chicken tossed in honey sauce or red hot pepper glaze, served with cold beer.", query: "Kyochon Chicken Seoul" },
     { id: "icn_19", type: "food", name: "Sulbing Korean Dessert Cafe (Injeolmi Bingsu)", category: "Shaved Milk Ice", location: "Myeongdong / Insadong", lat: 37.5630, lon: 126.9845, desc: "Snowy shaved milk ice covered in roasted soybean powder, chewy rice cakes, and sliced almonds.", query: "Sulbing Injeolmi Bingsu Seoul" },
     { id: "icn_20", type: "food", name: "Noryangjin Fisheries Wholesale Market", category: "Fresh Seafood Auction", location: "Dongjak District", lat: 37.5140, lon: 126.9415, desc: "Mega market where you pick live king crab, flatfish, and abalone to be prepared on the 2nd floor.", query: "Noryangjin Fish Market Seoul" }
-  ],
-
-  // 37. PHILADELPHIA, PA (20 Verified Items)
-  PHILADELPHIA: [
-    { id: "phl_1", type: "sight", name: "Liberty Bell Center & Independence Hall", category: "National Historic Landmark", location: "Independence National Historical Park", lat: 39.9496, lon: -75.1503, desc: "Historic home of the Liberty Bell and the birthplace of the Declaration of Independence and U.S. Constitution.", query: "Liberty Bell Philadelphia" },
-    { id: "phl_2", type: "sight", name: "Philadelphia Museum of Art & Rocky Steps", category: "World-Class Museum", location: "Fairmount Park", lat: 39.9656, lon: -75.1809, desc: "Grand art museum housing extensive European masterpieces, fronted by the iconic Rocky Balboa bronze statue and steps.", query: "Philadelphia Museum of Art Rocky Steps" },
-    { id: "phl_3", type: "sight", name: "Reading Terminal Market", category: "Historic Public Market", location: "Center City", lat: 39.9531, lon: -75.1587, desc: "America's oldest continuously operating farmer's market (since 1893) packed with Amish bakeries and roast pork sandwich counters.", query: "Reading Terminal Market Philadelphia" },
-    { id: "phl_4", type: "sight", name: "Eastern State Penitentiary", category: "Historic Prison Museum", location: "Fairmount", lat: 39.9676, lon: -75.1723, desc: "Pioneering 1829 radial prison once housing notorious figures like Al Capone, now an atmospheric historic museum.", query: "Eastern State Penitentiary Philadelphia" },
-    { id: "phl_5", type: "sight", name: "The Barnes Foundation", category: "Fine Art Collection", location: "Benjamin Franklin Parkway", lat: 39.9583, lon: -75.1741, desc: "World-renowned post-impressionist and modern art collection featuring hundreds of works by Renoir, Cézanne, and Matisse.", query: "The Barnes Foundation Philadelphia" },
-    { id: "phl_6", type: "sight", name: "Betsy Ross House", category: "Historic Revolutionary Site", location: "Old City", lat: 39.9515, lon: -75.1462, desc: "Historic 1740s townhouse believed to be the home where Betsy Ross sewed the first American flag.", query: "Betsy Ross House Philadelphia" },
-    { id: "phl_7", type: "sight", name: "Independence Seaport Museum & Cruiser Olympia", category: "Maritime Heritage", location: "Penn's Landing / Waterfront", lat: 39.9463, lon: -75.1425, desc: "Waterfront museum featuring the historic 1892 Spanish-American War cruiser USS Olympia.", query: "Independence Seaport Museum Philadelphia" },
-    { id: "phl_8", type: "sight", name: "Mütter Museum", category: "Medical History Museum", location: "Rittenhouse Square", lat: 39.9535, lon: -75.1824, desc: "Fascinating medical museum displaying historical anatomical specimens, models, and antique medical equipment.", query: "Mutter Museum Philadelphia" },
-    { id: "phl_9", type: "sight", name: "Fairmount Park & Boathouse Row", category: "Historic Park & River", location: "Schuylkill River", lat: 39.9723, lon: -75.1914, desc: "Iconic 19th-century Victorian rowing club boathouses glowing with lights along the Schuylkill River.", query: "Boathouse Row Philadelphia" },
-    { id: "phl_10", type: "sight", name: "Philadelphia's Magic Gardens", category: "Mosaic Art Environment", location: "South Street", lat: 39.9431, lon: -75.1574, desc: "Immersive indoor/outdoor mosaic labyrinth created by artist Isaiah Zagar using tiles, glass, and bicycle wheels.", query: "Philadelphia Magic Gardens" },
-    { id: "phl_11", type: "food", name: "Pat's King of Steaks vs. Geno's Steaks", category: "Original Cheesesteak Rivals", location: "South Philadelphia (9th & Passyunk)", lat: 39.9332, lon: -75.1593, desc: "The legendary 24/7 rivalry where Pat's invented the cheesesteak in 1930 and Geno's defends the corner.", query: "Pats King of Steaks Philadelphia" },
-    { id: "phl_12", type: "food", name: "John's Roast Pork", category: "Historic Roast Pork Sandwich", location: "South Philadelphia (Moyamensing Ave)", lat: 39.9205, lon: -75.1481, desc: "Family-run institution since 1930 serving slow-roasted pork shoulder with sharp provolone and broccoli rabe.", query: "Johns Roast Pork Philadelphia" },
-    { id: "phl_13", type: "food", name: "Dalessandro's Steaks", category: "Neighborhood Cheesesteak", location: "Roxborough", lat: 40.0338, lon: -75.2343, desc: "Beloved neighborhood counter known for finely chopped ribeye, melted cheese, and long lines.", query: "Dalessandros Steaks Philadelphia" },
-    { id: "phl_14", type: "food", name: "Federal Donuts (Korean Fried Chicken & Donuts)", category: "Artisan Donuts & Chicken", location: "Center City / South Philly", lat: 39.9475, lon: -75.1590, desc: "Famous pairing of twice-fried Korean spicy chicken with fancy glazed artisan cake donuts.", query: "Federal Donuts Philadelphia" },
-    { id: "phl_15", type: "food", name: "Di Bruno Bros. (Italian Market Flagship)", category: "Artisan Cheesemonger", location: "Italian Market (9th St)", lat: 39.9372, lon: -75.1578, desc: "Historic 1939 Italian market specialty food store stocked with imported cheeses and charcuterie.", query: "Di Bruno Bros 9th Street Philadelphia" },
-    { id: "phl_16", type: "food", name: "Jim's South Street (Classic Cheesesteaks)", category: "Center City Cheesesteaks", location: "South Street", lat: 39.9423, lon: -75.1512, desc: "Bustling corner grill serving classic sliced ribeye cheesesteaks smothered in Cheez Whiz.", query: "Jims South Street Philadelphia" },
-    { id: "phl_17", type: "food", name: "Zahav (Chef Michael Solomonov Modern Israeli)", category: "Award-Winning Israeli Dining", location: "Society Hill", lat: 39.9465, lon: -75.1472, desc: "James Beard Award-winning restaurant serving charcoal-grilled meats and warm Jerusalem pomegranate-glazed lamb.", query: "Zahav Restaurant Philadelphia" },
-    { id: "phl_18", type: "food", name: "Franklin Fountain", category: "Vintage Ice Cream Parlor", location: "Old City (Market St)", lat: 39.9502, lon: -75.1448, desc: "Turn-of-the-century soda fountain serving homemade ice cream sundaes in sodapop glasses.", query: "Franklin Fountain Philadelphia" },
-    { id: "phl_19", type: "food", name: "Termini Brothers Bakery (Italian Pastries)", category: "Historic Italian Bakery", location: "Italian Market / Reading Terminal", lat: 39.9328, lon: -75.1590, desc: "Historic 1921 South Philly bakery famous for hand-filled cannoli, sfogliatelle, and pignoli cookies.", query: "Termini Brothers Bakery Philadelphia" },
-    { id: "phl_20", type: "food", name: "Talula's Garden", category: "Farm-to-Table Dining", location: "Washington Square", lat: 39.9472, lon: -75.1525, desc: "Romantic garden-themed restaurant serving seasonal farm-to-table American gastronomy.", query: "Talulas Garden Philadelphia" }
-  ],
-
-  // 38. PITTSBURGH, PA (20 Verified Items)
-  PITTSBURGH: [
-    { id: "pit_1", type: "sight", name: "Duquesne Incline & Mount Washington Overlook", category: "Historic Cable Car", location: "Mount Washington", lat: 40.4402, lon: -80.0125, desc: "Historic 1877 wooden cable car climbing Mount Washington to provide the ultimate panoramic view of downtown's Three Rivers.", query: "Duquesne Incline Pittsburgh" },
-    { id: "pit_2", type: "sight", name: "Carnegie Museum of Art & Natural History", category: "World-Class Museum", location: "Oakland", lat: 40.4439, lon: -79.9477, desc: "Founded by Andrew Carnegie, featuring one of the world's finest dinosaur fossil collections and fine art galleries.", query: "Carnegie Museum of Natural History Pittsburgh" },
-    { id: "pit_3", type: "sight", name: "The Andy Warhol Museum", category: "Pop Art Museum", location: "North Shore", lat: 40.4475, lon: -80.0035, desc: "The largest museum in North America dedicated to a single artist, housing extensive works by pop icon Andy Warhol.", query: "The Andy Warhol Museum Pittsburgh" },
-    { id: "pit_4", type: "sight", name: "Phipps Conservatory and Botanical Gardens", category: "Victorian Glasshouse", location: "Schenley Park / Oakland", lat: 40.4415, lon: -79.9461, desc: "Historic 1893 Victorian glasshouse and botanical gardens featuring seasonal flower shows and tropical biomes.", query: "Phipps Conservatory Pittsburgh" },
-    { id: "pit_5", type: "sight", name: "Point State Park & The Three Rivers Fountain", category: "Historic Riverfront Park", location: "Downtown Point", lat: 40.4429, lon: -80.0094, desc: "36-acre waterfront park at the confluence of the Allegheny, Monongahela, and Ohio rivers marked by a giant fountain.", query: "Point State Park Pittsburgh" },
-    { id: "pit_6", type: "sight", name: "Senator John Heinz History Center", category: "Regional History Museum", location: "Strip District", lat: 40.4473, lon: -79.9922, desc: "Smithsonian-affiliated museum showcasing Western Pennsylvania history, sports heritage, and Mr. Rogers' Neighborhood.", query: "Heinz History Center Pittsburgh" },
-    { id: "pit_7", type: "sight", name: "PPG Paints Arena & North Shore Stadiums", category: "Sports Architecture", location: "North Shore / Uptown", lat: 40.4395, lon: -79.9880, desc: "State-of-the-art home of the Pittsburgh Penguins hockey team near Heinz Field and PNC Park.", query: "PPG Paints Arena Pittsburgh" },
-    { id: "pit_8", type: "sight", name: "National Aviary", category: "Indoor Bird Sanctuary", location: "North Side", lat: 40.4532, lon: -80.0122, desc: "America's only independent indoor aviary housing over 500 birds across immersive walkthrough habitats.", query: "National Aviary Pittsburgh" },
-    { id: "pit_9", type: "sight", name: "Cathedral of Learning (Nationality Rooms)", category: "Architectural Landmark", location: "University of Pittsburgh / Oakland", lat: 40.4443, lon: -79.9532, desc: "535-foot neo-Gothic academic tower featuring 31 ornate classrooms designed to reflect different ethnic cultures.", query: "Cathedral of Learning Pittsburgh" },
-    { id: "pit_10", type: "sight", name: "Monongahela Incline", category: "Historic Cable Railway", location: "Station Square / Mount Washington", lat: 40.4358, lon: -80.0040, desc: "The oldest continuously operating funicular railway in the United States, operating since 1870.", query: "Monongahela Incline Pittsburgh" },
-    { id: "pit_11", type: "food", name: "Primanti Bros. Flagship (Strip District)", category: "Iconic Pittsburgh Sandwich", location: "Strip District (Smallman St)", lat: 40.4502, lon: -79.9868, desc: "Legendary sandwich piled high with grilled meat, melted cheese, French fries, and cole slaw right between Italian bread.", query: "Primanti Bros Strip District Pittsburgh" },
-    { id: "pit_12", type: "food", name: "S&D Polish Deli", category: "Traditional Polish Fare", location: "Strip District", lat: 40.4510, lon: -79.9855, desc: "Authentic Polish market and cafe serving handmade pierogies, kielbasa, and stuffed cabbage rolls.", query: "SD Polish Deli Pittsburgh" },
-    { id: "pit_13", type: "food", name: "Pamela's Diner (Famous Crêpe-Style Pancakes)", category: "Historic Diner Breakfast", location: "Strip District / Oakland", lat: 40.4485, lon: -79.9890, desc: "Beloved local diner famous for crispy-edged, thin crêpe-style pancakes loaded with butter and syrup.", query: "Pamelas Diner Strip District Pittsburgh" },
-    { id: "pit_14", type: "food", name: "Church Brew Works", category: "Brewpub in Historic Church", location: "Lawrenceville", lat: 40.4655, lon: -79.9605, desc: "Stunning 1902 former church converted into a craft microbrewery serving peerless beer under stained-glass windows.", query: "Church Brew Works Pittsburgh" },
-    { id: "pit_15", type: "food", name: "Gaucho Parrilla Argentina", category: "Wood-Fired Argentine Grill", location: "Downtown / Cultural District", lat: 40.4425, lon: -79.9985, desc: "Wood-fired Argentine grill famous for smoky hanger steaks, empanadas, and chimichurri sauces.", query: "Gaucho Parrilla Argentina Pittsburgh" },
-    { id: "pit_16", type: "food", name: "Bigham Tavern (Mount Washington Wings)", category: "Neighborhood Tavern", location: "Mount Washington", lat: 40.4305, lon: -80.0090, desc: "Award-winning neighborhood tavern renowned for creative specialty chicken wings and pub burgers.", query: "Bigham Tavern Pittsburgh" },
-    { id: "pit_17", type: "food", name: "DeLuca's Diner (Strip District Breakfast)", category: "Classic Diner", location: "Strip District", lat: 40.4495, lon: -79.9875, desc: "Bustling historic diner serving massive omelets, hash browns, and Italian breakfast classics.", query: "DeLucas Diner Pittsburgh" },
-    { id: "pit_18", type: "food", name: "MP Brewery & Pittsburgh Salad Spots", category: "Local Culinary Tradition", location: "South Side", lat: 40.4285, lon: -79.9750, desc: "Discovering the classic Pittsburgh tradition of topping hefty steak or chicken salads with french fries.", query: "Pittsburgh Salad" },
-    { id: "pit_19", type: "food", name: "Betis Bakery (Strip District Biscotti)", category: "Artisan Italian Bakery", location: "Strip District", lat: 40.4500, lon: -79.9860, desc: "Generations-old bakery offering fresh Italian bread, biscotti, and sweet treats in the Strip District.", query: "Bettis Bakery Pittsburgh" },
-    { id: "pit_20", type: "food", name: "Fat Head's Saloon (Headwiches)", category: "South Side Pub", location: "South Side", lat: 40.4290, lon: -79.9755, desc: "Legendary South Side pub famous for giant overstuffed 'Headwich' sandwiches and craft beers on tap.", query: "Fat Heads Saloon Pittsburgh" }
   ]
 };

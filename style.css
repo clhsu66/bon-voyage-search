@@ -1,4 +1,8 @@
 /* ========================================================
+   CHUNG'S BON VOYAGE SEARCH - STYLESHEET (PART 1 OF 2)
+   ======================================================== */
+
+/* ========================================================
    THEME VARIABLES (DARK THEME DEFAULT + LIGHT OVERRIDES)
    ======================================================== */
 :root {
@@ -74,7 +78,9 @@ body {
   padding: 0 1.5rem;
 }
 
-/* Navbar */
+/* ========================================================
+   NAVBAR & CONTROLS
+   ======================================================== */
 .navbar {
   background-color: var(--card-bg);
   border-bottom: 1px solid var(--border);
@@ -133,7 +139,7 @@ body {
   border-color: var(--primary);
 }
 
-/* Currency Converter */
+/* Currency & Radius Selector */
 .currency-selector-wrapper {
   display: flex;
   align-items: center;
@@ -196,9 +202,9 @@ body {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background-color: rgba(59, 130, 246, 0.15);
+  background-color: var(--card-bg);
   border: 1px solid var(--primary);
-  padding: 0.35rem 0.75rem;
+  padding: 0.5rem 1rem;
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 600;
@@ -209,13 +215,29 @@ body {
   background-color: var(--primary);
   color: #fff;
   border: none;
-  padding: 0.25rem 0.6rem;
+  padding: 0.3rem 0.75rem;
   border-radius: 12px;
   font-size: 0.75rem;
   cursor: pointer;
+  font-weight: 600;
 }
 
-/* Trip Type Tabs */
+.btn-sm:hover {
+  background-color: var(--primary-hover);
+}
+
+/* ========================================================
+   SEARCH CARD & FORM CONTROLS
+   ======================================================== */
+.search-card {
+  background-color: var(--card-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 2rem;
+  border: 1px solid var(--border);
+}
+
 .trip-type-tabs {
   display: flex;
   gap: 0.5rem;
@@ -256,16 +278,6 @@ body {
   margin-bottom: 0.75rem;
 }
 
-/* Search Card */
-.search-card {
-  background-color: var(--card-bg);
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: var(--shadow-md);
-  margin-bottom: 2rem;
-  border: 1px solid var(--border);
-}
-
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -278,7 +290,7 @@ body {
 }
 
 .form-row-dates-radius {
-  grid-template-columns: 1fr 1fr 1.1fr;
+  grid-template-columns: 1fr 1fr 0.8fr 1.1fr;
 }
 
 .input-group {
@@ -350,6 +362,7 @@ label {
 
 input[type="text"],
 input[type="date"],
+input[type="number"],
 .sort-select {
   padding: 0.75rem 1rem;
   border: 1px solid var(--border);
@@ -363,6 +376,7 @@ input[type="date"],
 
 input[type="text"]:focus,
 input[type="date"]:focus,
+input[type="number"]:focus,
 .sort-select:focus {
   border-color: var(--primary);
 }
@@ -434,7 +448,9 @@ input[type="date"]:focus,
   border-color: var(--primary);
 }
 
-/* UI States */
+/* ========================================================
+   UI STATES & RESULTS HEADER
+   ======================================================== */
 .hidden {
   display: none !important;
 }
@@ -665,12 +681,19 @@ input[type="date"]:focus,
   font-weight: bold;
   box-shadow: 0 2px 6px rgba(0,0,0,0.4);
   border: 2px solid #ffffff;
+  transition: transform 0.2s ease;
 }
 
 .marker-hotel { background-color: #8c1d40; }
 .marker-sight { background-color: var(--primary); }
 .marker-food { background-color: var(--accent-rose); }
 .marker-custom { background-color: var(--accent-purple); }
+.marker-tagged {
+  background-color: var(--accent-amber) !important;
+  transform: scale(1.15);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.7);
+  border-color: #fff;
+}
 
 /* Leaflet Dark Popup adjustments */
 .leaflet-popup-content-wrapper {
@@ -762,7 +785,6 @@ input[type="date"]:focus,
   padding-top: 0.4rem;
   margin-top: 0.2rem;
 }
-
 /* ========================================================
    KEY SIGHTS & CULINARY HIGHLIGHTS SECTION
    ======================================================== */
@@ -847,11 +869,16 @@ input[type="date"]:focus,
 }
 
 .sights-grid::-webkit-scrollbar,
-.cards-stack::-webkit-scrollbar {
+.cards-stack::-webkit-scrollbar,
+.modal-body::-webkit-scrollbar,
+.drawer-content::-webkit-scrollbar {
   width: 6px;
 }
+
 .sights-grid::-webkit-scrollbar-thumb,
-.cards-stack::-webkit-scrollbar-thumb {
+.cards-stack::-webkit-scrollbar-thumb,
+.modal-body::-webkit-scrollbar-thumb,
+.drawer-content::-webkit-scrollbar-thumb {
   background-color: var(--border);
   border-radius: 3px;
 }
@@ -865,7 +892,7 @@ input[type="date"]:focus,
   flex-direction: column;
   gap: 0.4rem;
   position: relative;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .sight-card:hover {
@@ -882,10 +909,42 @@ input[type="date"]:focus,
   border-left: 3px solid var(--primary);
 }
 
+.sight-card.custom-item {
+  border-left: 3px solid var(--accent-purple);
+}
+
+/* Tagged Place Styling */
+.tagged-card {
+  border-color: var(--accent-amber) !important;
+  background-color: rgba(245, 158, 11, 0.08) !important;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.25);
+}
+
+.tag-indicator-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--accent-amber);
+  background-color: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 1px 6px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-active-tag {
+  background-color: rgba(245, 158, 11, 0.2) !important;
+  border-color: var(--accent-amber) !important;
+  color: var(--accent-amber) !important;
+  font-weight: 700;
+}
+
 .sight-category-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
 }
 
 .sight-category-badge {
@@ -903,6 +962,11 @@ input[type="date"]:focus,
 .badge-food {
   color: var(--accent-rose);
   background-color: rgba(244, 63, 94, 0.15);
+}
+
+.badge-custom {
+  color: var(--accent-purple);
+  background-color: rgba(168, 85, 247, 0.15);
 }
 
 .sight-name {
@@ -931,6 +995,8 @@ input[type="date"]:focus,
   margin-top: 0.5rem;
   padding-top: 0.35rem;
   border-top: 1px dashed var(--border);
+  flex-wrap: wrap;
+  gap: 0.35rem;
 }
 
 .sight-maps-link {
@@ -947,7 +1013,7 @@ input[type="date"]:focus,
   text-decoration: underline;
 }
 
-/* Card Manage / Edit / Delete Buttons */
+/* Card Manage Buttons */
 .card-manage-bar {
   display: flex;
   gap: 0.35rem;
@@ -977,7 +1043,7 @@ input[type="date"]:focus,
 }
 
 /* ========================================================
-   RESULTS GRID & CARDS
+   RESULTS GRID & CARDS (HOTELS & FLIGHTS)
    ======================================================== */
 .results-grid {
   display: grid;
@@ -1545,6 +1611,9 @@ input[type="date"]:focus,
   font-size: 0.9rem;
 }
 
+/* ========================================================
+   RESPONSIVE LAYOUT RULES
+   ======================================================== */
 @media (max-width: 860px) {
   .form-row, .form-row-3col, .form-row-dates-radius, .results-grid {
     grid-template-columns: 1fr;

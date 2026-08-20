@@ -1,36 +1,6 @@
 // ========================================================
-// CENTRALIZED APPLICATION STATE STORE
+// CHUNG'S BON VOYAGE SEARCH - APPLICATION CORE (PART 1 OF 2)
 // ========================================================
-const appState = {
-  tripType: "roundtrip",
-  originObj: null,
-  destAirportObj: null,
-  visitCityObj: null,
-  leg2OriginObj: null,
-  leg2DestObj: null,
-  departDate: "",
-  returnDate: "",
-  leg2Date: "",
-  tripDays: 1,
-  travelersCount: 1,
-  radiusKm: 10,
-  activeBrandFilter: "all",
-  activeSightFilter: "all",
-  currency: "USD",
-  
-  // Data collections
-  flights: [],
-  hotels: [],
-  sights: [],
-  taggedPlaces: [],
-  
-  // Selections
-  selectedFlight: null,
-  selectedHotel: null,
-
-  // Map Marker Cache for performance optimization (Diffing & In-place updates)
-  markerCache: new Map() // Key: item.id, Value: L.marker instance
-};
 
 // ========================================================
 // 1. GLOBAL AIRPORT & DOWNTOWN DIRECTORY
@@ -336,9 +306,10 @@ const exchangeRates = {
   TWD: { rate: 32.2, symbol: "NT$" },
   CNY: { rate: 7.25, symbol: "¥" }
 };
+let currentCurrency = "USD";
 
 function formatCurrency(amountInUSD) {
-  const fx = exchangeRates[appState.currency] || exchangeRates.USD;
+  const fx = exchangeRates[currentCurrency] || exchangeRates.USD;
   const converted = Math.round(amountInUSD * fx.rate);
   return `${fx.symbol}${converted.toLocaleString()}`;
 }
@@ -430,7 +401,7 @@ function renderTransitGuide(airportCode, cityName) {
 }
 
 // ========================================================
-// 4. TIER-1 RESOLUTION ENGINE (WITH DISTANCE CACHING)
+// 4. TIER-1 RESOLUTION ENGINE FOR SIGHTS & HOTELS
 // ========================================================
 async function fetchTargetCitySights(cityName, airportCode, centerLat, centerLon) {
   const normCity = cityName.toLowerCase();
@@ -473,16 +444,16 @@ async function fetchTargetCitySights(cityName, airportCode, centerLat, centerLon
   else if (normCity.includes("singapore") || normCode === "SIN") matchedKey = "SINGAPORE";
   else if (normCity.includes("bangkok") || normCode === "BKK") matchedKey = "BANGKOK";
   else if (normCity.includes("sydney") || normCode === "SYD") matchedKey = "SYDNEY";
-  else if (normCity.includes("philadelphia") || normCode === "philly" || normCode === "PHL") matchedKey = "PHILADELPHIA";
+  else if (normCity.includes("philadelphia") || normCity.includes("philly") || normCode === "PHL") matchedKey = "PHILADELPHIA";
   else if (normCity.includes("pittsburgh") || normCode === "PIT") matchedKey = "PITTSBURGH";
 
   if (matchedKey && typeof MASTER_CURATED_CATALOG !== 'undefined' && MASTER_CURATED_CATALOG[matchedKey]) {
     return MASTER_CURATED_CATALOG[matchedKey].map((item, idx) => {
-      const cachedDist = parseFloat(haversineDistance(centerLat, centerLon, item.lat, item.lon).toFixed(1));
+      const d = haversineDistance(centerLat, centerLon, item.lat, item.lon);
       return {
         ...item,
         id: item.id || `curated_${idx}_${Date.now()}`,
-        distanceKm: cachedDist
+        distanceKm: parseFloat(d.toFixed(1))
       };
     });
   }
@@ -496,7 +467,7 @@ async function fetchTargetCitySights(cityName, airportCode, centerLat, centerLon
       if (data && data.query && data.query.geosearch) {
         data.query.geosearch.forEach((item, idx) => {
           const title = item.title;
-          const cachedDist = parseFloat(haversineDistance(centerLat, centerLon, item.lat, item.lon).toFixed(1));
+          const dist = haversineDistance(centerLat, centerLon, item.lat, item.lon);
           const isFood = title.toLowerCase().includes("market") || title.toLowerCase().includes("restaurant");
           discoveredPlaces.push({
             id: `wiki_${item.pageid}_${idx}`,
@@ -506,7 +477,7 @@ async function fetchTargetCitySights(cityName, airportCode, centerLat, centerLon
             location: cityName,
             lat: parseFloat(item.lat),
             lon: parseFloat(item.lon),
-            distanceKm: cachedDist,
+            distanceKm: parseFloat(dist.toFixed(1)),
             desc: `Verified cultural destination in ${cityName}.`,
             query: `${title} ${cityName}`
           });
@@ -564,19 +535,22 @@ async function fetchLiveTargetHotels(centerLat, centerLon, cityName, airportCode
     priceUSD: 220 + (i * 50),
     lat: centerLat + (i === 0 ? 0.005 : -0.006),
     lon: centerLon + (i === 0 ? 0.006 : -0.005),
-    distanceKm: parseFloat(haversineDistance(centerLat, centerLon, centerLat + (i === 0 ? 0.005 : -0.006), centerLon + (i === 0 ? 0.006 : -0.005)).toFixed(1)),
+    distanceKm: 0.7,
     area: `${cityName} City Center`,
     badge: "Verified Property",
     brandUrl: getBrandPortalUrl(b, cityName, checkIn, checkOut)
   }));
 }
+
 // ========================================================
-// 5. TAGGING STATE & LEAFLET MAP & EVENT DELEGATION
+// 5. TAGGING STATE & LEAFLET MAP & INTERACTIVE CONTROLS
 // ========================================================
+let taggedPlaces = [];
+
 window.handleToggleTag = function(id, itemType) {
-  const existingIdx = appState.taggedPlaces.findIndex(p => p.id === id);
+  const existingIdx = taggedPlaces.findIndex(p => p.id === id);
   if (existingIdx > -1) {
-    appState.taggedPlaces.splice(existingIdx, 1);
+    taggedPlaces.splice(existingIdx, 1);
   } else {
     let item = null;
     if (itemType === "hotel") {
@@ -585,17 +559,16 @@ window.handleToggleTag = function(id, itemType) {
       item = currentSights.find(s => s.id === id);
     }
     if (item) {
-      appState.taggedPlaces.push({ ...item, itemType });
+      taggedPlaces.push({ ...item, itemType });
     }
   }
   sortAndRenderHotels();
-  renderDestinationSights(currentSights, appState.visitCityObj ? appState.visitCityObj.cityName : "");
+  renderDestinationSights(currentSights, resolvedVisitCityObj ? resolvedVisitCityObj.cityName : "");
   updateItineraryDrawer();
-  applyRadiusFilterAndRender(appState.radiusKm);
 };
 
 function isItemTagged(id) {
-  return appState.taggedPlaces.some(p => p.id === id);
+  return taggedPlaces.some(p => p.id === id);
 }
 
 let leafletMapInstance = null;
@@ -607,9 +580,7 @@ let allRawSights = [];
 let allRawHotels = [];
 let targetCenterLat = 0;
 let targetCenterLon = 0;
-
-let currentSights = [];
-let currentHotels = [];
+let currentRadiusKm = 10;
 
 function initLeafletMap(centerLat, centerLon, sights, hotels, radiusKm) {
   const mapElement = document.getElementById("leafletMap");
@@ -617,7 +588,7 @@ function initLeafletMap(centerLat, centerLon, sights, hotels, radiusKm) {
 
   targetCenterLat = centerLat;
   targetCenterLon = centerLon;
-  appState.radiusKm = radiusKm;
+  currentRadiusKm = radiusKm;
   allRawSights = sights;
   allRawHotels = hotels;
 
@@ -634,14 +605,14 @@ function initLeafletMap(centerLat, centerLon, sights, hotels, radiusKm) {
     leafletMapInstance.setView([centerLat, centerLon], 13);
   }
 
-  applyRadiusFilterAndRender(appState.radiusKm);
+  applyRadiusFilterAndRender(currentRadiusKm);
 }
 
 function applyRadiusFilterAndRender(radiusKm) {
-  appState.radiusKm = radiusKm;
+  currentRadiusKm = radiusKm;
 
-  const filteredSights = allRawSights.filter(s => (s.distanceKm !== undefined ? s.distanceKm : 0) <= appState.radiusKm);
-  const filteredHotels = allRawHotels.filter(h => (h.distanceKm !== undefined ? h.distanceKm : 0) <= appState.radiusKm);
+  const filteredSights = allRawSights.filter(s => (s.distanceKm !== undefined ? s.distanceKm : 0) <= currentRadiusKm);
+  const filteredHotels = allRawHotels.filter(h => (h.distanceKm !== undefined ? h.distanceKm : 0) <= currentRadiusKm);
 
   if (mapRadiusCircle && leafletMapInstance) {
     leafletMapInstance.removeLayer(mapRadiusCircle);
@@ -649,7 +620,7 @@ function applyRadiusFilterAndRender(radiusKm) {
 
   if (leafletMapInstance) {
     mapRadiusCircle = L.circle([targetCenterLat, targetCenterLon], {
-      radius: appState.radiusKm * 1000,
+      radius: currentRadiusKm * 1000,
       color: '#3b82f6',
       fillColor: '#3b82f6',
       fillOpacity: 0.08,
@@ -657,87 +628,65 @@ function applyRadiusFilterAndRender(radiusKm) {
       dashArray: '4, 6'
     }).addTo(leafletMapInstance);
 
-    const activeItemIds = new Set();
-    const allVisibleItems = [
-      ...filteredHotels.map(h => ({ ...h, itemType: 'hotel' })), 
-      ...filteredSights.map(s => ({ ...s, itemType: s.type || 'sight' }))
-    ];
+    mapMarkersLayer.clearLayers();
 
-    allVisibleItems.forEach(item => {
-      if (!item.lat || !item.lon) return;
-      activeItemIds.add(item.id);
-
-      const isTagged = isItemTagged(item.id);
-      let marker = appState.markerCache.get(item.id);
-
-      let popupHtml = '';
-      let markerIcon = null;
-
-      if (item.itemType === 'hotel') {
-        markerIcon = L.divIcon({
+    filteredHotels.forEach(h => {
+      if (h.lat && h.lon) {
+        const isTagged = isItemTagged(h.id);
+        const hotelIcon = L.divIcon({
           className: `custom-map-marker marker-hotel ${isTagged ? 'marker-tagged' : ''}`,
           html: isTagged ? `⭐` : `🏨`,
           iconSize: [30, 30],
           iconAnchor: [15, 15]
         });
 
-        popupHtml = `
+        const popupHtml = `
           <div style="font-family:sans-serif; font-size:12px; line-height:1.4;">
-            <strong style="color:var(--text-main); font-size:13px;">${item.name}</strong> ${isTagged ? '<span style="color:#f59e0b;">★ Tagged</span>' : ''}<br/>
-            <span style="color:#9f1239; font-weight:bold;">${item.brand}</span> • ${item.badge}<br/>
-            <span style="color:var(--text-muted);">📍 ${item.area} (${item.distanceKm} km away)</span><br/>
-            <b style="color:var(--primary); font-size:14px;">${formatCurrency(item.priceUSD)}</b> / night<br/>
+            <strong style="color:var(--text-main); font-size:13px;">${h.name}</strong> ${isTagged ? '<span style="color:#f59e0b;">★ Tagged</span>' : ''}<br/>
+            <span style="color:#9f1239; font-weight:bold;">${h.brand}</span> • ${h.badge}<br/>
+            <span style="color:var(--text-muted);">📍 ${h.area} (${h.distanceKm} km away)</span><br/>
+            <b style="color:var(--primary); font-size:14px;">${formatCurrency(h.priceUSD)}</b> / night<br/>
             <div style="display:flex; gap:0.4rem; margin-top:0.4rem; flex-wrap:wrap;">
-              <button data-action="toggle-tag" data-id="${item.id}" data-type="hotel" style="background:var(--pill-bg); border:1px solid var(--border); color:var(--text-main); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">${isTagged ? '★ Untag' : '⭐ Tag'}</button>
-              <button data-action="edit-item" data-id="${item.id}" data-type="hotel" style="background:var(--pill-bg); border:1px solid var(--border); color:var(--text-main); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">✏️ Edit</button>
-              <button data-action="delete-item" data-id="${item.id}" data-type="hotel" style="background:rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.3); color:var(--accent-rose); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">🗑️ Delete</button>
-              <a href="${item.brandUrl}" target="_blank" style="color:#3b82f6; font-weight:600; text-decoration:none; margin-left:auto;">Book ↗</a>
+              <button onclick="handleToggleTag('${h.id}', 'hotel')" style="background:var(--pill-bg); border:1px solid var(--border); color:var(--text-main); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">${isTagged ? '★ Untag' : '⭐ Tag'}</button>
+              <button onclick="handleEditItem('${h.id}', 'hotel')" style="background:var(--pill-bg); border:1px solid var(--border); color:var(--text-main); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">✏️ Edit</button>
+              <button onclick="handleDeleteItem('${h.id}', 'hotel')" style="background:rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.3); color:var(--accent-rose); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">🗑️ Delete</button>
+              <a href="${h.brandUrl}" target="_blank" style="color:#3b82f6; font-weight:600; text-decoration:none; margin-left:auto;">Book ↗</a>
             </div>
           </div>
         `;
-      } else {
-        const isFood = item.type === "food";
-        const isCustom = item.isCustom;
-        markerIcon = L.divIcon({
+        L.marker([h.lat, h.lon], { icon: hotelIcon }).bindPopup(popupHtml).addTo(mapMarkersLayer);
+      }
+    });
+
+    filteredSights.forEach(s => {
+      if (s.lat && s.lon) {
+        const isFood = s.type === "food";
+        const isCustom = s.isCustom;
+        const isTagged = isItemTagged(s.id);
+        const sightIcon = L.divIcon({
           className: `custom-map-marker ${isTagged ? 'marker-tagged' : isCustom ? 'marker-custom' : isFood ? 'marker-food' : 'marker-sight'}`,
           html: isTagged ? `⭐` : isCustom ? `📍` : isFood ? `🍜` : `🏛️`,
           iconSize: [30, 30],
           iconAnchor: [15, 15]
         });
 
-        popupHtml = `
+        const popupHtml = `
           <div style="font-family:sans-serif; font-size:12px; line-height:1.4;">
-            <span style="background:${isFood ? 'rgba(244,63,94,0.15)':'rgba(59,130,246,0.15)'}; color:${isFood ? '#f43f5e':'#3b82f6'}; padding:2px 6px; border-radius:4px; font-weight:bold; font-size:10px;">${item.category}</span> ${isTagged ? '<span style="color:#f59e0b; font-weight:bold;">★ Tagged</span>' : ''}<br/>
-            <strong style="color:var(--text-main); font-size:13px; margin-top:3px; display:inline-block;">${item.name}</strong><br/>
-            <p style="color:var(--text-main); margin:4px 0;">${item.desc}</p>
-            <span style="color:var(--text-muted);">📍 ${item.location} (${item.distanceKm} km away)</span><br/>
+            <span style="background:${isFood ? 'rgba(244,63,94,0.15)':'rgba(59,130,246,0.15)'}; color:${isFood ? '#f43f5e':'#3b82f6'}; padding:2px 6px; border-radius:4px; font-weight:bold; font-size:10px;">${s.category}</span> ${isTagged ? '<span style="color:#f59e0b; font-weight:bold;">★ Tagged</span>' : ''}<br/>
+            <strong style="color:var(--text-main); font-size:13px; margin-top:3px; display:inline-block;">${s.name}</strong><br/>
+            <p style="color:var(--text-main); margin:4px 0;">${s.desc}</p>
+            <span style="color:var(--text-muted);">📍 ${s.location} (${s.distanceKm} km away)</span><br/>
             <div style="display:flex; gap:0.4rem; margin-top:0.4rem; align-items:center; flex-wrap:wrap;">
-              <button data-action="toggle-tag" data-id="${item.id}" data-type="sight" style="background:var(--pill-bg); border:1px solid var(--border); color:var(--text-main); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">${isTagged ? '★ Untag' : '⭐ Tag'}</button>
-              <button data-action="edit-item" data-id="${item.id}" data-type="sight" style="background:var(--pill-bg); border:1px solid var(--border); color:var(--text-main); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">✏️ Edit</button>
-              <button data-action="delete-item" data-id="${item.id}" data-type="sight" style="background:rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.3); color:var(--accent-rose); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">🗑️ Delete</button>
-              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.query || item.name)}" target="_blank" style="color:#3b82f6; font-weight:600; text-decoration:none; margin-left:auto;">Maps ↗</a>
+              <button onclick="handleToggleTag('${s.id}', 'sight')" style="background:var(--pill-bg); border:1px solid var(--border); color:var(--text-main); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">${isTagged ? '★ Untag' : '⭐ Tag'}</button>
+              <button onclick="handleEditItem('${s.id}', 'sight')" style="background:var(--pill-bg); border:1px solid var(--border); color:var(--text-main); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">✏️ Edit</button>
+              <button onclick="handleDeleteItem('${s.id}', 'sight')" style="background:rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.3); color:var(--accent-rose); font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">🗑️ Delete</button>
+              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.query || s.name)}" target="_blank" style="color:#3b82f6; font-weight:600; text-decoration:none; margin-left:auto;">Maps ↗</a>
             </div>
           </div>
         `;
-      }
-
-      if (marker) {
-        marker.setLatLng([item.lat, item.lon]);
-        marker.setIcon(markerIcon);
-        marker.setPopupContent(popupHtml);
-      } else {
-        marker = L.marker([item.lat, item.lon], { icon: markerIcon }).bindPopup(popupHtml);
-        marker.addTo(mapMarkersLayer);
-        appState.markerCache.set(item.id, marker);
+        L.marker([s.lat, s.lon], { icon: sightIcon }).bindPopup(popupHtml).addTo(mapMarkersLayer);
       }
     });
-
-    for (let [id, marker] of appState.markerCache.entries()) {
-      if (!activeItemIds.has(id)) {
-        leafletMapInstance.removeLayer(marker);
-        appState.markerCache.delete(id);
-      }
-    }
 
     leafletMapInstance.fitBounds(mapRadiusCircle.getBounds(), { padding: [30, 30] });
     setTimeout(() => leafletMapInstance.invalidateSize(), 300);
@@ -745,27 +694,22 @@ function applyRadiusFilterAndRender(radiusKm) {
 
   currentSights = filteredSights;
   currentHotels = filteredHotels;
-  renderDestinationSights(currentSights, appState.visitCityObj ? appState.visitCityObj.cityName : "");
+  renderDestinationSights(currentSights, resolvedVisitCityObj ? resolvedVisitCityObj.cityName : "");
   sortAndRenderHotels();
 }
 
 window.handleDeleteItem = function(id, itemType) {
   if (itemType === "hotel") {
     allRawHotels = allRawHotels.filter(h => h.id !== id);
-    if (appState.selectedHotel && appState.selectedHotel.id === id) {
-      appState.selectedHotel = null;
+    if (selectedHotel && selectedHotel.id === id) {
+      selectedHotel = null;
       updateItineraryDrawer();
     }
   } else {
     allRawSights = allRawSights.filter(s => s.id !== id);
   }
-  appState.taggedPlaces = appState.taggedPlaces.filter(p => p.id !== id);
-  const cachedMarker = appState.markerCache.get(id);
-  if (cachedMarker && leafletMapInstance) {
-    leafletMapInstance.removeLayer(cachedMarker);
-    appState.markerCache.delete(id);
-  }
-  applyRadiusFilterAndRender(appState.radiusKm);
+  taggedPlaces = taggedPlaces.filter(p => p.id !== id);
+  applyRadiusFilterAndRender(currentRadiusKm);
 };
 
 window.handleEditItem = function(id, itemType) {
@@ -811,7 +755,7 @@ function openCustomPlaceModal(defaults = {}) {
   document.getElementById("placeNameInput").value = defaults.name || "";
   document.getElementById("placeCategoryType").value = defaults.type || "sight";
   document.getElementById("placeCategoryLabel").value = defaults.category || "Custom Landmark";
-  document.getElementById("placeDistrictInput").value = defaults.location || (appState.visitCityObj ? appState.visitCityObj.cityName : "Downtown");
+  document.getElementById("placeDistrictInput").value = defaults.location || (resolvedVisitCityObj ? resolvedVisitCityObj.cityName : "Downtown");
   document.getElementById("placeDescInput").value = defaults.desc || "";
   document.getElementById("placeLatInput").value = defaults.lat || targetCenterLat;
   document.getElementById("placeLonInput").value = defaults.lon || targetCenterLon;
@@ -921,10 +865,33 @@ function generateDynamicFlightSchedule(originObj, destAirportObj, departDate, re
 }
 
 // ========================================================
-// 7. APPLICATION CONTROLLER & EVENT DELEGATED RENDERERS
+// 7. APPLICATION CONTROLLER & STATE RENDERING
 // ========================================================
+let currentTripType = "roundtrip";
+let currentFlights = [];
+let currentHotels = [];
+let currentSights = [];
+
+let resolvedOriginObj = null;
+let resolvedDestAirportObj = null;
+let resolvedVisitCityObj = null;
+
+let resolvedLeg2OriginObj = null;
+let resolvedLeg2DestObj = null;
+
+let currentDepartDate = "";
+let currentReturnDate = "";
+let currentLeg2Date = "";
+let tripDays = 1;
+let travelersCount = 1;
+let activeBrandFilter = "all";
+let activeSightFilter = "all";
+
+let selectedFlight = null;
+let selectedHotel = null;
+
 function sortAndRenderFlights(sortBy = "price") {
-  const sorted = [...appState.flights].sort((a, b) => {
+  const sorted = [...currentFlights].sort((a, b) => {
     if (sortBy === "price") return a.priceUSD - b.priceUSD;
     if (sortBy === "duration") return a.rawDurationMinutes - b.rawDurationMinutes;
     if (sortBy === "stops") return a.stops - b.stops;
@@ -933,10 +900,13 @@ function sortAndRenderFlights(sortBy = "price") {
   });
 
   const flightListEl = document.getElementById("flightList");
+  const flightCountEl = document.getElementById("flightCount");
   if (!flightListEl) return;
 
+  if (flightCountEl) flightCountEl.textContent = `${sorted.length} options`;
+
   flightListEl.innerHTML = sorted.map(f => {
-    const isSelected = appState.selectedFlight && appState.selectedFlight.id === f.id;
+    const isSelected = selectedFlight && selectedFlight.id === f.id;
     return `
       <div class="flight-card ${isSelected ? 'selected' : ''}" id="card-${f.id}">
         <div class="flight-main">
@@ -948,7 +918,7 @@ function sortAndRenderFlights(sortBy = "price") {
           <div class="flight-route-row">
             <div class="flight-time-block">
               <span class="flight-time">${f.departTime}</span>
-              <span class="flight-airport">${appState.originObj ? appState.originObj.code : ""}</span>
+              <span class="flight-airport">${resolvedOriginObj ? resolvedOriginObj.code : ""}</span>
             </div>
 
             <div class="flight-duration-diagram">
@@ -959,16 +929,16 @@ function sortAndRenderFlights(sortBy = "price") {
 
             <div class="flight-time-block">
               <span class="flight-time">${f.arriveTime}</span>
-              <span class="flight-airport">${appState.destAirportObj ? appState.destAirportObj.code : ""}</span>
+              <span class="flight-airport">${resolvedDestAirportObj ? resolvedDestAirportObj.code : ""}</span>
             </div>
           </div>
         </div>
 
         <div class="flight-price-col">
-          <span class="flight-price">${formatCurrency(f.priceUSD * appState.travelersCount)}</span>
-          <span class="cabin-tag">${f.cabin} (${appState.travelersCount} pax)</span>
+          <span class="flight-price">${formatCurrency(f.priceUSD * travelersCount)}</span>
+          <span class="cabin-tag">${f.cabin} (${travelersCount} pax)</span>
           <div class="card-actions">
-            <button class="select-btn ${isSelected ? 'btn-active' : ''}" data-action="select-flight" data-id="${f.id}">
+            <button class="select-btn ${isSelected ? 'btn-active' : ''}" onclick="handleSelectFlight('${f.id}')">
               ${isSelected ? 'Selected ✓' : 'Select Flight'}
             </button>
             <a href="${f.bookingUrl}" target="_blank" rel="noopener noreferrer" class="ext-brand-link">Google Flights ↗</a>
@@ -990,8 +960,8 @@ function sortAndRenderHotels() {
   const sortBy = document.getElementById("hotelSort")?.value || "rating";
   
   let filtered = currentHotels.filter(h => {
-    if (appState.activeBrandFilter === "all") return true;
-    return h.brand === appState.activeBrandFilter;
+    if (activeBrandFilter === "all") return true;
+    return h.brand === activeBrandFilter;
   });
 
   filtered.sort((a, b) => {
@@ -1008,12 +978,12 @@ function sortAndRenderHotels() {
   if (hotelCountEl) hotelCountEl.textContent = `${filtered.length} found`;
 
   if (filtered.length === 0) {
-    hotelListEl.innerHTML = `<p style="color: var(--text-muted); font-size: 0.9rem; padding: 1rem 0;">No properties match within ${appState.radiusKm} km.</p>`;
+    hotelListEl.innerHTML = `<p style="color: var(--text-muted); font-size: 0.9rem; padding: 1rem 0;">No properties match within ${currentRadiusKm} km.</p>`;
     return;
   }
 
   hotelListEl.innerHTML = filtered.map(h => {
-    const isSelected = appState.selectedHotel && appState.selectedHotel.id === h.id;
+    const isSelected = selectedHotel && selectedHotel.id === h.id;
     const isTagged = isItemTagged(h.id);
     return `
       <div class="hotel-card ${isSelected ? 'selected' : ''} ${isTagged ? 'tagged-card' : ''}" id="card-${h.id}">
@@ -1033,11 +1003,11 @@ function sortAndRenderHotels() {
           </div>
 
           <div class="card-manage-bar" style="margin-top:0.35rem; display:flex; gap:0.4rem; flex-wrap:wrap;">
-            <button class="btn-card-action ${isTagged ? 'btn-active-tag' : ''}" data-action="toggle-tag" data-id="${h.id}" data-type="hotel">
+            <button class="btn-card-action ${isTagged ? 'btn-active-tag' : ''}" onclick="handleToggleTag('${h.id}', 'hotel')">
               ${isTagged ? '★ Tagged' : '⭐ Tag Hotel'}
             </button>
-            <button class="btn-card-action" data-action="edit-item" data-id="${h.id}" data-type="hotel">✏️ Edit</button>
-            <button class="btn-card-action btn-card-delete" data-action="delete-item" data-id="${h.id}" data-type="hotel">🗑️ Remove</button>
+            <button class="btn-card-action" onclick="handleEditItem('${h.id}', 'hotel')">✏️ Edit</button>
+            <button class="btn-card-action btn-card-delete" onclick="handleDeleteItem('${h.id}', 'hotel')">🗑️ Remove</button>
           </div>
         </div>
 
@@ -1045,7 +1015,7 @@ function sortAndRenderHotels() {
           <span class="hotel-price">${formatCurrency(h.priceUSD)}</span>
           <span class="per-night-tag">/ night</span>
           <div class="card-actions">
-            <button class="select-btn ${isSelected ? 'btn-active' : ''}" data-action="select-hotel" data-id="${h.id}">
+            <button class="select-btn ${isSelected ? 'btn-active' : ''}" onclick="handleSelectHotel('${h.id}')">
               ${isSelected ? 'Selected ✓' : 'Select Hotel'}
             </button>
             <a href="${h.brandUrl}" target="_blank" rel="noopener noreferrer" class="ext-brand-link">Brand Portal ↗</a>
@@ -1063,15 +1033,15 @@ function renderDestinationSights(sights, cityName) {
   if (!sightsListEl) return;
 
   const filtered = sights.filter(s => {
-    if (appState.activeSightFilter === "all") return true;
-    return s.type === appState.activeSightFilter;
+    if (activeSightFilter === "all") return true;
+    return s.type === activeSightFilter;
   });
 
   if (sightsCountEl) sightsCountEl.textContent = `${filtered.length} highlights`;
-  if (sightsSubtitleEl) sightsSubtitleEl.textContent = `Must-visit places, landmarks, and signature food experiences within ${appState.radiusKm} km of ${cityName}`;
+  if (sightsSubtitleEl) sightsSubtitleEl.textContent = `Must-visit places, landmarks, and signature food experiences within ${currentRadiusKm} km of ${cityName}`;
 
   if (filtered.length === 0) {
-    sightsListEl.innerHTML = `<p style="color: var(--text-muted); font-size: 0.9rem; padding: 1.5rem 0;">No verified places found within ${appState.radiusKm} km. Try increasing the exploration radius or clicking "+ Add Place".</p>`;
+    sightsListEl.innerHTML = `<p style="color: var(--text-muted); font-size: 0.9rem; padding: 1.5rem 0;">No verified places found within ${currentRadiusKm} km. Try increasing the exploration radius or clicking "+ Add Place".</p>`;
     return;
   }
 
@@ -1092,11 +1062,11 @@ function renderDestinationSights(sights, cityName) {
         <div class="sight-card-footer">
           <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.query || s.name)}" target="_blank" rel="noopener noreferrer" class="sight-maps-link">Explore ↗</a>
           <div class="card-manage-bar" style="display:flex; gap:0.35rem; flex-wrap:wrap;">
-            <button class="btn-card-action ${isTagged ? 'btn-active-tag' : ''}" data-action="toggle-tag" data-id="${s.id}" data-type="sight">
+            <button class="btn-card-action ${isTagged ? 'btn-active-tag' : ''}" onclick="handleToggleTag('${s.id}', 'sight')">
               ${isTagged ? '★ Tagged' : '⭐ Tag'}
             </button>
-            <button class="btn-card-action" data-action="edit-item" data-id="${s.id}" data-type="sight">✏️ Edit</button>
-            <button class="btn-card-action btn-card-delete" data-action="delete-item" data-id="${s.id}" data-type="sight">🗑️ Remove</button>
+            <button class="btn-card-action" onclick="handleEditItem('${s.id}', 'sight')">✏️ Edit</button>
+            <button class="btn-card-action btn-card-delete" onclick="handleDeleteItem('${s.id}', 'sight')">🗑️ Remove</button>
           </div>
         </div>
       </div>
@@ -1105,15 +1075,15 @@ function renderDestinationSights(sights, cityName) {
 }
 
 window.handleSelectFlight = function(flightId) {
-  const fl = appState.flights.find(f => f.id === flightId);
-  appState.selectedFlight = appState.selectedFlight && appState.selectedFlight.id === flightId ? null : fl;
+  const fl = currentFlights.find(f => f.id === flightId);
+  selectedFlight = selectedFlight && selectedFlight.id === flightId ? null : fl;
   sortAndRenderFlights(document.getElementById("flightSort")?.value || "price");
   updateItineraryDrawer();
 };
 
 window.handleSelectHotel = function(hotelId) {
   const ht = currentHotels.find(h => h.id === hotelId);
-  appState.selectedHotel = appState.selectedHotel && appState.selectedHotel.id === hotelId ? null : ht;
+  selectedHotel = selectedHotel && selectedHotel.id === hotelId ? null : ht;
   sortAndRenderHotels();
   updateItineraryDrawer();
 };
@@ -1132,23 +1102,23 @@ function updateItineraryDrawer() {
   const drawerDailyTransit = document.getElementById("drawerDailyTransit");
   const drawerGoogleFlightsLink = document.getElementById("drawerGoogleFlightsLink");
 
-  const dailyFoodUSD = 60 * appState.travelersCount;
-  const dailyTransitUSD = 12 * appState.travelersCount;
-  const totalLivingUSD = (dailyFoodUSD + dailyTransitUSD) * appState.tripDays;
+  const dailyFoodUSD = 60 * travelersCount;
+  const dailyTransitUSD = 12 * travelersCount;
+  const totalLivingUSD = (dailyFoodUSD + dailyTransitUSD) * tripDays;
 
   let flightCostUSD = 0;
   let hotelCostUSD = 0;
   let count = 0;
 
-  if (appState.selectedFlight) {
-    flightCostUSD = appState.selectedFlight.priceUSD * appState.travelersCount;
+  if (selectedFlight) {
+    flightCostUSD = selectedFlight.priceUSD * travelersCount;
     count++;
     if (drawerFlight) {
       drawerFlight.className = "drawer-card";
       drawerFlight.innerHTML = `
-        <strong>${appState.selectedFlight.airline} (${appState.selectedFlight.flightNum})</strong><br/>
-        <small style="color:var(--text-muted);">${appState.originObj ? appState.originObj.code : ""} ➔ ${appState.destAirportObj ? appState.destAirportObj.code : ""} (${appState.selectedFlight.durationText})</small><br/>
-        <b>${formatCurrency(appState.selectedFlight.priceUSD)}</b> &times; ${appState.travelersCount} traveler(s) = <b>${formatCurrency(flightCostUSD)}</b> <span style="font-size:11px;color:var(--text-muted);">${appState.selectedFlight.cabin}</span>
+        <strong>${selectedFlight.airline} (${selectedFlight.flightNum})</strong><br/>
+        <small style="color:var(--text-muted);">${resolvedOriginObj ? resolvedOriginObj.code : ""} ➔ ${resolvedDestAirportObj ? resolvedDestAirportObj.code : ""} (${selectedFlight.durationText})</small><br/>
+        <b>${formatCurrency(selectedFlight.priceUSD)}</b> &times; ${travelersCount} traveler(s) = <b>${formatCurrency(flightCostUSD)}</b> <span style="font-size:11px;color:var(--text-muted);">${selectedFlight.cabin}</span>
       `;
     }
   } else if (drawerFlight) {
@@ -1156,16 +1126,16 @@ function updateItineraryDrawer() {
     drawerFlight.innerHTML = "<span>No flight selected yet.</span>";
   }
 
-  if (appState.selectedHotel) {
-    hotelCostUSD = appState.selectedHotel.priceUSD * appState.tripDays;
+  if (selectedHotel) {
+    hotelCostUSD = selectedHotel.priceUSD * tripDays;
     count++;
     if (drawerHotel) {
       drawerHotel.className = "drawer-card";
       drawerHotel.innerHTML = `
-        <strong>${appState.selectedHotel.name}</strong><br/>
-        <span class="brand-badge ${getBrandClass(appState.selectedHotel.brand)}" style="font-size:10px;">${appState.selectedHotel.brand}</span><br/>
-        <small style="color:var(--text-muted);">${appState.selectedHotel.area}</small><br/>
-        <b>${formatCurrency(appState.selectedHotel.priceUSD)} / night</b> &times; ${appState.tripDays} night(s) = <b>${formatCurrency(hotelCostUSD)}</b>
+        <strong>${selectedHotel.name}</strong><br/>
+        <span class="brand-badge ${getBrandClass(selectedHotel.brand)}" style="font-size:10px;">${selectedHotel.brand}</span><br/>
+        <small style="color:var(--text-muted);">${selectedHotel.area}</small><br/>
+        <b>${formatCurrency(selectedHotel.priceUSD)} / night</b> &times; ${tripDays} night(s) = <b>${formatCurrency(hotelCostUSD)}</b>
       `;
     }
   } else if (drawerHotel) {
@@ -1173,33 +1143,33 @@ function updateItineraryDrawer() {
     drawerHotel.innerHTML = "<span>No hotel selected yet.</span>";
   }
 
-  if (drawerDailyFood) drawerDailyFood.textContent = `${formatCurrency(60 * appState.travelersCount)} / day (${appState.travelersCount} pax)`;
-  if (drawerDailyTransit) drawerDailyTransit.textContent = `${formatCurrency(12 * appState.travelersCount)} / day (${appState.travelersCount} pax)`;
+  if (drawerDailyFood) drawerDailyFood.textContent = `${formatCurrency(60 * travelersCount)} / day (${travelersCount} pax)`;
+  if (drawerDailyTransit) drawerDailyTransit.textContent = `${formatCurrency(12 * travelersCount)} / day (${travelersCount} pax)`;
   if (flightPriceEl) flightPriceEl.textContent = formatCurrency(flightCostUSD);
-  if (hotelLabelEl) hotelLabelEl.textContent = `Hotel Room (${appState.tripDays} night${appState.tripDays > 1 ? 's' : ''}):`;
+  if (hotelLabelEl) hotelLabelEl.textContent = `Hotel Room (${tripDays} night${tripDays > 1 ? 's' : ''}):`;
   if (hotelPriceEl) hotelPriceEl.textContent = formatCurrency(hotelCostUSD);
   if (livingPriceEl) livingPriceEl.textContent = formatCurrency(totalLivingUSD);
   
   const grandTotalUSD = flightCostUSD + hotelCostUSD + totalLivingUSD;
   if (totalPriceEl) totalPriceEl.textContent = formatCurrency(grandTotalUSD);
 
-  if (drawerGoogleFlightsLink && appState.originObj && appState.destAirportObj) {
+  if (drawerGoogleFlightsLink && resolvedOriginObj && resolvedDestAirportObj) {
     drawerGoogleFlightsLink.href = buildGoogleFlightsUrl(
-      appState.tripType, 
-      appState.originObj.code, 
-      appState.destAirportObj.code, 
-      appState.departDate, 
-      appState.returnDate,
-      appState.leg2OriginObj ? appState.leg2OriginObj.code : "",
-      appState.leg2DestObj ? appState.leg2DestObj.code : "",
-      appState.leg2Date
+      currentTripType, 
+      resolvedOriginObj.code, 
+      resolvedDestAirportObj.code, 
+      currentDepartDate, 
+      currentReturnDate,
+      resolvedLeg2OriginObj ? resolvedLeg2OriginObj.code : "",
+      resolvedLeg2DestObj ? resolvedLeg2DestObj.code : "",
+      currentLeg2Date
     );
   }
 
-  const totalTaggedCount = appState.taggedPlaces.length;
-  if (count > 0 || totalTaggedCount > 0 && badgeEl && badgeText) {
+  const totalTaggedCount = taggedPlaces.length;
+  if ((count > 0 || totalTaggedCount > 0) && badgeEl && badgeText) {
     badgeEl.classList.remove("hidden");
-    badgeText.textContent = `${count} Booked • ${totalTaggedCount} Tagged ⭐ (${appState.travelersCount} Pax)`;
+    badgeText.textContent = `${count} Booked • ${totalTaggedCount} Tagged ⭐ (${travelersCount} Pax)`;
   } else if (badgeEl) {
     badgeEl.classList.add("hidden");
   }
@@ -1221,17 +1191,17 @@ function toggleDrawer(open) {
 // 8. SMART DAILY ITINERARY GENERATOR (PROXIMITY ENGINE)
 // ========================================================
 function generateSmartDailyItinerary() {
-  const sightsOnly = appState.taggedPlaces.filter(p => p.itemType === "sight" || !p.itemType);
+  const sightsOnly = taggedPlaces.filter(p => p.itemType === "sight" || !p.itemType);
   if (sightsOnly.length === 0) {
     alert("Please tag (⭐) at least a few sights or food spots first to generate your smart daily itinerary!");
     return;
   }
 
-  let anchorLat = appState.visitCityObj ? appState.visitCityObj.lat : targetCenterLat;
-  let anchorLon = appState.visitCityObj ? appState.visitCityObj.lon : targetCenterLon;
-  if (appState.selectedHotel) {
-    anchorLat = appState.selectedHotel.lat;
-    anchorLon = appState.selectedHotel.lon;
+  let anchorLat = resolvedVisitCityObj ? resolvedVisitCityObj.lat : targetCenterLat;
+  let anchorLon = resolvedVisitCityObj ? resolvedVisitCityObj.lon : targetCenterLon;
+  if (selectedHotel) {
+    anchorLat = selectedHotel.lat;
+    anchorLon = selectedHotel.lon;
   }
 
   let remainingSights = sightsOnly.map(s => ({
@@ -1239,7 +1209,7 @@ function generateSmartDailyItinerary() {
     distFromAnchor: haversineDistance(anchorLat, anchorLon, s.lat, s.lon)
   })).sort((a, b) => a.distFromAnchor - b.distFromAnchor);
 
-  const daysCount = Math.max(1, appState.tripDays);
+  const daysCount = Math.max(1, tripDays);
   let dailySchedules = Array.from({ length: daysCount }, () => []);
 
   let currentDayIdx = 0;
@@ -1280,10 +1250,10 @@ function renderDailyItineraryModal(dailySchedules) {
   }
 
   const bodyEl = document.getElementById("smartItineraryBody");
-  const hotelName = appState.selectedHotel ? appState.selectedHotel.name : (appState.visitCityObj ? appState.visitCityObj.cityName + " Center" : "Hotel Anchor");
+  const hotelName = selectedHotel ? selectedHotel.name : (resolvedVisitCityObj ? resolvedVisitCityObj.cityName + " Center" : "Hotel Anchor");
 
   bodyEl.innerHTML = `
-    <p style="font-size:0.85rem; color:var(--text-muted);">Optimized geographic clustering departing from <strong>🏨 ${hotelName}</strong> for ${appState.travelersCount} traveler(s) across your ${dailySchedules.length}-day trip.</p>
+    <p style="font-size:0.85rem; color:var(--text-muted);">Optimized geographic clustering departing from <strong>🏨 ${hotelName}</strong> for ${travelersCount} traveler(s) across your ${dailySchedules.length}-day trip.</p>
   ` + dailySchedules.map((daySpots, idx) => {
     if (daySpots.length === 0) return `<div class="drawer-card"><h4>Day ${idx + 1}</h4><p style="color:var(--text-muted);font-size:0.85rem;">Free day / flexible exploration.</p></div>`;
     
@@ -1336,32 +1306,32 @@ function getSavedTrips() {
 }
 
 function saveTripToLocalStorage() {
-  if (!appState.originObj || !appState.destAirportObj || !appState.visitCityObj) {
+  if (!resolvedOriginObj || !resolvedDestAirportObj || !resolvedVisitCityObj) {
     alert("Please perform a search and select an itinerary first.");
     return;
   }
 
   const trips = getSavedTrips();
-  const tripName = prompt("Enter a name for this trip plan:", `${appState.visitCityObj.cityName} Trip (${appState.departDate})`);
+  const tripName = prompt("Enter a name for this trip plan:", `${resolvedVisitCityObj.cityName} Trip (${currentDepartDate})`);
   if (!tripName) return;
 
   const newTrip = {
     id: "trip_" + Date.now(),
     name: tripName,
-    tripType: appState.tripType,
-    origin: appState.originObj,
-    destAirport: appState.destAirportObj,
-    visitCity: appState.visitCityObj,
-    departDate: appState.departDate,
-    returnDate: appState.returnDate,
-    selectedFlight: appState.selectedFlight,
-    selectedHotel: appState.selectedHotel,
+    tripType: currentTripType,
+    origin: resolvedOriginObj,
+    destAirport: resolvedDestAirportObj,
+    visitCity: resolvedVisitCityObj,
+    departDate: currentDepartDate,
+    returnDate: currentReturnDate,
+    selectedFlight: selectedFlight,
+    selectedHotel: selectedHotel,
     savedSights: allRawSights,
     savedHotels: allRawHotels,
-    taggedPlaces: appState.taggedPlaces,
-    tripDays: appState.tripDays,
-    travelersCount: appState.travelersCount,
-    radiusKm: appState.radiusKm,
+    taggedPlaces: taggedPlaces,
+    tripDays: tripDays,
+    travelersCount: travelersCount,
+    radiusKm: currentRadiusKm,
     createdAt: new Date().toLocaleDateString()
   };
 
@@ -1414,7 +1384,7 @@ window.loadSavedTrip = function(tripId) {
   if (document.getElementById("radiusSelect")) document.getElementById("radiusSelect").value = trip.radiusKm || "10";
   if (document.getElementById("travelersCount")) document.getElementById("travelersCount").value = trip.travelersCount || 1;
   
-  if (trip.taggedPlaces) appState.taggedPlaces = trip.taggedPlaces;
+  if (trip.taggedPlaces) taggedPlaces = trip.taggedPlaces;
 
   document.getElementById("savedTripsModal")?.classList.add("hidden");
   document.getElementById("savedTripsModalOverlay")?.classList.add("hidden");
@@ -1430,66 +1400,11 @@ window.deleteSavedTrip = function(tripId) {
 };
 
 // ========================================================
-// 10. EVENT DELEGATION & DOM INITIALIZATION
+// 10. DOM INITIALIZATION & EVENT LISTENERS
 // ========================================================
-function setupEventDelegation() {
-  // Hotels List Delegation
-  document.getElementById("hotelList")?.addEventListener("click", (e) => {
-    const btn = e.target.closest("button[data-action]");
-    if (!btn) return;
-    const action = btn.getAttribute("data-action");
-    const id = btn.getAttribute("data-id");
-    const type = btn.getAttribute("data-type");
-
-    if (action === "toggle-tag") handleToggleTag(id, type);
-    if (action === "edit-item") handleEditItem(id, type);
-    if (action === "delete-item") handleDeleteItem(id, type);
-    if (action === "select-hotel") handleSelectHotel(id);
-  });
-
-  // Sights List Delegation
-  document.getElementById("sightsList")?.addEventListener("click", (e) => {
-    const btn = e.target.closest("button[data-action]");
-    if (!btn) return;
-    const action = btn.getAttribute("data-action");
-    const id = btn.getAttribute("data-id");
-    const type = btn.getAttribute("data-type");
-
-    if (action === "toggle-tag") handleToggleTag(id, type);
-    if (action === "edit-item") handleEditItem(id, type);
-    if (action === "delete-item") handleDeleteItem(id, type);
-  });
-
-  // Flight List Delegation
-  document.getElementById("flightList")?.addEventListener("click", (e) => {
-    const btn = e.target.closest("button[data-action]");
-    if (!btn) return;
-    const action = btn.getAttribute("data-action");
-    const id = btn.getAttribute("data-id");
-
-    if (action === "select-flight") handleSelectFlight(id);
-  });
-
-  // Map Container Popup Delegation
-  document.getElementById("leafletMap")?.addEventListener("click", (e) => {
-    const btn = e.target.closest("button[data-action]");
-    if (!btn) return;
-    const action = btn.getAttribute("data-action");
-    const id = btn.getAttribute("data-id");
-    const type = btn.getAttribute("data-type");
-
-    if (action === "toggle-tag") handleToggleTag(id, type);
-    if (action === "edit-item") handleEditItem(id, type);
-    if (action === "delete-item") handleDeleteItem(id, type);
-  });
-}
-
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
   document.getElementById("themeToggleBtn")?.addEventListener("click", toggleTheme);
-
-  // Initialize Event Delegation
-  setupEventDelegation();
 
   const today = new Date().toISOString().split("T")[0];
   const departInput = document.getElementById("departDate");
@@ -1519,35 +1434,81 @@ document.addEventListener("DOMContentLoaded", () => {
     const desc = document.getElementById("placeDescInput").value.trim();
     const lat = parseFloat(document.getElementById("placeLatInput").value) || targetCenterLat;
     const lon = parseFloat(document.getElementById("placeLonInput").value) || targetCenterLon;
-    const distKm = parseFloat(haversineDistance(targetCenterLat, targetCenterLon, lat, lon).toFixed(1));
+    const distKm = haversineDistance(targetCenterLat, targetCenterLon, lat, lon);
 
     if (editId) {
-      let item = allRawSights.find(s => s.id === editId);
-      if (item) {
-        item.name = name;
-        item.type = type;
-        item.category = category;
-        item.location = location;
-        item.desc = desc;
+      if (type === "hotel") {
+        let hotelItem = allRawHotels.find(h => h.id === editId);
+        if (hotelItem) {
+          hotelItem.name = name;
+          hotelItem.badge = category || hotelItem.badge;
+          hotelItem.area = location || hotelItem.area;
+          hotelItem.lat = lat;
+          hotelItem.lon = lon;
+          hotelItem.distanceKm = parseFloat(distKm.toFixed(1));
+        }
+      } else {
+        let sightItem = allRawSights.find(s => s.id === editId);
+        if (sightItem) {
+          sightItem.name = name;
+          sightItem.type = type;
+          sightItem.category = category;
+          sightItem.location = location;
+          sightItem.desc = desc;
+          sightItem.lat = lat;
+          sightItem.lon = lon;
+          sightItem.distanceKm = parseFloat(distKm.toFixed(1));
+        }
+      }
+      
+      const taggedIdx = taggedPlaces.findIndex(p => p.id === editId);
+      if (taggedIdx > -1) {
+        taggedPlaces[taggedIdx] = {
+          ...taggedPlaces[taggedIdx],
+          name: name,
+          category: category,
+          location: location,
+          desc: desc,
+          lat: lat,
+          lon: lon,
+          distanceKm: parseFloat(distKm.toFixed(1))
+        };
       }
     } else {
-      allRawSights.unshift({
-        id: `custom_${Date.now()}`,
-        name: name,
-        type: type,
-        category: category,
-        location: location,
-        desc: desc,
-        lat: lat,
-        lon: lon,
-        distanceKm: distKm,
-        isCustom: true,
-        query: `${name} ${location}`
-      });
+      if (type === "hotel") {
+        allRawHotels.unshift({
+          id: `custom_hotel_${Date.now()}`,
+          name: name,
+          brand: "Independent",
+          rating: 4.8,
+          priceUSD: 250,
+          lat: lat,
+          lon: lon,
+          distanceKm: parseFloat(distKm.toFixed(1)),
+          area: location,
+          badge: category || "Custom Stay",
+          brandUrl: `https://www.google.com/travel/hotels?q=${encodeURIComponent(name + " " + location)}`
+        });
+      } else {
+        allRawSights.unshift({
+          id: `custom_${Date.now()}`,
+          name: name,
+          type: type,
+          category: category,
+          location: location,
+          desc: desc,
+          lat: lat,
+          lon: lon,
+          distanceKm: parseFloat(distKm.toFixed(1)),
+          isCustom: true,
+          query: `${name} ${location}`
+        });
+      }
     }
 
     closeCustomPlaceModal();
-    applyRadiusFilterAndRender(appState.radiusKm);
+    applyRadiusFilterAndRender(currentRadiusKm);
+    updateItineraryDrawer();
   });
 
   document.getElementById("openAddPlaceMapBtn")?.addEventListener("click", () => openCustomPlaceModal());
@@ -1560,18 +1521,18 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", (e) => {
       document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
       e.target.classList.add("active");
-      appState.tripType = e.target.getAttribute("data-type");
+      currentTripType = e.target.getAttribute("data-type");
 
       const returnGroup = document.getElementById("returnDateGroup");
       const multiCityFields = document.getElementById("multiCityFields");
 
-      if (appState.tripType === "roundtrip") {
+      if (currentTripType === "roundtrip") {
         returnGroup?.classList.remove("hidden");
         multiCityFields?.classList.add("hidden");
-      } else if (appState.tripType === "oneway") {
+      } else if (currentTripType === "oneway") {
         returnGroup?.classList.add("hidden");
         multiCityFields?.classList.add("hidden");
-      } else if (appState.tripType === "multicity") {
+      } else if (currentTripType === "multicity") {
         returnGroup?.classList.add("hidden");
         multiCityFields?.classList.remove("hidden");
       }
@@ -1596,34 +1557,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Currency
   document.getElementById("currencySelect")?.addEventListener("change", (e) => {
-    appState.currency = e.target.value;
-    if (appState.flights.length > 0) {
+    currentCurrency = e.target.value;
+    if (currentFlights.length > 0) {
       sortAndRenderFlights(document.getElementById("flightSort")?.value || "price");
       sortAndRenderHotels();
       updateItineraryDrawer();
     }
   });
 
-  // View Mode Toggles (Side-by-Side vs Map View)
+  // View Mode
   const toggleListViewBtn = document.getElementById("toggleListViewBtn");
   const toggleMapViewBtn = document.getElementById("toggleMapViewBtn");
   const mapSection = document.getElementById("mapSection");
   const resultsGrid = document.querySelector(".results-grid");
+  const sightsWrapper = document.querySelector(".sights-wrapper");
 
   toggleListViewBtn?.addEventListener("click", () => {
     toggleListViewBtn.classList.add("active");
     toggleMapViewBtn?.classList.remove("active");
     mapSection?.classList.remove("hidden");
-    resultsGrid?.classList.remove("hidden");
-    if (leafletMapInstance) leafletMapInstance.invalidateSize();
+    if (resultsGrid) resultsGrid.classList.remove("hidden");
+    if (sightsWrapper) sightsWrapper.classList.remove("hidden");
+    if (leafletMapInstance) {
+      setTimeout(() => leafletMapInstance.invalidateSize(), 200);
+    }
   });
 
   toggleMapViewBtn?.addEventListener("click", () => {
     toggleMapViewBtn.classList.add("active");
     toggleListViewBtn?.classList.remove("active");
     mapSection?.classList.remove("hidden");
-    resultsGrid?.classList.add("hidden");
-    if (leafletMapInstance) leafletMapInstance.invalidateSize();
+    if (resultsGrid) resultsGrid.classList.add("hidden");
+    if (sightsWrapper) sightsWrapper.classList.add("hidden");
+    if (leafletMapInstance) {
+      setTimeout(() => {
+        leafletMapInstance.invalidateSize();
+        if (mapRadiusCircle) leafletMapInstance.fitBounds(mapRadiusCircle.getBounds(), { padding: [30, 30] });
+      }, 200);
+    }
   });
 
   // Saved Trips Modal
@@ -1664,8 +1635,8 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", (e) => {
       document.querySelectorAll(".sight-filter-btn").forEach(b => b.classList.remove("active"));
       e.target.classList.add("active");
-      appState.activeSightFilter = e.target.getAttribute("data-filter");
-      renderDestinationSights(currentSights, appState.visitCityObj ? appState.visitCityObj.cityName : "");
+      activeSightFilter = e.target.getAttribute("data-filter");
+      renderDestinationSights(currentSights, resolvedVisitCityObj ? resolvedVisitCityObj.cityName : "");
     });
   });
 
@@ -1673,7 +1644,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", (e) => {
       document.querySelectorAll(".hotel-pill-btn").forEach(b => b.classList.remove("active"));
       e.target.classList.add("active");
-      appState.activeBrandFilter = e.target.getAttribute("data-brand");
+      activeBrandFilter = e.target.getAttribute("data-brand");
       sortAndRenderHotels();
     });
   });
@@ -1710,14 +1681,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const visitCityInputVal = document.getElementById("visitCity").value.trim();
       const chosenRadiusKm = parseInt(radiusSelect ? radiusSelect.value : 10);
 
-      appState.departDate = departInput.value;
-      appState.returnDate = returnInput ? returnInput.value : "";
+      currentDepartDate = departInput.value;
+      currentReturnDate = returnInput ? returnInput.value : "";
       
       const leg2OriginVal = document.getElementById("leg2Origin")?.value.trim();
       const leg2DestVal = document.getElementById("leg2Dest")?.value.trim();
-      appState.leg2Date = leg2DateInput ? leg2DateInput.value : "";
+      currentLeg2Date = leg2DateInput ? leg2DateInput.value : "";
 
-      appState.travelersCount = parseInt(document.getElementById("travelersCount")?.value) || 1;
+      travelersCount = parseInt(document.getElementById("travelersCount")?.value) || 1;
 
       const selectedBrands = Array.from(document.querySelectorAll('input[name="hotelBrand"]:checked')).map(cb => cb.value);
       if (selectedBrands.length === 0) {
@@ -1725,83 +1696,85 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      if (appState.departDate && appState.returnDate && appState.tripType === "roundtrip") {
-        const d1 = new Date(appState.departDate);
-        const d2 = new Date(appState.returnDate);
-        appState.tripDays = Math.max(1, Math.ceil(Math.abs(d2 - d1) / (1000 * 60 * 60 * 24)));
+      if (currentDepartDate && currentReturnDate && currentTripType === "roundtrip") {
+        const d1 = new Date(currentDepartDate);
+        const d2 = new Date(currentReturnDate);
+        tripDays = Math.max(1, Math.ceil(Math.abs(d2 - d1) / (1000 * 60 * 60 * 24)));
       } else {
-        appState.tripDays = 1;
+        tripDays = 1;
       }
 
-      appState.selectedFlight = null;
-      appState.selectedHotel = null;
+      // Reset selection and tagged places for the new corridor search
+      selectedFlight = null;
+      selectedHotel = null;
+      taggedPlaces = [];
       updateItineraryDrawer();
 
       resultsSection?.classList.add("hidden");
       loadingState?.classList.remove("hidden");
 
-      appState.originObj = await resolveAirportHub(originInputVal);
-      appState.destAirportObj = await resolveAirportHub(destAirportInputVal);
-      appState.visitCityObj = await resolveVisitCityLocation(visitCityInputVal, appState.destAirportObj);
+      resolvedOriginObj = await resolveAirportHub(originInputVal);
+      resolvedDestAirportObj = await resolveAirportHub(destAirportInputVal);
+      resolvedVisitCityObj = await resolveVisitCityLocation(visitCityInputVal, resolvedDestAirportObj);
 
-      if (appState.tripType === "multicity" && leg2OriginVal && leg2DestVal) {
-        appState.leg2OriginObj = await resolveAirportHub(leg2OriginVal);
-        appState.leg2DestObj = await resolveAirportHub(leg2DestVal);
+      if (currentTripType === "multicity" && leg2OriginVal && leg2DestVal) {
+        resolvedLeg2OriginObj = await resolveAirportHub(leg2OriginVal);
+        resolvedLeg2DestObj = await resolveAirportHub(leg2DestVal);
       } else {
-        appState.leg2OriginObj = null;
-        appState.leg2DestObj = null;
+        resolvedLeg2OriginObj = null;
+        resolvedLeg2DestObj = null;
       }
 
       const rawSights = await fetchTargetCitySights(
-        appState.visitCityObj.cityName,
-        appState.destAirportObj.code,
-        appState.visitCityObj.lat,
-        appState.visitCityObj.lon
+        resolvedVisitCityObj.cityName,
+        resolvedDestAirportObj.code,
+        resolvedVisitCityObj.lat,
+        resolvedVisitCityObj.lon
       );
 
       const rawHotels = await fetchLiveTargetHotels(
-        appState.visitCityObj.lat,
-        appState.visitCityObj.lon,
-        appState.visitCityObj.cityName,
-        appState.destAirportObj.code,
+        resolvedVisitCityObj.lat,
+        resolvedVisitCityObj.lon,
+        resolvedVisitCityObj.cityName,
+        resolvedDestAirportObj.code,
         selectedBrands,
-        appState.departDate,
-        appState.returnDate
+        currentDepartDate,
+        currentReturnDate
       );
 
-      appState.flights = generateDynamicFlightSchedule(appState.originObj, appState.destAirportObj, appState.departDate, appState.returnDate, appState.tripType);
+      currentFlights = generateDynamicFlightSchedule(resolvedOriginObj, resolvedDestAirportObj, currentDepartDate, currentReturnDate, currentTripType);
       if (googleFlightsLiveBtn) {
         googleFlightsLiveBtn.href = buildGoogleFlightsUrl(
-          appState.tripType,
-          appState.originObj.code,
-          appState.destAirportObj.code,
-          appState.departDate,
-          appState.returnDate,
-          appState.leg2OriginObj ? appState.leg2OriginObj.code : "",
-          appState.leg2DestObj ? appState.leg2DestObj.code : "",
-          appState.leg2Date
+          currentTripType,
+          resolvedOriginObj.code,
+          resolvedDestAirportObj.code,
+          currentDepartDate,
+          currentReturnDate,
+          resolvedLeg2OriginObj ? resolvedLeg2OriginObj.code : "",
+          resolvedLeg2DestObj ? resolvedLeg2DestObj.code : "",
+          currentLeg2Date
         );
       }
 
       loadingState?.classList.add("hidden");
 
-      if (resolvedOriginText) resolvedOriginText.textContent = `${appState.originObj.name} (${appState.originObj.code})`;
-      if (resolvedDestText) resolvedDestText.textContent = `${appState.destAirportObj.name} (${appState.destAirportObj.code})`;
-      if (resolvedCityPill) resolvedCityPill.textContent = `📍 Target: ${appState.visitCityObj.cityName}`;
-      if (resultsTitle) resultsTitle.textContent = `${appState.originObj.name} to ${appState.destAirportObj.name} | Exploring ${appState.visitCityObj.cityName}`;
-      if (tripLengthSubtitle) tripLengthSubtitle.textContent = appState.returnDate && appState.tripType === "roundtrip" ? `Trip Length: ${appState.tripDays} night(s) stay (${appState.travelersCount} Traveler${appState.travelersCount > 1 ? 's' : ''})` : `Point-to-point corridor search`;
+      if (resolvedOriginText) resolvedOriginText.textContent = `${resolvedOriginObj.name} (${resolvedOriginObj.code})`;
+      if (resolvedDestText) resolvedDestText.textContent = `${resolvedDestAirportObj.name} (${resolvedDestAirportObj.code})`;
+      if (resolvedCityPill) resolvedCityPill.textContent = `📍 Target: ${resolvedVisitCityObj.cityName}`;
+      if (resultsTitle) resultsTitle.textContent = `${resolvedOriginObj.name} to ${resolvedDestAirportObj.name} | Exploring ${resolvedVisitCityObj.cityName}`;
+      if (tripLengthSubtitle) tripLengthSubtitle.textContent = currentReturnDate && currentTripType === "roundtrip" ? `Trip Length: ${tripDays} night(s) stay (${travelersCount} Traveler${travelersCount > 1 ? 's' : ''})` : `Point-to-point corridor search`;
 
-      appState.activeSightFilter = "all";
+      activeSightFilter = "all";
       document.querySelectorAll(".sight-filter-btn").forEach(b => {
         b.classList.toggle("active", b.getAttribute("data-filter") === "all");
       });
 
-      appState.activeBrandFilter = "all";
+      activeBrandFilter = "all";
       document.querySelectorAll(".hotel-pill-btn").forEach(b => {
         b.classList.toggle("active", b.getAttribute("data-brand") === "all");
       });
 
-      renderTransitGuide(appState.destAirportObj.code, appState.visitCityObj.cityName);
+      renderTransitGuide(resolvedDestAirportObj.code, resolvedVisitCityObj.cityName);
 
       const flightSortEl = document.getElementById("flightSort");
       const hotelSortEl = document.getElementById("hotelSort");
@@ -1809,7 +1782,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (hotelSortEl) hotelSortEl.value = "rating";
       
       sortAndRenderFlights("price");
-      initLeafletMap(appState.visitCityObj.lat, appState.visitCityObj.lon, rawSights, rawHotels, chosenRadiusKm);
+      initLeafletMap(resolvedVisitCityObj.lat, resolvedVisitCityObj.lon, rawSights, rawHotels, chosenRadiusKm);
 
       resultsSection?.classList.remove("hidden");
     });
