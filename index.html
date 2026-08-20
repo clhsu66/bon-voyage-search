@@ -23,6 +23,11 @@
       </div>
       
       <div class="nav-controls">
+        <!-- How It Works Visual Guide Trigger -->
+        <button id="openHowItWorksBtn" class="btn-secondary-nav" title="How It Works & Visual Guide">
+          ℹ️ How It Works
+        </button>
+
         <!-- Currency Converter Selector -->
         <div class="currency-selector-wrapper">
           <label for="currencySelect">Currency:</label>
@@ -404,6 +409,84 @@
       </div>
     </div>
   </aside>
+
+  <!-- ========================================== -->
+  <!-- HOW IT WORKS & VISUAL GUIDE MODAL          -->
+  <!-- ========================================== -->
+  <div id="howItWorksModalOverlay" class="modal-overlay hidden"></div>
+  <div id="howItWorksModal" class="modal-card modal-card-wide hidden">
+    <div class="modal-header">
+      <div>
+        <h3 style="display:flex; align-items:center; gap:0.5rem;">🧭 Welcome to Chung's Bon Voyage Search</h3>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">Your privacy-first, loyalty-direct travel explorer & itinerary architect.</p>
+      </div>
+      <button id="closeHowItWorksModalBtn" class="close-btn">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- 4-Step Interactive Workflow Diagram -->
+      <div class="guide-steps-grid">
+        <div class="guide-step-card">
+          <div class="guide-step-num">1</div>
+          <div class="guide-step-icon">✈️</div>
+          <h4>Route & Passports</h4>
+          <p>Enter your origin and target city, choose an exploration radius (5–50 km), and assign specific passport nationalities for every traveler in your party.</p>
+        </div>
+
+        <div class="guide-step-card">
+          <div class="guide-step-num">2</div>
+          <div class="guide-step-icon">🛂</div>
+          <h4>Smart Visa Matrix</h4>
+          <p>Instantly evaluates reciprocal visa exemptions, eTA/ESTA requirements, and stay limits per traveler with official government application links.</p>
+        </div>
+
+        <div class="guide-step-card">
+          <div class="guide-step-num">3</div>
+          <div class="guide-step-icon">🏨</div>
+          <h4>Loyalty Stays & Map</h4>
+          <p>Book directly with Marriott, Hyatt, and IHG to retain elite perks. Filter landmarks, local food, and transit guides within your chosen radius.</p>
+        </div>
+
+        <div class="guide-step-card">
+          <div class="guide-step-num">4</div>
+          <div class="guide-step-icon">📅</div>
+          <h4>Build & Export Routes</h4>
+          <p>Star (⭐) favorite spots, assign Day 1–N buckets, and launch optimized multi-stop directions in Google Maps straight from your hotel anchor.</p>
+        </div>
+      </div>
+
+      <!-- Core Differentiators & Values -->
+      <div class="guide-badges-row">
+        <div class="guide-badge-item">
+          <span class="guide-badge-icon">🔒</span>
+          <div>
+            <strong>100% Client-Side Privacy</strong>
+            <p>Zero tracking, no mandatory accounts, and all trip plans stored securely in your browser's localStorage.</p>
+          </div>
+        </div>
+        <div class="guide-badge-item">
+          <span class="guide-badge-icon">💎</span>
+          <div>
+            <strong>Direct Booking Links</strong>
+            <p>No marked-up OTA middleman fees. Direct deep-links into official airline and hotel brand search engines.</p>
+          </div>
+        </div>
+        <div class="guide-badge-item">
+          <span class="guide-badge-icon">🏛️</span>
+          <div>
+            <strong>38 Hand-Curated Metros</strong>
+            <p>Verified landmarks, culinary classics, and neighborhood districts with exact GPS coordinates.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dismiss Button -->
+      <div style="margin-top: 1.5rem; text-align: center;">
+        <button id="dismissHowItWorksBtn" class="btn-primary" style="max-width: 240px; margin: 0 auto;">
+          🚀 Got It, Let's Explore!
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- ========================================== -->
   <!-- CUSTOM DAILY ITINERARY PLANNER MODAL       -->

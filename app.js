@@ -1767,7 +1767,32 @@ function toggleDrawer(open) {
 }
 
 // ========================================================
-// 9. CUSTOM & AI DAILY ITINERARY PLANNERS
+// 9. HOW IT WORKS & VISUAL GUIDE MODAL LOGIC
+// ========================================================
+const HOW_IT_WORKS_KEY = "voyagesearch_has_seen_guide";
+
+function openHowItWorksModal() {
+  document.getElementById("howItWorksModal")?.classList.remove("hidden");
+  document.getElementById("howItWorksModalOverlay")?.classList.remove("hidden");
+}
+
+function closeHowItWorksModal() {
+  document.getElementById("howItWorksModal")?.classList.add("hidden");
+  document.getElementById("howItWorksModalOverlay")?.classList.add("hidden");
+  localStorage.setItem(HOW_IT_WORKS_KEY, "true");
+}
+
+function initHowItWorksGuide() {
+  const hasSeen = localStorage.getItem(HOW_IT_WORKS_KEY);
+  if (!hasSeen) {
+    setTimeout(() => {
+      openHowItWorksModal();
+    }, 600);
+  }
+}
+
+// ========================================================
+// 10. CUSTOM & AI DAILY ITINERARY PLANNERS
 // ========================================================
 function openCustomPlannerModal() {
   renderCustomPlannerModal();
@@ -1956,7 +1981,7 @@ function closeSmartItineraryModal() {
 }
 
 // ========================================================
-// 10. SAVED TRIPS MANAGER
+// 11. SAVED TRIPS MANAGER
 // ========================================================
 const SAVED_TRIPS_KEY = "voyagesearch_saved_trips";
 
@@ -2073,7 +2098,7 @@ window.deleteSavedTrip = function(tripId) {
 };
 
 // ========================================================
-// 11. DOM INITIALIZATION & EVENT LISTENERS
+// 12. DOM INITIALIZATION & EVENT LISTENERS
 // ========================================================
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
@@ -2100,6 +2125,13 @@ document.addEventListener("DOMContentLoaded", () => {
       renderTravelerNationalityDropdowns(count);
     });
   }
+
+  // How It Works Modal Bindings & First-Time Check
+  initHowItWorksGuide();
+  document.getElementById("openHowItWorksBtn")?.addEventListener("click", openHowItWorksModal);
+  document.getElementById("closeHowItWorksModalBtn")?.addEventListener("click", closeHowItWorksModal);
+  document.getElementById("dismissHowItWorksBtn")?.addEventListener("click", closeHowItWorksModal);
+  document.getElementById("howItWorksModalOverlay")?.addEventListener("click", closeHowItWorksModal);
 
   setupLiveAirportAutocomplete("origin", "originSuggestions");
   setupLiveAirportAutocomplete("destination", "destSuggestions", "visitCity");

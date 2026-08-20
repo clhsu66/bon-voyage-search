@@ -1656,6 +1656,101 @@ input[type="number"]:focus,
 }
 
 /* ========================================================
+   HOW IT WORKS & VISUAL GUIDE MODAL STYLING
+   ======================================================== */
+.guide-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.guide-step-card {
+  background-color: var(--pill-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.2rem 1rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.guide-step-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+}
+
+.guide-step-num {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 24px;
+  height: 24px;
+  background-color: var(--primary);
+  color: #ffffff;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--card-bg);
+}
+
+.guide-step-icon {
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+}
+
+.guide-step-card h4 {
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+
+.guide-step-card p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.guide-badges-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  background-color: var(--pill-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.guide-badge-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.guide-badge-icon {
+  font-size: 1.5rem;
+}
+
+.guide-badge-item strong {
+  font-size: 0.85rem;
+  color: var(--text-main);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.guide-badge-item p {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+/* ========================================================
    CUSTOM DAILY PLANNER BOARD STYLING
    ======================================================== */
 .planner-staging-tray {
@@ -1990,6 +2085,15 @@ input[type="number"]:focus,
     grid-template-columns: 1fr;
   }
   .visa-grid {
+    grid-template-columns: 1fr;
+  }
+  .guide-steps-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .guide-steps-grid {
     grid-template-columns: 1fr;
   }
 }
