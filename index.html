@@ -119,6 +119,16 @@
           </div>
         </div>
 
+        <!-- Individual Traveler Nationality Selectors -->
+        <div class="traveler-nationalities-section">
+          <div class="form-section-title" style="font-size: 0.78rem; color: var(--primary);">
+            🛂 Traveler Passport Nationalities (For Visa & Entry Requirements)
+          </div>
+          <div id="travelerNationalitiesList" class="traveler-nationalities-grid">
+            <!-- Dynamically populated in app.js based on traveler count -->
+          </div>
+        </div>
+
         <!-- Multi-City Segment 2 (Hidden by Default) -->
         <div id="multiCityFields" class="hidden" style="margin-bottom: 1.25rem;">
           <div class="form-section-title" style="color: var(--accent-amber);">Segment 2: Connecting Journey</div>
@@ -170,7 +180,7 @@
     <!-- ========================================== -->
     <div id="loadingState" class="hidden">
       <div class="spinner"></div>
-      <p>Resolving geographic coordinates, flight schedules, and verified venues...</p>
+      <p>Resolving geographic coordinates, flight schedules, visa requirements, and verified venues...</p>
     </div>
 
     <!-- ========================================== -->
@@ -203,6 +213,18 @@
             <button id="toggleMapViewBtn" class="mode-btn">Map View</button>
           </div>
         </div>
+      </div>
+
+      <!-- Travel & Visa Entry Matrix Guide -->
+      <div id="visaRequirementsWrapper" class="visa-wrapper">
+        <div class="visa-header">
+          <div class="visa-title-block">
+            <h3>🛂 Entry & Visa Requirements per Traveler</h3>
+            <span id="visaCitySubtitle" class="visa-subtitle">Passport entry rules, electronic travel authorizations, and validity standards</span>
+          </div>
+          <span id="visaOverallBadge" class="count-badge">Checking rules...</span>
+        </div>
+        <div id="visaRequirementsContent" class="visa-grid"></div>
       </div>
 
       <!-- Interactive Map Section -->

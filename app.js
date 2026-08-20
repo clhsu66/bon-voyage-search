@@ -39,16 +39,25 @@ const majorAirportCatalog = [
   { code: "LHR", name: "London Heathrow", city: "London", country: "United Kingdom", airportLat: 51.4700, airportLon: -0.4543, cityLat: 51.5074, cityLon: -0.1278 },
   { code: "CDG", name: "Paris Charles de Gaulle", city: "Paris", country: "France", airportLat: 49.0097, airportLon: 2.5479, cityLat: 48.8566, cityLon: 2.3522 },
   { code: "FCO", name: "Rome Fiumicino Leonardo da Vinci", city: "Rome", country: "Italy", airportLat: 41.8003, airportLon: 12.2389, cityLat: 41.9028, cityLon: 12.4964 },
+  { code: "FLR", name: "Florence Peretola Airport", city: "Florence", country: "Italy", airportLat: 43.8100, airportLon: 11.2012, cityLat: 43.7696, cityLon: 11.2558 },
   { code: "BCN", name: "Barcelona-El Prat", city: "Barcelona", country: "Spain", airportLat: 41.2974, airportLon: 2.0833, cityLat: 41.3874, cityLon: 2.1686 },
   { code: "MAD", name: "Adolfo Suárez Madrid-Barajas", city: "Madrid", country: "Spain", airportLat: 40.4839, airportLon: -3.5680, cityLat: 40.4168, cityLon: -3.7038 },
   { code: "LIS", name: "Humberto Delgado Airport (Lisbon)", city: "Lisbon", country: "Portugal", airportLat: 38.7742, airportLon: -9.1342, cityLat: 38.7223, cityLon: -9.1393 },
   { code: "AMS", name: "Amsterdam Schiphol", city: "Amsterdam", country: "Netherlands", airportLat: 52.3105, airportLon: 4.7683, cityLat: 52.3676, cityLon: 4.9041 },
   { code: "TPE", name: "Taiwan Taoyuan International", city: "Taipei", country: "Taiwan", airportLat: 25.0797, airportLon: 121.2342, cityLat: 25.0330, cityLon: 121.5654 },
   { code: "TSA", name: "Taipei Songshan Airport", city: "Taipei", country: "Taiwan", airportLat: 25.0697, airportLon: 121.5525, cityLat: 25.0330, cityLon: 121.5654 },
+  { code: "RMQ", name: "Taichung International", city: "Taichung", country: "Taiwan", airportLat: 24.2646, airportLon: 120.6217, cityLat: 24.1477, cityLon: 120.6736 },
+  { id: "TNN", code: "TNN", name: "Tainan Airport", city: "Tainan", country: "Taiwan", airportLat: 22.9504, airportLon: 120.2060, cityLat: 22.9997, cityLon: 120.2270 },
+  { code: "KHH", name: "Kaohsiung International", city: "Kaohsiung", country: "Taiwan", airportLat: 22.5771, airportLon: 120.3500, cityLat: 22.6273, cityLon: 120.3014 },
   { code: "HND", name: "Tokyo Haneda", city: "Tokyo", country: "Japan", airportLat: 35.5494, airportLon: 139.7798, cityLat: 35.6895, cityLon: 139.6917 },
   { code: "NRT", name: "Tokyo Narita", city: "Tokyo", country: "Japan", airportLat: 35.7720, airportLon: 140.3929, cityLat: 35.6895, cityLon: 139.6917 },
+  { code: "ITM", name: "Osaka Itami Airport", city: "Osaka", country: "Japan", airportLat: 34.7855, airportLon: 135.4382, cityLat: 34.6937, cityLon: 135.5023 },
   { code: "KIX", name: "Kansai International (Kyoto/Osaka)", city: "Kyoto / Osaka", country: "Japan", airportLat: 34.4320, airportLon: 135.2304, cityLat: 35.0116, cityLon: 135.7681 },
-  { code: "HKG", name: "Hong Kong International", city: "Hong Kong", country: "Hong Kong", airportLat: 22.3080, airportLon: 113.9185, cityLat: 22.2855, cityLon: 114.1577 }
+  { code: "HKG", name: "Hong Kong International", city: "Hong Kong", country: "Hong Kong", airportLat: 22.3080, airportLon: 113.9185, cityLat: 22.2855, cityLon: 114.1577 },
+  { code: "SIN", name: "Singapore Changi Airport", city: "Singapore", country: "Singapore", airportLat: 1.3644, airportLon: 103.9915, cityLat: 1.3521, cityLon: 103.8198 },
+  { code: "BKK", name: "Bangkok Suvarnabhumi", city: "Bangkok", country: "Thailand", airportLat: 13.6900, airportLon: 100.7501, cityLat: 13.7563, cityLon: 100.5018 },
+  { code: "SYD", name: "Sydney Kingsford Smith", city: "Sydney", country: "Australia", airportLat: -33.9399, airportLon: 151.1753, cityLat: -33.8688, cityLon: 151.2093 },
+  { code: "ICN", name: "Seoul Incheon International", city: "Seoul", country: "South Korea", airportLat: 37.4602, airportLon: 126.4407, cityLat: 37.5665, cityLon: 126.9780 }
 ];
 
 function haversineDistance(lat1, lon1, lat2, lon2) {
@@ -138,6 +147,7 @@ async function resolveVisitCityLocation(cityName, fallbackAirportObj) {
   if (!cityName || cityName.trim() === "") {
     return {
       cityName: fallbackAirportObj.city,
+      country: fallbackAirportObj.country,
       lat: fallbackAirportObj.cityLat,
       lon: fallbackAirportObj.cityLon
     };
@@ -148,7 +158,7 @@ async function resolveVisitCityLocation(cityName, fallbackAirportObj) {
 
   const known = majorAirportCatalog.find(a => a.city.toLowerCase() === lower || lower.includes(a.city.toLowerCase()));
   if (known) {
-    return { cityName: known.city, lat: known.cityLat, lon: known.cityLon };
+    return { cityName: known.city, country: known.country, lat: known.cityLat, lon: known.cityLon };
   }
 
   try {
@@ -158,6 +168,7 @@ async function resolveVisitCityLocation(cityName, fallbackAirportObj) {
       if (data && data.length > 0) {
         return {
           cityName: data[0].address.city || data[0].address.town || data[0].address.state || cleanCity,
+          country: data[0].address.country || fallbackAirportObj.country,
           lat: parseFloat(data[0].lat),
           lon: parseFloat(data[0].lon)
         };
@@ -167,6 +178,7 @@ async function resolveVisitCityLocation(cityName, fallbackAirportObj) {
 
   return {
     cityName: cleanCity,
+    country: fallbackAirportObj.country,
     lat: fallbackAirportObj.cityLat,
     lon: fallbackAirportObj.cityLon
   };
@@ -401,7 +413,519 @@ function renderTransitGuide(airportCode, cityName) {
 }
 
 // ========================================================
-// 4. TIER-1 RESOLUTION ENGINE FOR SIGHTS & HOTELS
+// 4. MULTI-NATIONALITY VISA & ENTRY MATRIX ENGINE
+// ========================================================
+const passportNationalitiesCatalog = [
+  { code: "USA", label: "United States (US Passport)" },
+  { code: "TWN", label: "Taiwan (ROC Passport)" },
+  { code: "CAN", label: "Canada (Canadian Passport)" },
+  { code: "GBR", label: "United Kingdom (British Passport)" },
+  { code: "JPN", label: "Japan (Japanese Passport)" },
+  { code: "EU",  label: "European Union / Schengen Citizen" },
+  { code: "HKG", label: "Hong Kong (HKSAR Passport)" },
+  { code: "AUS", label: "Australia (Australian Passport)" },
+  { code: "SGP", label: "Singapore (Singaporean Passport)" },
+  { code: "KOR", label: "South Korea (ROK Passport)" },
+  { code: "CHN", label: "China (PRC Passport)" }
+];
+
+let travelerPassports = ["USA"];
+
+function renderTravelerNationalityDropdowns(count) {
+  const container = document.getElementById("travelerNationalitiesList");
+  if (!container) return;
+
+  while (travelerPassports.length < count) {
+    travelerPassports.push(travelerPassports[0] || "USA");
+  }
+  travelerPassports = travelerPassports.slice(0, count);
+
+  container.innerHTML = travelerPassports.map((pCode, idx) => `
+    <div class="traveler-nationality-item">
+      <label for="travelerPassport_${idx}">Traveler ${idx + 1} ${idx === 0 ? '(Lead)' : ''} Passport:</label>
+      <select id="travelerPassport_${idx}" onchange="handleTravelerPassportChange(${idx}, this.value)">
+        ${passportNationalitiesCatalog.map(p => `
+          <option value="${p.code}" ${p.code === pCode ? 'selected' : ''}>${p.label}</option>
+        `).join('')}
+      </select>
+    </div>
+  `).join('');
+}
+
+window.handleTravelerPassportChange = function(index, newCode) {
+  travelerPassports[index] = newCode;
+  if (resolvedDestAirportObj && resolvedVisitCityObj) {
+    evaluateAndRenderVisaRequirements(resolvedDestAirportObj, resolvedVisitCityObj);
+  }
+};
+
+function normalizeDestinationCountry(destCountryStr, destCityStr) {
+  const norm = `${destCountryStr || ''} ${destCityStr || ''}`.toLowerCase();
+  if (norm.includes("united states") || norm.includes("usa") || norm.includes("america") || norm.includes("hawaii")) return "USA";
+  if (norm.includes("canada") || norm.includes("vancouver") || norm.includes("toronto") || norm.includes("montreal")) return "CAN";
+  if (norm.includes("taiwan") || norm.includes("taipei") || norm.includes("taichung") || norm.includes("tainan") || norm.includes("kaohsiung")) return "TWN";
+  if (norm.includes("japan") || norm.includes("tokyo") || norm.includes("kyoto") || norm.includes("osaka")) return "JPN";
+  if (norm.includes("united kingdom") || norm.includes("uk") || norm.includes("london") || norm.includes("england")) return "GBR";
+  if (norm.includes("france") || norm.includes("paris")) return "FRA";
+  if (norm.includes("italy") || norm.includes("rome") || norm.includes("florence")) return "ITA";
+  if (norm.includes("spain") || norm.includes("barcelona") || norm.includes("madrid")) return "ESP";
+  if (norm.includes("portugal") || norm.includes("lisbon")) return "PRT";
+  if (norm.includes("netherlands") || norm.includes("holland") || norm.includes("amsterdam")) return "NLD";
+  if (norm.includes("hong kong")) return "HKG";
+  if (norm.includes("singapore")) return "SGP";
+  if (norm.includes("thailand") || norm.includes("bangkok")) return "THA";
+  if (norm.includes("australia") || norm.includes("sydney")) return "AUS";
+  if (norm.includes("south korea") || norm.includes("korea") || norm.includes("seoul")) return "KOR";
+  return "OTHER";
+}
+
+function getVisaRequirementDetails(passportCode, destCountryCode, destCityName) {
+  const isSchengen = ["FRA", "ITA", "ESP", "PRT", "NLD"].includes(destCountryCode);
+
+  // Domestic Citizen Travel
+  if (passportCode === destCountryCode || (passportCode === "EU" && isSchengen)) {
+    return {
+      status: "Citizen / Domestic",
+      statusClass: "visa-status-free",
+      headline: "Citizen / Domestic Entry",
+      stayLimit: "Unlimited (Citizen / Resident)",
+      validity: "Standard Domestic Government ID / Passport",
+      desc: "No visa or electronic travel authorization required for domestic travel.",
+      portalUrl: "https://www.travel.state.gov",
+      portalLabel: "Official Passport Services ↗"
+    };
+  }
+
+  // US Passport Holders
+  if (passportCode === "USA") {
+    if (destCountryCode === "CAN") {
+      return {
+        status: "Visa-Free",
+        statusClass: "visa-status-free",
+        headline: "Visa-Free Entry (Up to 180 Days)",
+        stayLimit: "Up to 6 months per entry",
+        validity: "Valid for duration of intended stay",
+        desc: "US citizens enter Canada visa-free. No eTA required when entering by air or land.",
+        portalUrl: "https://www.canada.ca/en/immigration-refugees-citizenship/services/visit-canada.html",
+        portalLabel: "Immigration Canada (IRCC) ↗"
+      };
+    }
+    if (isSchengen) {
+      return {
+        status: "Visa-Free / ETIAS",
+        statusClass: "visa-status-eta",
+        headline: "Visa-Free (ETIAS Required in 2025/2026)",
+        stayLimit: "Up to 90 days in any 180-day period",
+        validity: "Must be valid for at least 3 months beyond departure date",
+        desc: "Short-stay tourist entry is visa-free across the Schengen Area. Ensure passport was issued within the last 10 years.",
+        portalUrl: "https://travel-europe.europa.eu/etias_en",
+        portalLabel: "Official EU ETIAS Portal ↗"
+      };
+    }
+    if (destCountryCode === "GBR") {
+      return {
+        status: "Visa-Free / UK ETA",
+        statusClass: "visa-status-eta",
+        headline: "Visa-Free (UK ETA Required)",
+        stayLimit: "Up to 6 months per entry",
+        validity: "Valid for entire duration of stay",
+        desc: "US citizens require a valid UK Electronic Travel Authorisation (ETA) before boarding flights to London/UK.",
+        portalUrl: "https://www.gov.uk/electronic-travel-authorisation",
+        portalLabel: "UK GOV ETA Portal ↗"
+      };
+    }
+    if (destCountryCode === "TWN") {
+      return {
+        status: "Visa-Free",
+        statusClass: "visa-status-free",
+        headline: "Visa-Free Entry (90 Days)",
+        stayLimit: "Up to 90 days (No extension)",
+        validity: "Must be valid for at least 6 months upon arrival",
+        desc: "US passport holders enter Taiwan visa-free. Must possess a confirmed onward or return air ticket.",
+        portalUrl: "https://www.boca.gov.tw/cp-149-4486-7785a-2.html",
+        portalLabel: "Taiwan MOFA BOCA ↗"
+      };
+    }
+    if (destCountryCode === "JPN") {
+      return {
+        status: "Visa-Free",
+        statusClass: "visa-status-free",
+        headline: "Visa-Free Tourism (90 Days)",
+        stayLimit: "Up to 90 days",
+        validity: "Valid for duration of stay (6 months recommended)",
+        desc: "Visa exemption for tourism. Fill out Visit Japan Web online for fast immigration and customs QR clearance.",
+        portalUrl: "https://www.vjw.digital.go.jp/",
+        portalLabel: "Visit Japan Web Official ↗"
+      };
+    }
+    if (destCountryCode === "AUS") {
+      return {
+        status: "ETA Required",
+        statusClass: "visa-status-eta",
+        headline: "Australian ETA (Subclass 601)",
+        stayLimit: "Up to 3 months per visit within 12 months",
+        validity: "Must be valid for period of stay",
+        desc: "US citizens must apply for an Electronic Travel Authority (ETA) via the official AustralianETA smartphone app.",
+        portalUrl: "https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/electronic-travel-authority-601",
+        portalLabel: "Australia Home Affairs ETA ↗"
+      };
+    }
+    if (destCountryCode === "HKG") {
+      return {
+        status: "Visa-Free",
+        statusClass: "visa-status-free",
+        headline: "Visa-Free Entry (90 Days)",
+        stayLimit: "Up to 90 days",
+        validity: "Must be valid at least 1 month beyond intended stay",
+        desc: "US citizens do not require a visa for tourism or business visits up to 90 days.",
+        portalUrl: "https://www.immd.gov.hk/eng/services/visas/visit-transit/visit-visa-entry-permit.html",
+        portalLabel: "Hong Kong ImmD Official ↗"
+      };
+    }
+    if (destCountryCode === "SGP") {
+      return {
+        status: "Visa-Free",
+        statusClass: "visa-status-free",
+        headline: "Visa-Free (SG Arrival Card Required)",
+        stayLimit: "Up to 90 days",
+        validity: "Must be valid for at least 6 months",
+        desc: "Visa-free entry. Must submit the free SG Arrival Card (SGAC) with electronic health declaration within 3 days before arrival.",
+        portalUrl: "https://eservices.ica.gov.sg/sgarrivalcard/",
+        portalLabel: "Singapore ICA Official ↗"
+      };
+    }
+    if (destCountryCode === "THA") {
+      return {
+        status: "Visa-Free",
+        statusClass: "visa-status-free",
+        headline: "Visa Exemption (60 Days)",
+        stayLimit: "Up to 60 days (Extendable by 30 days)",
+        validity: "Must be valid for at least 6 months",
+        desc: "US citizens enter Thailand visa-free for up to 60 days under the visa exemption scheme.",
+        portalUrl: "https://www.thaievisa.go.th/",
+        portalLabel: "Thailand Official e-Visa ↗"
+      };
+    }
+    if (destCountryCode === "KOR") {
+      return {
+        status: "Visa-Free / K-ETA",
+        statusClass: "visa-status-free",
+        headline: "Visa-Free (K-ETA Temporarily Exempt)",
+        stayLimit: "Up to 90 days",
+        validity: "Valid for duration of intended stay",
+        desc: "US passport holders enter South Korea visa-free. K-ETA requirement is temporarily waived for tourism.",
+        portalUrl: "https://www.k-eta.go.kr/",
+        portalLabel: "Official K-ETA Portal ↗"
+      };
+    }
+  }
+
+  // Taiwan (ROC) Passport Holders
+  if (passportCode === "TWN") {
+    if (destCountryCode === "USA") {
+      return {
+        status: "ESTA Required",
+        statusClass: "visa-status-eta",
+        headline: "US Visa Waiver Program (ESTA)",
+        stayLimit: "Up to 90 days",
+        validity: "E-passport with National ID Number valid 6 months",
+        desc: "Taiwan biometric passport holders must obtain an approved ESTA prior to boarding flights to the United States.",
+        portalUrl: "https://esta.cbp.dhs.gov/",
+        portalLabel: "Official US CBP ESTA Portal ↗"
+      };
+    }
+    if (destCountryCode === "CAN") {
+      return {
+        status: "eTA Required",
+        statusClass: "visa-status-eta",
+        headline: "Canada eTA (Electronic Authorization)",
+        stayLimit: "Up to 6 months",
+        validity: "Taiwan passport with Personal ID Number",
+        desc: "Must obtain an electronic Travel Authorization (eTA, CA$7) online prior to air travel to Canada.",
+        portalUrl: "https://www.canada.ca/en/immigration-refugees-citizenship/services/visit-canada/eta.html",
+        portalLabel: "Official Canada eTA Portal ↗"
+      };
+    }
+    if (isSchengen) {
+      return {
+        status: "Visa-Free / ETIAS",
+        statusClass: "visa-status-eta",
+        headline: "Visa-Free (ETIAS Required in 2025/2026)",
+        stayLimit: "Up to 90 days in any 180-day period",
+        validity: "Passport with ID Number valid 3 months beyond departure",
+        desc: "Taiwanese biometric passport holders enter Schengen countries visa-free. ETIAS authorization required once operational.",
+        portalUrl: "https://travel-europe.europa.eu/etias_en",
+        portalLabel: "Official EU ETIAS Portal ↗"
+      };
+    }
+    if (destCountryCode === "GBR") {
+      return {
+        status: "Visa-Free",
+        statusClass: "visa-status-free",
+        headline: "Visa-Free Entry (Up to 6 Months)",
+        stayLimit: "Up to 6 months",
+        validity: "Taiwan passport with ID Number valid for stay",
+        desc: "Visa-free entry for tourism across the United Kingdom.",
+        portalUrl: "https://www.gov.uk/check-uk-visa",
+        portalLabel: "UK Visa Check Official ↗"
+      };
+    }
+    if (destCountryCode === "JPN") {
+      return {
+        status: "Visa-Free",
+        statusClass: "visa-status-free",
+        headline: "Visa-Free Tourism (90 Days)",
+        stayLimit: "Up to 90 days",
+        validity: "Valid for duration of stay",
+        desc: "Taiwan passport holders enjoy visa-free entry to Japan for up to 90 days. Register with Visit Japan Web.",
+        portalUrl: "https://www.vjw.digital.go.jp/",
+        portalLabel: "Visit Japan Web ↗"
+      };
+    }
+    if (destCountryCode === "HKG") {
+      return {
+        status: "Pre-Arrival / Taibaozheng",
+        statusClass: "visa-status-eta",
+        headline: "Pre-Arrival Registration or Mainland Travel Permit",
+        stayLimit: "Up to 30 days (PAR) / 30 days (MTP)",
+        validity: "Valid Taiwan passport or Mainland Travel Permit",
+        desc: "Must complete free online Pre-arrival Registration (PAR) for Taiwan Residents or hold a valid Mainland Travel Permit (Taibaozheng).",
+        portalUrl: "https://www.immd.gov.hk/eng/services/visas/pre-arrival_registration_for_taiwan_residents.html",
+        portalLabel: "Hong Kong ImmD PAR ↗"
+      };
+    }
+    if (destCountryCode === "SGP") {
+      return {
+        status: "Visa-Free",
+        statusClass: "visa-status-free",
+        headline: "Visa-Free (30 Days)",
+        stayLimit: "Up to 30 days",
+        validity: "Must be valid for at least 6 months",
+        desc: "Visa-free entry. Complete SG Arrival Card within 3 days prior to landing in Singapore.",
+        portalUrl: "https://eservices.ica.gov.sg/sgarrivalcard/",
+        portalLabel: "Singapore ICA Official ↗"
+      };
+    }
+    if (destCountryCode === "THA") {
+      return {
+        status: "Visa-Free",
+        statusClass: "visa-status-free",
+        headline: "Visa Exemption (60 Days)",
+        stayLimit: "Up to 60 days",
+        validity: "Must be valid for at least 6 months",
+        desc: "Taiwan passport holders are eligible for visa-free entry to Thailand for up to 60 days.",
+        portalUrl: "https://www.thaievisa.go.th/",
+        portalLabel: "Thailand e-Visa Official ↗"
+      };
+    }
+    if (destCountryCode === "AUS") {
+      return {
+        status: "ETA Required",
+        statusClass: "visa-status-eta",
+        headline: "Australian ETA (Subclass 601)",
+        stayLimit: "Up to 3 months",
+        validity: "Passport valid for duration of stay",
+        desc: "Taiwan biometric passport holders must apply for an ETA via the AustralianETA mobile app.",
+        portalUrl: "https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/electronic-travel-authority-601",
+        portalLabel: "Australia ETA Official ↗"
+      };
+    }
+    if (destCountryCode === "KOR") {
+      return {
+        status: "Visa-Free / K-ETA",
+        statusClass: "visa-status-free",
+        headline: "Visa-Free Tourism (90 Days)",
+        stayLimit: "Up to 90 days",
+        validity: "Must be valid for at least 6 months",
+        desc: "Visa exemption applies. K-ETA is temporarily exempted for Taiwanese travelers.",
+        portalUrl: "https://www.k-eta.go.kr/",
+        portalLabel: "K-ETA Official Portal ↗"
+      };
+    }
+  }
+
+  // Canada Passport Holders
+  if (passportCode === "CAN") {
+    if (destCountryCode === "USA") {
+      return {
+        status: "Visa-Free",
+        statusClass: "visa-status-free",
+        headline: "Visa-Free Entry (Up to 180 Days)",
+        stayLimit: "Up to 6 months per entry",
+        validity: "Canadian passport valid for duration of stay",
+        desc: "Canadian citizens generally do not require a visa or ESTA to enter the United States for tourism.",
+        portalUrl: "https://www.cbp.gov/travel/canadian-citizens",
+        portalLabel: "US CBP Travel ↗"
+      };
+    }
+    if (isSchengen || destCountryCode === "GBR" || destCountryCode === "TWN" || destCountryCode === "JPN" || destCountryCode === "HKG" || destCountryCode === "SGP" || destCountryCode === "THA" || destCountryCode === "KOR") {
+      return {
+        status: "Visa-Free",
+        statusClass: "visa-status-free",
+        headline: "Visa-Free Entry (90 to 180 Days)",
+        stayLimit: "Up to 90 days (180 days in UK)",
+        validity: "Must be valid for at least 3 to 6 months beyond stay",
+        desc: "Canadian passport holders enjoy reciprocal visa-free entry for tourism.",
+        portalUrl: "https://travel.gc.ca/travelling/advisories",
+        portalLabel: "Travel.gc.ca Advisory ↗"
+      };
+    }
+    if (destCountryCode === "AUS") {
+      return {
+        status: "ETA Required",
+        statusClass: "visa-status-eta",
+        headline: "Australian ETA (Subclass 601)",
+        stayLimit: "Up to 3 months",
+        validity: "Valid for duration of stay",
+        desc: "Canadian citizens must apply for an ETA via the AustralianETA smartphone app before travel.",
+        portalUrl: "https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/electronic-travel-authority-601",
+        portalLabel: "Australia ETA Official ↗"
+      };
+    }
+  }
+
+  // Standard Reciprocal / Visa Exemption for OECD / Tier-1 Passports (UK, Japan, EU, Singapore, Australia, Korea)
+  if (["GBR", "JPN", "EU", "SGP", "AUS", "KOR"].includes(passportCode)) {
+    if (destCountryCode === "USA") {
+      return {
+        status: "ESTA Required",
+        statusClass: "visa-status-eta",
+        headline: "US Visa Waiver Program (ESTA)",
+        stayLimit: "Up to 90 days",
+        validity: "Valid e-Passport",
+        desc: "Must hold an approved ESTA before boarding flight to the US.",
+        portalUrl: "https://esta.cbp.dhs.gov/",
+        portalLabel: "US CBP ESTA ↗"
+      };
+    }
+    if (destCountryCode === "CAN") {
+      return {
+        status: "eTA Required",
+        statusClass: "visa-status-eta",
+        headline: "Canada Electronic Travel Authorization (eTA)",
+        stayLimit: "Up to 6 months",
+        validity: "Valid passport",
+        desc: "Must obtain an approved eTA online prior to flying to Canada.",
+        portalUrl: "https://www.canada.ca/en/immigration-refugees-citizenship/services/visit-canada/eta.html",
+        portalLabel: "Canada eTA ↗"
+      };
+    }
+    return {
+      status: "Visa-Free",
+      statusClass: "visa-status-free",
+      headline: `Visa-Free Tourism to ${destCityName}`,
+      stayLimit: "Up to 90 days for leisure",
+      validity: "6 months validity recommended",
+      desc: `Reciprocal tourist visa waiver applies for ${passportCode} passports entering ${destCityName}.`,
+      portalUrl: "https://www.iatatravelcentre.com/",
+      portalLabel: "IATA Travel Centre ↗"
+    };
+  }
+
+  // Fallback for Passports requiring Embassy Visa / eVisa
+  return {
+    status: "Visa Required / Check eVisa",
+    statusClass: "visa-status-required",
+    headline: `Entry Visa or eVisa Required for ${destCityName}`,
+    stayLimit: "Varies by approved consular visa",
+    validity: "Must have at least 6 months validity",
+    desc: `Holders of this passport generally require an advance consular tourist visa or pre-approved eVisa to enter ${destCityName}.`,
+    portalUrl: "https://www.iatatravelcentre.com/",
+    portalLabel: "Check Official Consular Rules ↗"
+  };
+}
+
+function evaluateAndRenderVisaRequirements(destAirportObj, visitCityObj) {
+  const contentEl = document.getElementById("visaRequirementsContent");
+  const overallBadgeEl = document.getElementById("visaOverallBadge");
+  const subtitleEl = document.getElementById("visaCitySubtitle");
+  if (!contentEl) return;
+
+  const destCountryCode = normalizeDestinationCountry(visitCityObj.country || destAirportObj.country, visitCityObj.cityName);
+  const targetCityName = visitCityObj.cityName;
+
+  if (subtitleEl) {
+    subtitleEl.textContent = `Entry rules, passport validity, and authorizations for travel into ${targetCityName} (${visitCityObj.country || destAirportObj.country})`;
+  }
+
+  let hasRestrictedOrVisaReq = false;
+  let hasEta = false;
+
+  const evaluations = travelerPassports.map((pCode, idx) => {
+    const passportMeta = passportNationalitiesCatalog.find(p => p.code === pCode) || { code: pCode, label: `${pCode} Passport` };
+    const req = getVisaRequirementDetails(pCode, destCountryCode, targetCityName);
+    
+    if (req.statusClass === "visa-status-required") hasRestrictedOrVisaReq = true;
+    if (req.statusClass === "visa-status-eta") hasEta = true;
+
+    return {
+      travelerIndex: idx + 1,
+      isLead: idx === 0,
+      passport: passportMeta,
+      ...req
+    };
+  });
+
+  if (overallBadgeEl) {
+    if (hasRestrictedOrVisaReq) {
+      overallBadgeEl.className = "count-badge";
+      overallBadgeEl.style.backgroundColor = "rgba(244, 63, 94, 0.15)";
+      overallBadgeEl.style.color = "var(--accent-rose)";
+      overallBadgeEl.style.borderColor = "rgba(244, 63, 94, 0.3)";
+      overallBadgeEl.textContent = "⚠️ Action Required (Visa Needed for 1+ Pax)";
+    } else if (hasEta) {
+      overallBadgeEl.className = "count-badge";
+      overallBadgeEl.style.backgroundColor = "rgba(59, 130, 246, 0.15)";
+      overallBadgeEl.style.color = "var(--primary)";
+      overallBadgeEl.style.borderColor = "rgba(59, 130, 246, 0.3)";
+      overallBadgeEl.textContent = "ℹ️ Electronic Authorization (ETA) Required";
+    } else {
+      overallBadgeEl.className = "count-badge";
+      overallBadgeEl.style.backgroundColor = "rgba(16, 185, 129, 0.15)";
+      overallBadgeEl.style.color = "var(--accent-green)";
+      overallBadgeEl.style.borderColor = "rgba(16, 185, 129, 0.3)";
+      overallBadgeEl.textContent = "✓ All Travelers Visa-Free";
+    }
+  }
+
+  contentEl.innerHTML = evaluations.map(ev => `
+    <div class="visa-traveler-card">
+      <div class="visa-card-header">
+        <span class="visa-traveler-label">👤 Traveler ${ev.travelerIndex} ${ev.isLead ? '(Lead Traveler)' : ''}</span>
+        <span class="visa-status-badge ${ev.statusClass}">${ev.status}</span>
+      </div>
+
+      <div class="visa-passport-info">
+        <strong>${ev.passport.label}</strong>
+      </div>
+
+      <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-main); margin-top: 2px;">
+        ${ev.headline}
+      </div>
+
+      <p class="visa-detail-text">${ev.desc}</p>
+
+      <div class="visa-meta-row">
+        <span>Max Stay:</span>
+        <strong style="color: var(--text-main);">${ev.stayLimit}</strong>
+      </div>
+
+      <div class="visa-meta-row">
+        <span>Passport Validity:</span>
+        <strong style="color: var(--text-main);">${ev.validity}</strong>
+      </div>
+
+      <div style="margin-top: 0.35rem; display: flex; justify-content: flex-end;">
+        <a href="${ev.portalUrl}" target="_blank" rel="noopener noreferrer" class="visa-portal-link">
+          ${ev.portalLabel}
+        </a>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ========================================================
+// 5. TIER-1 RESOLUTION ENGINE FOR SIGHTS & HOTELS
 // ========================================================
 async function fetchTargetCitySights(cityName, airportCode, centerLat, centerLon) {
   const normCity = cityName.toLowerCase();
@@ -541,9 +1065,8 @@ async function fetchLiveTargetHotels(centerLat, centerLon, cityName, airportCode
     brandUrl: getBrandPortalUrl(b, cityName, checkIn, checkOut)
   }));
 }
-
 // ========================================================
-// 5. TAGGING & DAY ASSIGNMENT STATE & MAP CONTROLS
+// 6. TAGGING & DAY ASSIGNMENT STATE & MAP CONTROLS
 // ========================================================
 let taggedPlaces = [];
 
@@ -813,8 +1336,9 @@ function closeCustomPlaceModal() {
   document.getElementById("placeModal")?.classList.add("hidden");
   document.getElementById("placeModalOverlay")?.classList.add("hidden");
 }
+
 // ========================================================
-// 6. FLIGHT SCHEDULE GENERATOR
+// 7. FLIGHT SCHEDULE GENERATOR
 // ========================================================
 function formatMinutesToDuration(mins) {
   const h = Math.floor(mins / 60);
@@ -908,7 +1432,7 @@ function generateDynamicFlightSchedule(originObj, destAirportObj, departDate, re
 }
 
 // ========================================================
-// 7. APPLICATION CONTROLLER & STATE RENDERING
+// 8. APPLICATION CONTROLLER & STATE RENDERING
 // ========================================================
 let currentTripType = "roundtrip";
 let currentFlights = [];
@@ -1243,7 +1767,7 @@ function toggleDrawer(open) {
 }
 
 // ========================================================
-// 8. CUSTOM & AI DAILY ITINERARY PLANNERS
+// 9. CUSTOM & AI DAILY ITINERARY PLANNERS
 // ========================================================
 function openCustomPlannerModal() {
   renderCustomPlannerModal();
@@ -1432,7 +1956,7 @@ function closeSmartItineraryModal() {
 }
 
 // ========================================================
-// 9. SAVED TRIPS MANAGER
+// 10. SAVED TRIPS MANAGER
 // ========================================================
 const SAVED_TRIPS_KEY = "voyagesearch_saved_trips";
 
@@ -1471,6 +1995,7 @@ function saveTripToLocalStorage() {
     taggedPlaces: taggedPlaces,
     tripDays: tripDays,
     travelersCount: travelersCount,
+    travelerPassports: [...travelerPassports],
     radiusKm: currentRadiusKm,
     createdAt: new Date().toLocaleDateString()
   };
@@ -1522,8 +2047,16 @@ window.loadSavedTrip = function(tripId) {
   document.getElementById("departDate").value = trip.departDate;
   if (document.getElementById("returnDate")) document.getElementById("returnDate").value = trip.returnDate || "";
   if (document.getElementById("radiusSelect")) document.getElementById("radiusSelect").value = trip.radiusKm || "10";
-  if (document.getElementById("travelersCount")) document.getElementById("travelersCount").value = trip.travelersCount || 1;
+  if (document.getElementById("travelersCount")) {
+    document.getElementById("travelersCount").value = trip.travelersCount || 1;
+    travelersCount = trip.travelersCount || 1;
+  }
   
+  if (trip.travelerPassports && Array.isArray(trip.travelerPassports)) {
+    travelerPassports = [...trip.travelerPassports];
+  }
+  renderTravelerNationalityDropdowns(travelersCount);
+
   if (trip.taggedPlaces) taggedPlaces = trip.taggedPlaces;
 
   document.getElementById("savedTripsModal")?.classList.add("hidden");
@@ -1540,7 +2073,7 @@ window.deleteSavedTrip = function(tripId) {
 };
 
 // ========================================================
-// 10. DOM INITIALIZATION & EVENT LISTENERS
+// 11. DOM INITIALIZATION & EVENT LISTENERS
 // ========================================================
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
@@ -1550,10 +2083,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const departInput = document.getElementById("departDate");
   const returnInput = document.getElementById("returnDate");
   const leg2DateInput = document.getElementById("leg2Date");
+  const travelersCountInput = document.getElementById("travelersCount");
   
   if (departInput) departInput.setAttribute("min", today);
   if (returnInput) returnInput.setAttribute("min", today);
   if (leg2DateInput) leg2DateInput.setAttribute("min", today);
+
+  // Initialize Traveler Passport Dropdowns
+  const initialTravelerCount = parseInt(travelersCountInput ? travelersCountInput.value : 1) || 1;
+  renderTravelerNationalityDropdowns(initialTravelerCount);
+
+  if (travelersCountInput) {
+    travelersCountInput.addEventListener("input", (e) => {
+      const count = Math.max(1, parseInt(e.target.value) || 1);
+      travelersCount = count;
+      renderTravelerNationalityDropdowns(count);
+    });
+  }
 
   setupLiveAirportAutocomplete("origin", "originSuggestions");
   setupLiveAirportAutocomplete("destination", "destSuggestions", "visitCity");
@@ -1826,7 +2372,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const leg2DestVal = document.getElementById("leg2Dest")?.value.trim();
       currentLeg2Date = leg2DateInput ? leg2DateInput.value : "";
 
-      travelersCount = parseInt(document.getElementById("travelersCount")?.value) || 1;
+      travelersCount = parseInt(travelersCountInput ? travelersCountInput.value : 1) || 1;
 
       const selectedBrands = Array.from(document.querySelectorAll('input[name="hotelBrand"]:checked')).map(cb => cb.value);
       if (selectedBrands.length === 0) {
@@ -1842,7 +2388,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tripDays = 1;
       }
 
-      // Reset selection and tagged places for the new corridor search
+      // Reset selections and tagged places for the new corridor search
       selectedFlight = null;
       selectedHotel = null;
       taggedPlaces = [];
@@ -1862,6 +2408,9 @@ document.addEventListener("DOMContentLoaded", () => {
         resolvedLeg2OriginObj = null;
         resolvedLeg2DestObj = null;
       }
+
+      // Evaluate Visa & Entry Requirements for all individual travelers
+      evaluateAndRenderVisaRequirements(resolvedDestAirportObj, resolvedVisitCityObj);
 
       const rawSights = await fetchTargetCitySights(
         resolvedVisitCityObj.cityName,

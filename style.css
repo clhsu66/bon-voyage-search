@@ -381,6 +381,53 @@ input[type="number"]:focus,
   border-color: var(--primary);
 }
 
+/* Traveler Nationalities Section */
+.traveler-nationalities-section {
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.15rem;
+  background-color: var(--pill-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.traveler-nationalities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.traveler-nationality-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.traveler-nationality-item label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.traveler-nationality-item select {
+  padding: 0.55rem 0.75rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background-color: var(--input-bg);
+  color: var(--text-main);
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.traveler-nationality-item select:focus {
+  border-color: var(--primary);
+}
+
 .hotel-brands-section {
   margin-bottom: 1.75rem;
   padding-top: 1rem;
@@ -569,6 +616,140 @@ input[type="number"]:focus,
   background-color: var(--primary);
   color: #fff;
   border-color: var(--primary);
+}
+
+/* ========================================================
+   TRAVEL & VISA REQUIREMENTS SECTION
+   ======================================================== */
+.visa-wrapper {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.visa-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.visa-title-block h3 {
+  font-size: 1.2rem;
+  color: var(--text-main);
+}
+
+.visa-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: block;
+  margin-top: 2px;
+}
+
+.visa-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.visa-traveler-card {
+  background-color: var(--pill-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: transform 0.15s ease;
+}
+
+.visa-traveler-card:hover {
+  transform: translateY(-2px);
+}
+
+.visa-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.visa-traveler-label {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+
+.visa-status-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.visa-status-free {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: var(--accent-green);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.visa-status-eta {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: var(--primary);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.visa-status-evisa {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: var(--accent-amber);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.visa-status-required {
+  background-color: rgba(244, 63, 94, 0.15);
+  color: var(--accent-rose);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.visa-passport-info {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.visa-detail-text {
+  font-size: 0.82rem;
+  color: var(--text-main);
+  line-height: 1.45;
+}
+
+.visa-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  border-top: 1px dashed var(--border);
+  padding-top: 0.45rem;
+  margin-top: 0.2rem;
+}
+
+.visa-portal-link {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--google-blue);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.visa-portal-link:hover {
+  text-decoration: underline;
 }
 
 /* ========================================================
@@ -1806,6 +1987,9 @@ input[type="number"]:focus,
     padding-top: 0.75rem;
   }
   .planner-board-grid {
+    grid-template-columns: 1fr;
+  }
+  .visa-grid {
     grid-template-columns: 1fr;
   }
 }
