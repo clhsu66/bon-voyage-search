@@ -273,6 +273,41 @@
         <div id="transitContent" class="transit-grid"></div>
       </div>
 
+      <!-- ========================================== -->
+      <!-- DESTINATION INSIGHTS: WEATHER & ETIQUETTE  -->
+      <!-- ========================================== -->
+      <div id="destinationInsightsSection" class="insights-section-grid">
+        <!-- Trip Weather Forecast Card -->
+        <div class="insight-block">
+          <div class="insight-header">
+            <div>
+              <h3>🌤️ Trip Dates Weather & Packing Forecast</h3>
+              <span id="weatherSubtitle" class="transit-subtitle">Live daily temperatures, precipitation probability, and weather outlook</span>
+            </div>
+            <div class="unit-toggle-wrap">
+              <button type="button" id="tempUnitFBtn" class="unit-btn active">°F</button>
+              <button type="button" id="tempUnitCBtn" class="unit-btn">°C</button>
+            </div>
+          </div>
+          <div id="weatherForecastContainer" class="weather-grid">
+            <!-- Dynamically populated in app.js -->
+          </div>
+        </div>
+
+        <!-- Tipping, Plugs & Etiquette Guide Card -->
+        <div class="insight-block">
+          <div class="insight-header">
+            <div>
+              <h3>🧭 Local Customs, Tipping & Power Guide</h3>
+              <span id="etiquetteSubtitle" class="transit-subtitle">Tipping etiquette, electrical sockets, emergency contacts, and social norms</span>
+            </div>
+          </div>
+          <div id="etiquetteContainer" class="etiquette-grid">
+            <!-- Dynamically populated in app.js -->
+          </div>
+        </div>
+      </div>
+
       <!-- Key Sights & Gastronomy Section -->
       <div class="sights-wrapper">
         <div class="sights-header">

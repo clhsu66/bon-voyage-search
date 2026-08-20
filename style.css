@@ -70,12 +70,15 @@ body {
   line-height: 1.5;
   min-height: 100vh;
   transition: background-color 0.25s ease, color 0.25s ease;
+  overflow-x: hidden;
 }
 
+/* Fluid responsive container spanning full browser width */
 .container {
-  max-width: 1140px;
+  width: 96%;
+  max-width: 1800px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 1rem;
 }
 
 /* ========================================================
@@ -85,7 +88,7 @@ body {
   background-color: var(--card-bg);
   border-bottom: 1px solid var(--border);
   padding: 1rem 0;
-  margin-bottom: 2rem;
+  margin-bottom: 1.75rem;
   box-shadow: var(--shadow-sm);
   transition: background-color 0.25s ease, border-color 0.25s ease;
 }
@@ -258,11 +261,12 @@ body {
    ======================================================== */
 .search-card {
   background-color: var(--card-bg);
-  padding: 2rem;
+  padding: 1.75rem 2rem;
   border-radius: 12px;
   box-shadow: var(--shadow-md);
   margin-bottom: 2rem;
   border: 1px solid var(--border);
+  width: 100%;
 }
 
 .trip-type-tabs {
@@ -307,13 +311,13 @@ body {
 
 .form-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.25rem;
   margin-bottom: 1.25rem;
 }
 
 .form-row-3col {
-  grid-template-columns: 1fr 1fr 1.1fr;
+  grid-template-columns: 1fr 1fr 1.2fr;
 }
 
 .form-row-dates-radius {
@@ -399,6 +403,7 @@ input[type="number"],
   background-color: var(--input-bg);
   color: var(--text-main);
   transition: border-color 0.2s ease, background-color 0.2s ease;
+  width: 100%;
 }
 
 input[type="text"]:focus,
@@ -419,7 +424,7 @@ input[type="number"]:focus,
 
 .traveler-nationalities-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 0.85rem;
   margin-top: 0.5rem;
 }
@@ -465,6 +470,7 @@ input[type="number"]:focus,
   display: flex;
   gap: 1.5rem;
   margin-top: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .checkbox-label {
@@ -655,6 +661,7 @@ input[type="number"]:focus,
   padding: 1.5rem;
   margin-bottom: 2rem;
   box-shadow: var(--shadow-sm);
+  width: 100%;
 }
 
 .visa-header {
@@ -680,8 +687,8 @@ input[type="number"]:focus,
 
 .visa-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
 }
 
 .visa-traveler-card {
@@ -789,6 +796,7 @@ input[type="number"]:focus,
   padding: 1.5rem;
   margin-bottom: 2rem;
   box-shadow: var(--shadow-sm);
+  width: 100%;
 }
 
 .map-header {
@@ -888,8 +896,10 @@ input[type="number"]:focus,
 .dot-sight { background-color: var(--primary); }
 .dot-food { background-color: var(--accent-rose); }
 
+/* Dynamic Viewport Scaled Map Container */
 .leaflet-map-container {
-  height: 500px;
+  height: min(580px, 60vh);
+  min-height: 420px;
   width: 100%;
   border-radius: 8px;
   border: 1px solid var(--border);
@@ -983,6 +993,7 @@ input[type="number"]:focus,
   padding: 1.5rem;
   margin-bottom: 2rem;
   box-shadow: var(--shadow-sm);
+  width: 100%;
 }
 
 .transit-header {
@@ -1001,7 +1012,7 @@ input[type="number"]:focus,
 
 .transit-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
   gap: 1.25rem;
 }
 
@@ -1052,6 +1063,214 @@ input[type="number"]:focus,
   margin-top: 0.2rem;
 }
 /* ========================================================
+   DESTINATION INSIGHTS: WEATHER & ETIQUETTE GRIDS
+   ======================================================== */
+.insights-section-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.insight-block {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+.insight-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.insight-header h3 {
+  font-size: 1.15rem;
+  color: var(--text-main);
+}
+
+.unit-toggle-wrap {
+  display: flex;
+  background-color: var(--pill-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 2px;
+}
+
+.unit-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.unit-btn.active {
+  background-color: var(--primary);
+  color: #ffffff;
+}
+
+/* Weather Forecast Grid */
+.weather-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.weather-day-card {
+  background-color: var(--pill-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.85rem 0.65rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.35rem;
+  transition: transform 0.15s ease;
+}
+
+.weather-day-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+}
+
+.weather-day-name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.weather-date-sub {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: -3px;
+}
+
+.weather-icon {
+  font-size: 1.8rem;
+  margin: 0.15rem 0;
+}
+
+.weather-temp-range {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.temp-max {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.temp-min {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.weather-condition-desc {
+  font-size: 0.72rem;
+  color: var(--text-main);
+  line-height: 1.25;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.weather-pop {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--google-blue);
+  background-color: rgba(59, 130, 246, 0.12);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.weather-advice-pill {
+  grid-column: 1 / -1;
+  background-color: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: var(--accent-green);
+  padding: 0.55rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+/* Etiquette, Tipping & Power Grid */
+.etiquette-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.etiquette-card-item {
+  background-color: var(--pill-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.etiquette-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.etiquette-item-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.etiquette-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.etiquette-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.etiquette-detail-highlight {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+/* ========================================================
    KEY SIGHTS & CULINARY HIGHLIGHTS SECTION
    ======================================================== */
 .sights-wrapper {
@@ -1061,6 +1280,7 @@ input[type="number"]:focus,
   padding: 1.5rem;
   margin-bottom: 2rem;
   box-shadow: var(--shadow-sm);
+  width: 100%;
 }
 
 .sights-header {
@@ -1127,9 +1347,9 @@ input[type="number"]:focus,
 
 .sights-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1rem;
-  max-height: 520px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.15rem;
+  max-height: 540px;
   overflow-y: auto;
   padding-right: 4px;
 }
@@ -1333,9 +1553,10 @@ input[type="number"]:focus,
    ======================================================== */
 .results-grid {
   display: grid;
-  grid-template-columns: 1.25fr 1fr;
+  grid-template-columns: 1.2fr 1fr;
   gap: 2rem;
   margin-bottom: 3rem;
+  width: 100%;
 }
 
 .column-header {
@@ -1689,8 +1910,8 @@ input[type="number"]:focus,
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 90%;
-  max-width: 580px;
+  width: 92%;
+  max-width: 620px;
   max-height: 85vh;
   background-color: var(--card-bg);
   border-radius: 12px;
@@ -1702,8 +1923,8 @@ input[type="number"]:focus,
 }
 
 .modal-card-wide {
-  max-width: 960px;
-  width: 94%;
+  max-width: 1200px;
+  width: 95%;
 }
 
 .modal-header {
@@ -1725,8 +1946,8 @@ input[type="number"]:focus,
    ======================================================== */
 .guide-steps-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
   margin-bottom: 1.5rem;
 }
 
@@ -1784,8 +2005,8 @@ input[type="number"]:focus,
 
 .guide-badges-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
   background-color: var(--pill-bg);
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -1862,7 +2083,7 @@ input[type="number"]:focus,
 
 .planner-board-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
   gap: 1.25rem;
 }
 
@@ -1895,7 +2116,7 @@ input[type="number"]:focus,
   flex-direction: column;
   gap: 0.5rem;
   min-height: 100px;
-  max-height: 380px;
+  max-height: 420px;
   overflow-y: auto;
 }
 
@@ -1925,16 +2146,6 @@ input[type="number"]:focus,
 .planner-item-info small {
   color: var(--text-muted);
   font-size: 0.72rem;
-}
-
-.btn-item-reassign {
-  background-color: var(--card-bg);
-  border: 1px solid var(--border);
-  color: var(--text-main);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.72rem;
-  cursor: pointer;
 }
 
 /* Saved Trips Stack */
@@ -2016,7 +2227,7 @@ input[type="number"]:focus,
   right: 0;
   bottom: 0;
   width: 100%;
-  max-width: 420px;
+  max-width: 440px;
   background-color: var(--card-bg);
   box-shadow: -4px 0 24px rgba(0, 0, 0, 0.4);
   border-left: 1px solid var(--border);
@@ -2121,10 +2332,71 @@ input[type="number"]:focus,
 }
 
 /* ========================================================
-   RESPONSIVE LAYOUT RULES
+   DYNAMIC RESPONSIVE BREAKPOINTS (MULTI-DEVICE SCALING)
    ======================================================== */
-@media (max-width: 860px) {
-  .form-row, .form-row-3col, .form-row-dates-radius, .results-grid {
+
+/* Large Ultra-Wide Desktops (>1500px) */
+@media (min-width: 1500px) {
+  .sights-grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+  .weather-grid {
+    grid-template-columns: repeat(7, 1fr);
+  }
+}
+
+/* Standard Laptops & Tablets Landscape (961px – 1280px) */
+@media (max-width: 1280px) {
+  .form-row-3col {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .form-row-dates-radius {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+  .results-grid {
+    grid-template-columns: 1.15fr 1fr;
+    gap: 1.5rem;
+  }
+}
+
+/* Medium Tablets & Narrow Windows (769px – 960px) */
+@media (max-width: 960px) {
+  .container {
+    width: 98%;
+    padding: 0 0.5rem;
+  }
+  .form-row, .form-row-3col, .form-row-dates-radius {
+    grid-template-columns: 1fr 1fr;
+  }
+  .insights-section-grid {
+    grid-template-columns: 1fr;
+  }
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+  .flight-card, .hotel-card {
+    flex-direction: row;
+  }
+}
+
+/* Mobile & Narrow Window Resizing (<768px) */
+@media (max-width: 768px) {
+  .container {
+    width: 100%;
+    padding: 0 0.75rem;
+  }
+  .navbar-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .nav-controls {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .search-card {
+    padding: 1.25rem 1rem;
+  }
+  .form-row, .form-row-3col, .form-row-dates-radius {
     grid-template-columns: 1fr;
   }
   .brand-checkboxes {
@@ -2152,13 +2424,16 @@ input[type="number"]:focus,
   .visa-grid {
     grid-template-columns: 1fr;
   }
-  .guide-steps-grid {
-    grid-template-columns: 1fr 1fr;
+  .transit-grid {
+    grid-template-columns: 1fr;
   }
-}
-
-@media (max-width: 520px) {
   .guide-steps-grid {
     grid-template-columns: 1fr;
+  }
+  .guide-badges-row {
+    grid-template-columns: 1fr;
+  }
+  .leaflet-map-container {
+    height: 380px;
   }
 }

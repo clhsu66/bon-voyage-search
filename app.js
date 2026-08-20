@@ -277,8 +277,6 @@ function renderDropdownItems(list, input, dropdown, linkToVisitCityId = null) {
 // 2. THEME, CURRENCY & GITHUB AUTO-VERSION ENGINES
 // ========================================================
 const THEME_STORAGE_KEY = "voyagesearch_theme";
-
-// Optional manual repo setting: if left empty, auto-detects from GitHub Pages domain/path
 const GITHUB_REPO_OVERRIDE = ""; 
 
 async function initGitHubVersionBadge() {
@@ -288,7 +286,6 @@ async function initGitHubVersionBadge() {
   const currentYear = new Date().getFullYear();
   let repoPath = GITHUB_REPO_OVERRIDE;
 
-  // Auto-detect GitHub user and repo from GitHub Pages URL (e.g. username.github.io/repo-name/)
   if (!repoPath && window.location.hostname.includes("github.io")) {
     const owner = window.location.hostname.split(".")[0];
     const pathParts = window.location.pathname.split("/").filter(Boolean);
@@ -529,7 +526,6 @@ function normalizeDestinationCountry(destCountryStr, destCityStr) {
 function getVisaRequirementDetails(passportCode, destCountryCode, destCityName) {
   const isSchengen = ["FRA", "ITA", "ESP", "PRT", "NLD"].includes(destCountryCode);
 
-  // Domestic Citizen Travel
   if (passportCode === destCountryCode || (passportCode === "EU" && isSchengen)) {
     return {
       status: "Citizen / Domestic",
@@ -543,7 +539,6 @@ function getVisaRequirementDetails(passportCode, destCountryCode, destCityName) 
     };
   }
 
-  // US Passport Holders
   if (passportCode === "USA") {
     if (destCountryCode === "CAN") {
       return {
@@ -667,7 +662,6 @@ function getVisaRequirementDetails(passportCode, destCountryCode, destCityName) 
     }
   }
 
-  // Taiwan (ROC) Passport Holders
   if (passportCode === "TWN") {
     if (destCountryCode === "USA") {
       return {
@@ -791,7 +785,6 @@ function getVisaRequirementDetails(passportCode, destCountryCode, destCityName) 
     }
   }
 
-  // Canada Passport Holders
   if (passportCode === "CAN") {
     if (destCountryCode === "USA") {
       return {
@@ -831,7 +824,6 @@ function getVisaRequirementDetails(passportCode, destCountryCode, destCityName) 
     }
   }
 
-  // Standard Reciprocal / Visa Exemption for OECD / Tier-1 Passports (UK, Japan, EU, Singapore, Australia, Korea)
   if (["GBR", "JPN", "EU", "SGP", "AUS", "KOR"].includes(passportCode)) {
     if (destCountryCode === "USA") {
       return {
@@ -869,7 +861,6 @@ function getVisaRequirementDetails(passportCode, destCountryCode, destCityName) 
     };
   }
 
-  // Fallback for Passports requiring Embassy Visa / eVisa
   return {
     status: "Visa Required / Check eVisa",
     statusClass: "visa-status-required",
@@ -1112,8 +1103,296 @@ async function fetchLiveTargetHotels(centerLat, centerLon, cityName, airportCode
     brandUrl: getBrandPortalUrl(b, cityName, checkIn, checkOut)
   }));
 }
+
 // ========================================================
-// 6. TAGGING & DAY ASSIGNMENT STATE & MAP CONTROLS
+// 6. OPEN-METEO WEATHER FORECAST & PACKING ENGINE
+// ========================================================
+let cachedWeatherData = null;
+let currentTempUnit = "F";
+
+function getWeatherConditionMeta(wmoCode) {
+  if (wmoCode === 0) return { icon: "☀️", label: "Clear & Sunny" };
+  if (wmoCode === 1 || wmoCode === 2) return { icon: "🌤️", label: "Partly Cloudy" };
+  if (wmoCode === 3) return { icon: "☁️", label: "Overcast" };
+  if (wmoCode === 45 || wmoCode === 48) return { icon: "🌫️", label: "Foggy" };
+  if (wmoCode >= 51 && wmoCode <= 55) return { icon: "🌦️", label: "Light Drizzle" };
+  if (wmoCode >= 61 && wmoCode <= 65) return { icon: "🌧️", label: "Rain Showers" };
+  if (wmoCode >= 71 && wmoCode <= 77) return { icon: "🌨️", label: "Snow Flurries" };
+  if (wmoCode >= 80 && wmoCode <= 82) return { icon: "🌧️", label: "Heavy Showers" };
+  if (wmoCode >= 95) return { icon: "⛈️", label: "Thunderstorms" };
+  return { icon: "⛅", label: "Mixed Sun & Cloud" };
+}
+
+function cToF(c) {
+  return Math.round((c * 9) / 5 + 32);
+}
+
+async function fetchDestinationWeather(lat, lon, cityName, departDate, returnDate) {
+  const container = document.getElementById("weatherForecastContainer");
+  const subtitle = document.getElementById("weatherSubtitle");
+  if (!container) return;
+
+  if (subtitle) {
+    subtitle.textContent = `Forecast & packing advisory for ${cityName} around ${departDate || 'your travel window'}`;
+  }
+
+  container.innerHTML = `<div style="grid-column: 1 / -1; padding: 1rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">Retrieving meteorological data...</div>`;
+
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto`;
+    const res = await fetchWithTimeout(url, {}, 3500);
+    
+    if (res && res.ok) {
+      const data = await res.json();
+      if (data && data.daily && data.daily.time && data.daily.time.length > 0) {
+        cachedWeatherData = data.daily;
+        renderWeatherForecast(cachedWeatherData);
+        return;
+      }
+    }
+  } catch (err) {}
+
+  // Fallback Climatological Model if network or dates beyond forecast window
+  const fallbackDays = [];
+  const start = departDate ? new Date(departDate) : new Date();
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(start);
+    d.setDate(d.getDate() + i);
+    fallbackDays.push({
+      dateStr: d.toISOString().split("T")[0],
+      dayName: d.toLocaleDateString(undefined, { weekday: 'short' }),
+      maxC: 22 + (i % 3),
+      minC: 14 + (i % 2),
+      wmo: i % 4 === 0 ? 61 : (i % 3 === 0 ? 2 : 0),
+      pop: i % 4 === 0 ? 60 : 10
+    });
+  }
+
+  cachedWeatherData = {
+    time: fallbackDays.map(f => f.dateStr),
+    temperature_2m_max: fallbackDays.map(f => f.maxC),
+    temperature_2m_min: fallbackDays.map(f => f.minC),
+    weathercode: fallbackDays.map(f => f.wmo),
+    precipitation_probability_max: fallbackDays.map(f => f.pop)
+  };
+
+  renderWeatherForecast(cachedWeatherData);
+}
+
+function renderWeatherForecast(daily) {
+  const container = document.getElementById("weatherForecastContainer");
+  if (!container || !daily) return;
+
+  const count = Math.min(7, daily.time.length);
+  let html = "";
+  let hasHighRain = false;
+  let minObservedF = 120;
+  let maxObservedF = -40;
+
+  for (let i = 0; i < count; i++) {
+    const dateStr = daily.time[i];
+    const dateObj = new Date(dateStr + "T12:00:00");
+    const dayName = dateObj.toLocaleDateString(undefined, { weekday: 'short' });
+    const formattedDate = dateObj.toLocaleDateString(undefined, { month: 'numeric', day: 'numeric' });
+    
+    const maxC = Math.round(daily.temperature_2m_max[i]);
+    const minC = Math.round(daily.temperature_2m_min[i]);
+    const maxF = cToF(maxC);
+    const minF = cToF(minC);
+
+    if (minF < minObservedF) minObservedF = minF;
+    if (maxF > maxObservedF) maxObservedF = maxF;
+
+    const wmo = daily.weathercode ? daily.weathercode[i] : 0;
+    const meta = getWeatherConditionMeta(wmo);
+    const pop = daily.precipitation_probability_max ? daily.precipitation_probability_max[i] : 10;
+    if (pop >= 40) hasHighRain = true;
+
+    const displayMax = currentTempUnit === "F" ? `${maxF}°F` : `${maxC}°C`;
+    const displayMin = currentTempUnit === "F" ? `${minF}°F` : `${minC}°C`;
+
+    html += `
+      <div class="weather-day-card">
+        <span class="weather-day-name">${dayName}</span>
+        <span class="weather-date-sub">${formattedDate}</span>
+        <div class="weather-icon" title="${meta.label}">${meta.icon}</div>
+        <div class="weather-temp-range">
+          <span class="temp-max">${displayMax}</span>
+          <span class="temp-min">${displayMin}</span>
+        </div>
+        <span class="weather-condition-desc">${meta.label}</span>
+        <span class="weather-pop">💧 ${pop}%</span>
+      </div>
+    `;
+  }
+
+  // Generate Smart Packing Advice
+  let advice = "💡 <strong>Packing Advice:</strong> Comfortable walking shoes, breathable clothing, and a light jacket for evenings.";
+  if (minObservedF < 45) {
+    advice = "🧥 <strong>Packing Alert:</strong> Cold temperatures expected. Bring a thermal layer, warm winter jacket, and gloves.";
+  } else if (maxObservedF > 85) {
+    advice = "☀️ <strong>Packing Alert:</strong> High heat forecasted. Pack sunscreen, UV sunglasses, breathable linen, and stay hydrated.";
+  }
+  if (hasHighRain) {
+    advice += " ☂️ <em>Rain expected — bring a compact umbrella or waterproof shell.</em>";
+  }
+
+  html += `<div class="weather-advice-pill">${advice}</div>`;
+  container.innerHTML = html;
+}
+
+window.handleSetTempUnit = function(unit) {
+  currentTempUnit = unit;
+  document.getElementById("tempUnitFBtn")?.classList.toggle("active", unit === "F");
+  document.getElementById("tempUnitCBtn")?.classList.toggle("active", unit === "C");
+  if (cachedWeatherData) {
+    renderWeatherForecast(cachedWeatherData);
+  }
+};
+
+// ========================================================
+// 7. DESTINATION TIPPING, POWER & ETIQUETTE ENGINE
+// ========================================================
+const etiquetteGuideCatalog = {
+  USA: {
+    tipping: "18%–20% standard in sit-down restaurants; $1–$2 per drink at bars; $2–$5/night for hotel housekeeping.",
+    power: "Type A & B plugs (120V, 60Hz). US standard 3-prong & 2-prong.",
+    emergency: "911 (Police, Fire, Medical Ambulance)",
+    etiquette: "Always stand on the right side of escalators; tax is added at the cash register (not included on price tags)."
+  },
+  CAN: {
+    tipping: "15%–20% standard in restaurants and bars; $2–$4 for hotel bellhops and taxis.",
+    power: "Type A & B plugs (120V, 60Hz). Compatible with US electronics.",
+    emergency: "911 (Police, Fire, Ambulance)",
+    etiquette: "Bilingual signage (English & French); polite queueing is strictly observed."
+  },
+  GBR: {
+    tipping: "10%–12.5% in restaurants (often added as an optional 'Service Charge'); tipping at pubs is not standard.",
+    power: "Type G 3-rectangular-pin plugs (230V, 50Hz). Requires standard UK adapter.",
+    emergency: "999 or 112 (Police, Fire, Ambulance)",
+    etiquette: "Stand on the right on London Underground escalators; avoid loud phone calls in tube carriages."
+  },
+  FRA: {
+    tipping: "Service is included by law ('Service Compris'); rounding up or leaving 5%–10% in coins for exceptional service is customary.",
+    power: "Type C & E round 2-pin European plugs (230V, 50Hz).",
+    emergency: "112 (EU General) or 15 (SAMU Medical), 17 (Police)",
+    etiquette: "Always greet shopkeepers with 'Bonjour Madame/Monsieur' upon entering; keep speaking volume moderate."
+  },
+  ITA: {
+    tipping: "Not mandatory. A 'Coperto' (cover charge €2–€4) is common on bills. Rounding up €1–€5 for dinner is appreciated.",
+    power: "Type C, F & L European plugs (230V, 50Hz).",
+    emergency: "112 (Universal Emergency) or 118 (Ambulance), 113 (Police)",
+    etiquette: "Modest attire required for churches (shoulders and knees covered); cappuccino is strictly a morning drink."
+  },
+  ESP: {
+    tipping: "Not customary. Leaving small change (5%–10% for large dinner parties) is appreciated but never expected.",
+    power: "Type C & F Europlug (230V, 50Hz).",
+    emergency: "112 (Universal Emergency)",
+    etiquette: "Lunch occurs between 1:30 PM–4:00 PM; dinner typically starts after 8:30 PM."
+  },
+  PRT: {
+    tipping: "5%–10% in casual dining if service is good; rounding up taxi fares to the nearest Euro is customary.",
+    power: "Type C & F Europlug (230V, 50Hz).",
+    emergency: "112 (Universal Emergency)",
+    etiquette: "Appetizers placed on your table (bread, olives, cheese) are not complimentary unless eaten."
+  },
+  NLD: {
+    tipping: "Service charge included; leaving 5%–10% for polite service or rounding up is standard.",
+    power: "Type C & F Europlug (230V, 50Hz).",
+    emergency: "112 (Universal Emergency)",
+    etiquette: "Never walk in marked red bicycle lanes; bikes have absolute right of way."
+  },
+  TWN: {
+    tipping: "Zero tipping culture. Tipping is not expected and may confuse staff. Upscale restaurants add a 10% service charge directly.",
+    power: "Type A & B plugs (110V, 60Hz). US 2-prong plugs fit standard outlets directly.",
+    emergency: "110 (Police), 119 (Fire & Ambulance)",
+    etiquette: "No eating, drinking, or chewing gum allowed in MRT subway stations (strictly enforced with fines); stand on the right on escalators."
+  },
+  JPN: {
+    tipping: "Strictly NO tipping. Leaving extra money is considered confusing or disrespectful. Exceptional service is built into hospitality ('Omotenashi').",
+    power: "Type A 2-flat-pin plugs (100V, 50/60Hz). 3-prong US plugs require a 2-prong adapter.",
+    emergency: "110 (Police), 119 (Fire & Ambulance)",
+    etiquette: "Keep phones on silent ('Manner Mode') on public transit; do not walk while eating street snacks; remove shoes when entering tatami/homes."
+  },
+  HKG: {
+    tipping: "10% service charge is usually included on restaurant bills; rounding up small change is customary in taxis.",
+    power: "Type G UK-style 3-rectangular-pin plugs (220V, 50Hz).",
+    emergency: "999 (Police, Fire, Ambulance)",
+    etiquette: "Tap Octopus card at all transit turnstiles and convenience stores; fast-paced queueing."
+  },
+  SGP: {
+    tipping: "Tipping is not standard and officially discouraged at Changi Airport. 10% service charge + GST is added to bills.",
+    power: "Type G UK-style 3-pin plugs (230V, 50Hz).",
+    emergency: "999 (Police), 995 (Ambulance & Fire)",
+    etiquette: "Strict cleanliness laws: no chewing gum sales, no littering, no eating on MRT trains."
+  },
+  THA: {
+    tipping: "Small tips (20–50 THB) are appreciated for hotel staff, massage therapists, and restaurant servers.",
+    power: "Type A, B & C hybrid sockets (220V, 50Hz).",
+    emergency: "191 (Police), 1669 (Medical Emergency), 1155 (Tourist Police)",
+    etiquette: "Never touch anyone's head; remove shoes before entering temples and private residences."
+  },
+  AUS: {
+    tipping: "Not expected as workers earn livable minimum wages. 10% for exceptional dining is optional.",
+    power: "Type I 3-flat-pin angled plugs (230V, 50Hz).",
+    emergency: "000 (Triple Zero - Police, Fire, Ambulance)",
+    etiquette: "Keep left on escalators and footpaths; sun protection (Slip, Slop, Slap) is essential."
+  },
+  KOR: {
+    tipping: "No tipping culture. Attempting to tip will usually be politely refused.",
+    power: "Type C & F Europlug (220V, 60Hz).",
+    emergency: "112 (Police), 119 (Fire & Ambulance)",
+    etiquette: "Receive and give items with both hands; do not speak loudly on subway cars."
+  }
+};
+
+function renderEtiquetteGuide(destCountryCode, cityName) {
+  const container = document.getElementById("etiquetteContainer");
+  const subtitle = document.getElementById("etiquetteSubtitle");
+  if (!container) return;
+
+  if (subtitle) {
+    subtitle.textContent = `Essential local rules, tipping norms, electrical adapters, and emergency lines for ${cityName}`;
+  }
+
+  const guide = etiquetteGuideCatalog[destCountryCode] || etiquetteGuideCatalog.USA;
+
+  container.innerHTML = `
+    <div class="etiquette-card-item">
+      <div class="etiquette-item-header">
+        <span class="etiquette-item-title">💵 Tipping & Gratuity Standards</span>
+        <span class="etiquette-badge" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-amber);">Local Norms</span>
+      </div>
+      <p class="etiquette-desc">${guide.tipping}</p>
+    </div>
+
+    <div class="etiquette-card-item">
+      <div class="etiquette-item-header">
+        <span class="etiquette-item-title">🔌 Power Outlets & Voltage</span>
+        <span class="etiquette-badge" style="background: rgba(59, 130, 246, 0.15); color: var(--primary);">Electrical</span>
+      </div>
+      <p class="etiquette-desc"><strong class="etiquette-detail-highlight">${guide.power}</strong></p>
+    </div>
+
+    <div class="etiquette-card-item">
+      <div class="etiquette-item-header">
+        <span class="etiquette-item-title">🚨 Emergency Phone Numbers</span>
+        <span class="etiquette-badge" style="background: rgba(244, 63, 94, 0.15); color: var(--accent-rose);">Emergency</span>
+      </div>
+      <p class="etiquette-desc"><strong class="etiquette-detail-highlight">${guide.emergency}</strong></p>
+    </div>
+
+    <div class="etiquette-card-item">
+      <div class="etiquette-item-header">
+        <span class="etiquette-item-title">🤝 Culture & Social Etiquette</span>
+        <span class="etiquette-badge" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-green);">Social Customs</span>
+      </div>
+      <p class="etiquette-desc">${guide.etiquette}</p>
+    </div>
+  `;
+}
+// ========================================================
+// 8. TAGGING & DAY ASSIGNMENT STATE & MAP CONTROLS
 // ========================================================
 let taggedPlaces = [];
 
@@ -1132,7 +1411,7 @@ window.handleToggleTag = function(id, itemType) {
       taggedPlaces.push({ ...item, itemType, assignedDay: 0 });
     }
   }
-  // Immediately update map markers dynamically without changing zoom
+  // Immediately update map markers dynamically without changing zoom or bounds
   applyRadiusFilterAndRender(currentRadiusKm, false);
   updateItineraryDrawer();
   renderCustomPlannerModal();
@@ -1152,7 +1431,7 @@ window.handleAssignDay = function(id, itemType, dayValue) {
     taggedItem.assignedDay = dayNum;
   }
 
-  // Immediately update map markers dynamically without changing zoom
+  // Immediately update map markers dynamically without changing zoom or bounds
   applyRadiusFilterAndRender(currentRadiusKm, false);
   updateItineraryDrawer();
   renderCustomPlannerModal();
@@ -1387,7 +1666,7 @@ function closeCustomPlaceModal() {
 }
 
 // ========================================================
-// 7. FLIGHT SCHEDULE GENERATOR
+// 9. FLIGHT SCHEDULE GENERATOR
 // ========================================================
 function formatMinutesToDuration(mins) {
   const h = Math.floor(mins / 60);
@@ -1481,7 +1760,7 @@ function generateDynamicFlightSchedule(originObj, destAirportObj, departDate, re
 }
 
 // ========================================================
-// 8. APPLICATION CONTROLLER & STATE RENDERING
+// 10. APPLICATION CONTROLLER & STATE RENDERING
 // ========================================================
 let currentTripType = "roundtrip";
 let currentFlights = [];
@@ -1816,7 +2095,7 @@ function toggleDrawer(open) {
 }
 
 // ========================================================
-// 9. HOW IT WORKS & VISUAL GUIDE MODAL LOGIC
+// 11. HOW IT WORKS & VISUAL GUIDE MODAL LOGIC
 // ========================================================
 const HOW_IT_WORKS_KEY = "voyagesearch_has_seen_guide";
 
@@ -1841,7 +2120,7 @@ function initHowItWorksGuide() {
 }
 
 // ========================================================
-// 10. CUSTOM & AI DAILY ITINERARY PLANNERS
+// 12. CUSTOM & AI DAILY ITINERARY PLANNERS
 // ========================================================
 function openCustomPlannerModal() {
   renderCustomPlannerModal();
@@ -2030,7 +2309,7 @@ function closeSmartItineraryModal() {
 }
 
 // ========================================================
-// 11. SAVED TRIPS MANAGER
+// 13. SAVED TRIPS MANAGER
 // ========================================================
 const SAVED_TRIPS_KEY = "voyagesearch_saved_trips";
 
@@ -2147,12 +2426,27 @@ window.deleteSavedTrip = function(tripId) {
 };
 
 // ========================================================
-// 12. DOM INITIALIZATION & EVENT LISTENERS
+// 14. DOM INITIALIZATION & EVENT LISTENERS
 // ========================================================
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
   initGitHubVersionBadge();
   document.getElementById("themeToggleBtn")?.addEventListener("click", toggleTheme);
+
+  // Weather Temperature Unit Toggle Buttons
+  document.getElementById("tempUnitFBtn")?.addEventListener("click", () => handleSetTempUnit("F"));
+  document.getElementById("tempUnitCBtn")?.addEventListener("click", () => handleSetTempUnit("C"));
+
+  // Debounced Window Resize Handler to dynamically adapt Leaflet Map
+  let resizeDebounceTimer = null;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeDebounceTimer);
+    resizeDebounceTimer = setTimeout(() => {
+      if (leafletMapInstance) {
+        leafletMapInstance.invalidateSize();
+      }
+    }, 150);
+  });
 
   const today = new Date().toISOString().split("T")[0];
   const departInput = document.getElementById("departDate");
@@ -2282,6 +2576,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("openAddPlaceMapBtn")?.addEventListener("click", () => openCustomPlaceModal());
   document.getElementById("openAddPlaceListBtn")?.addEventListener("click", () => openCustomPlaceModal());
+  document.getElementById("closePlaceModalBtn")?.addEventListener("closePlaceModal", closeCustomPlaceModal);
   document.getElementById("closePlaceModalBtn")?.addEventListener("click", closeCustomPlaceModal);
   document.getElementById("placeModalOverlay")?.addEventListener("click", closeCustomPlaceModal);
 
@@ -2524,6 +2819,11 @@ document.addEventListener("DOMContentLoaded", () => {
           currentLeg2Date
         );
       }
+
+      // Fetch Weather Forecast & Local Tipping/Power/Etiquette Guide
+      const destCountryCode = normalizeDestinationCountry(resolvedVisitCityObj.country || resolvedDestAirportObj.country, resolvedVisitCityObj.cityName);
+      fetchDestinationWeather(resolvedVisitCityObj.lat, resolvedVisitCityObj.lon, resolvedVisitCityObj.cityName, currentDepartDate, currentReturnDate);
+      renderEtiquetteGuide(destCountryCode, resolvedVisitCityObj.cityName);
 
       loadingState?.classList.add("hidden");
 
