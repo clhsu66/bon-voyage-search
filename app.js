@@ -3,22 +3,26 @@
 // ========================================================
 
 // ========================================================
-// 1. GLOBAL AIRPORT & DOWNTOWN DIRECTORY
+// 1. GLOBAL AIRPORT & DOWNTOWN DIRECTORY (51 AIRPORTS)
 // ========================================================
 const majorAirportCatalog = [
-  // United States
+  // United States & Territories
   { code: "SFO", name: "San Francisco International", city: "San Francisco", country: "United States", airportLat: 37.6213, airportLon: -122.3790, cityLat: 37.7749, cityLon: -122.4194 },
   { code: "SJC", name: "San José Mineta International", city: "San Jose", country: "United States", airportLat: 37.3639, airportLon: -121.9289, cityLat: 37.3382, cityLon: -121.8863 },
   { code: "OAK", name: "Oakland San Francisco Bay", city: "Oakland", country: "United States", airportLat: 37.7213, airportLon: -122.2207, cityLat: 37.8044, cityLon: -122.2711 },
   { code: "LAX", name: "Los Angeles International", city: "Los Angeles", country: "United States", airportLat: 33.9416, airportLon: -118.4085, cityLat: 34.0522, cityLon: -118.2437 },
   { code: "SAN", name: "San Diego International", city: "San Diego", country: "United States", airportLat: 32.7338, airportLon: -117.1933, cityLat: 32.7157, cityLon: -117.1611 },
   { code: "SEA", name: "Seattle-Tacoma International", city: "Seattle", country: "United States", airportLat: 47.4502, airportLon: -122.3088, cityLat: 47.6062, cityLon: -122.3321 },
+  { code: "PDX", name: "Portland International", city: "Portland", country: "United States", airportLat: 45.5898, airportLon: -122.5951, cityLat: 45.5152, cityLon: -122.6784 },
   { code: "LAS", name: "Harry Reid International", city: "Las Vegas", country: "United States", airportLat: 36.0840, airportLon: -115.1537, cityLat: 36.1147, cityLon: -115.1728 },
+  { code: "DEN", name: "Denver International", city: "Denver", country: "United States", airportLat: 39.8561, airportLon: -104.6737, cityLat: 39.7392, cityLon: -104.9903 },
   { code: "HNL", name: "Daniel K. Inouye International", city: "Honolulu", country: "United States", airportLat: 21.3245, airportLon: -157.9251, cityLat: 21.2766, cityLon: -157.8283 },
   { code: "ORD", name: "Chicago O'Hare International", city: "Chicago", country: "United States", airportLat: 41.9742, airportLon: -87.9073, cityLat: 41.8781, cityLon: -87.6298 },
   { code: "MDW", name: "Chicago Midway International", city: "Chicago", country: "United States", airportLat: 41.7868, airportLon: -87.7522, cityLat: 41.8781, cityLon: -87.6298 },
   { code: "AUS", name: "Austin-Bergstrom International", city: "Austin", country: "United States", airportLat: 30.1975, airportLon: -97.6664, cityLat: 30.2672, cityLon: -97.7431 },
   { code: "MSY", name: "Louis Armstrong New Orleans", city: "New Orleans", country: "United States", airportLat: 29.9934, airportLon: -90.2580, cityLat: 29.9511, cityLon: -90.0715 },
+  { code: "ATL", name: "Hartsfield-Jackson Atlanta International", city: "Atlanta", country: "United States", airportLat: 33.6407, airportLon: -84.4277, cityLat: 33.7490, cityLon: -84.3880 },
+  { code: "BNA", name: "Nashville International", city: "Nashville", country: "United States", airportLat: 36.1263, airportLon: -86.6774, cityLat: 36.1627, cityLon: -86.7816 },
   { code: "MIA", name: "Miami International", city: "Miami", country: "United States", airportLat: 25.7959, airportLon: -80.2870, cityLat: 25.7617, cityLon: -80.1918 },
   { code: "JFK", name: "John F. Kennedy International", city: "New York", country: "United States", airportLat: 40.6413, airportLon: -73.7781, cityLat: 40.7580, cityLon: -73.9855 },
   { code: "EWR", name: "Newark Liberty International", city: "Newark / New York", country: "United States", airportLat: 40.6895, airportLon: -74.1745, cityLat: 40.7357, cityLon: -74.1724 },
@@ -27,7 +31,8 @@ const majorAirportCatalog = [
   { code: "IAD", name: "Washington Dulles International", city: "Washington D.C.", country: "United States", airportLat: 38.9531, airportLon: -77.4565, cityLat: 38.9072, cityLon: -77.0369 },
   { code: "DCA", name: "Ronald Reagan Washington National", city: "Washington D.C.", country: "United States", airportLat: 38.8512, airportLon: -77.0402, cityLat: 38.9072, cityLon: -77.0369 },
   { code: "PHL", name: "Philadelphia International", city: "Philadelphia", country: "United States", airportLat: 39.8722, airportLon: -75.2437, cityLat: 39.9526, cityLon: -75.1652 },
-  { code: "PIT", name: "Pittsburgh International", city: "Pittsburgh", country: "United States", airportLat: 40.4914, airportLon: -80.2329, cityLat: 40.4406, cityLon: -79.9959 },  
+  { code: "PIT", name: "Pittsburgh International", city: "Pittsburgh", country: "United States", airportLat: 40.4914, airportLon: -80.2329, cityLat: 40.4406, cityLon: -79.9959 },
+  { code: "SJU", name: "Luis Muñoz Marín International", city: "San Juan", country: "Puerto Rico (USA)", airportLat: 18.4394, airportLon: -66.0018, cityLat: 18.4655, cityLon: -66.1057 },
 
   // Canada
   { code: "YVR", name: "Vancouver International", city: "Vancouver", country: "Canada", airportLat: 49.1967, airportLon: -123.1815, cityLat: 49.2827, cityLon: -123.1207 },
@@ -35,8 +40,9 @@ const majorAirportCatalog = [
   { code: "YTZ", name: "Billy Bishop Toronto City Airport", city: "Toronto", country: "Canada", airportLat: 43.6275, airportLon: -79.3962, cityLat: 43.6532, cityLon: -79.3832 },
   { code: "YUL", name: "Montréal-Trudeau International", city: "Montreal", country: "Canada", airportLat: 45.4657, airportLon: -73.7455, cityLat: 45.5017, cityLon: -73.5673 },
 
-  // Europe & Asia
+  // Europe
   { code: "LHR", name: "London Heathrow", city: "London", country: "United Kingdom", airportLat: 51.4700, airportLon: -0.4543, cityLat: 51.5074, cityLon: -0.1278 },
+  { code: "EDI", name: "Edinburgh Airport", city: "Edinburgh", country: "United Kingdom", airportLat: 55.9500, airportLon: -3.3725, cityLat: 55.9533, cityLon: -3.1883 },
   { code: "CDG", name: "Paris Charles de Gaulle", city: "Paris", country: "France", airportLat: 49.0097, airportLon: 2.5479, cityLat: 48.8566, cityLon: 2.3522 },
   { code: "FCO", name: "Rome Fiumicino Leonardo da Vinci", city: "Rome", country: "Italy", airportLat: 41.8003, airportLon: 12.2389, cityLat: 41.9028, cityLon: 12.4964 },
   { code: "FLR", name: "Florence Peretola Airport", city: "Florence", country: "Italy", airportLat: 43.8100, airportLon: 11.2012, cityLat: 43.7696, cityLon: 11.2558 },
@@ -44,6 +50,11 @@ const majorAirportCatalog = [
   { code: "MAD", name: "Adolfo Suárez Madrid-Barajas", city: "Madrid", country: "Spain", airportLat: 40.4839, airportLon: -3.5680, cityLat: 40.4168, cityLon: -3.7038 },
   { code: "LIS", name: "Humberto Delgado Airport (Lisbon)", city: "Lisbon", country: "Portugal", airportLat: 38.7742, airportLon: -9.1342, cityLat: 38.7223, cityLon: -9.1393 },
   { code: "AMS", name: "Amsterdam Schiphol", city: "Amsterdam", country: "Netherlands", airportLat: 52.3105, airportLon: 4.7683, cityLat: 52.3676, cityLon: 4.9041 },
+  { code: "VIE", name: "Vienna International", city: "Vienna", country: "Austria", airportLat: 48.1103, airportLon: 16.5697, cityLat: 48.2082, cityLon: 16.3738 },
+  { code: "PRG", name: "Václav Havel Airport Prague", city: "Prague", country: "Czech Republic", airportLat: 50.1008, airportLon: 14.2600, cityLat: 50.0755, cityLon: 14.4378 },
+  { code: "BER", name: "Berlin Brandenburg Airport", city: "Berlin", country: "Germany", airportLat: 52.3667, airportLon: 13.5033, cityLat: 52.5200, cityLon: 13.4050 },
+
+  // Asia & Oceania
   { code: "TPE", name: "Taiwan Taoyuan International", city: "Taipei", country: "Taiwan", airportLat: 25.0797, airportLon: 121.2342, cityLat: 25.0330, cityLon: 121.5654 },
   { code: "TSA", name: "Taipei Songshan Airport", city: "Taipei", country: "Taiwan", airportLat: 25.0697, airportLon: 121.5525, cityLat: 25.0330, cityLon: 121.5654 },
   { code: "RMQ", name: "Taichung International", city: "Taichung", country: "Taiwan", airportLat: 24.2646, airportLon: 120.6217, cityLat: 24.1477, cityLon: 120.6736 },
@@ -53,11 +64,15 @@ const majorAirportCatalog = [
   { code: "NRT", name: "Tokyo Narita", city: "Tokyo", country: "Japan", airportLat: 35.7720, airportLon: 140.3929, cityLat: 35.6895, cityLon: 139.6917 },
   { code: "ITM", name: "Osaka Itami Airport", city: "Osaka", country: "Japan", airportLat: 34.7855, airportLon: 135.4382, cityLat: 34.6937, cityLon: 135.5023 },
   { code: "KIX", name: "Kansai International (Kyoto/Osaka)", city: "Kyoto / Osaka", country: "Japan", airportLat: 34.4320, airportLon: 135.2304, cityLat: 35.0116, cityLon: 135.7681 },
+  { code: "FUK", name: "Fukuoka Airport", city: "Fukuoka", country: "Japan", airportLat: 33.5859, airportLon: 130.4507, cityLat: 33.5904, cityLon: 130.4017 },
   { code: "HKG", name: "Hong Kong International", city: "Hong Kong", country: "Hong Kong", airportLat: 22.3080, airportLon: 113.9185, cityLat: 22.2855, cityLon: 114.1577 },
   { code: "SIN", name: "Singapore Changi Airport", city: "Singapore", country: "Singapore", airportLat: 1.3644, airportLon: 103.9915, cityLat: 1.3521, cityLon: 103.8198 },
   { code: "BKK", name: "Bangkok Suvarnabhumi", city: "Bangkok", country: "Thailand", airportLat: 13.6900, airportLon: 100.7501, cityLat: 13.7563, cityLon: 100.5018 },
+  { code: "KUL", name: "Kuala Lumpur International", city: "Kuala Lumpur", country: "Malaysia", airportLat: 2.7456, airportLon: 101.7072, cityLat: 3.1390, cityLon: 101.6869 },
   { code: "SYD", name: "Sydney Kingsford Smith", city: "Sydney", country: "Australia", airportLat: -33.9399, airportLon: 151.1753, cityLat: -33.8688, cityLon: 151.2093 },
-  { code: "ICN", name: "Seoul Incheon International", city: "Seoul", country: "South Korea", airportLat: 37.4602, airportLon: 126.4407, cityLat: 37.5665, cityLon: 126.9780 }
+  { code: "MEL", name: "Melbourne Airport (Tullamarine)", city: "Melbourne", country: "Australia", airportLat: -37.6690, airportLon: 144.8410, cityLat: -37.8136, cityLon: 144.9631 },
+  { code: "ICN", name: "Seoul Incheon International", city: "Seoul", country: "South Korea", airportLat: 37.4602, airportLon: 126.4407, cityLat: 37.5665, cityLon: 126.9780 },
+  { code: "PUS", name: "Gimhae International (Busan)", city: "Busan", country: "South Korea", airportLat: 35.1795, airportLon: 128.9382, cityLat: 35.1796, cityLon: 129.0756 }
 ];
 
 function haversineDistance(lat1, lon1, lat2, lon2) {
@@ -101,10 +116,25 @@ async function resolveAirportHub(userInput) {
     "barcelona": { code: "BCN", name: "Barcelona-El Prat Airport", city: "Barcelona", country: "Spain", airportLat: 41.2974, airportLon: 2.0833, cityLat: 41.3874, cityLon: 2.1686 },
     "uk": { code: "LHR", name: "London Heathrow", city: "London", country: "United Kingdom", airportLat: 51.4700, airportLon: -0.4543, cityLat: 51.5074, cityLon: -0.1278 },
     "london": { code: "LHR", name: "London Heathrow", city: "London", country: "United Kingdom", airportLat: 51.4700, airportLon: -0.4543, cityLat: 51.5074, cityLon: -0.1278 },
-    "canada": { code: "YVR", name: "Vancouver International", city: "Vancouver", country: "Canada", airportLat: 49.1967, airportLon: -123.1815, cityLat: 49.2827, cityLon: -123.1207 },
-    "new york": { code: "JFK", name: "John F. Kennedy International", city: "New York", country: "United States", airportLat: 40.6413, airportLon: -73.7781, cityLat: 40.7580, cityLon: -73.9855 },
-    "chicago": { code: "ORD", name: "Chicago O'Hare International", city: "Chicago", country: "United States", airportLat: 41.9742, airportLon: -87.9073, cityLat: 41.8781, cityLon: -87.6298 },
-    "san francisco": { code: "SFO", name: "San Francisco International", city: "San Francisco", country: "United States", airportLat: 37.6213, airportLon: -122.3790, cityLat: 37.7749, cityLon: -122.4194 }
+    "denver": { code: "DEN", name: "Denver International", city: "Denver", country: "United States", airportLat: 39.8561, airportLon: -104.6737, cityLat: 39.7392, cityLon: -104.9903 },
+    "san juan": { code: "SJU", name: "Luis Muñoz Marín International", city: "San Juan", country: "Puerto Rico (USA)", airportLat: 18.4394, airportLon: -66.0018, cityLat: 18.4655, cityLon: -66.1057 },
+    "puerto rico": { code: "SJU", name: "Luis Muñoz Marín International", city: "San Juan", country: "Puerto Rico (USA)", airportLat: 18.4394, airportLon: -66.0018, cityLat: 18.4655, cityLon: -66.1057 },
+    "portland": { code: "PDX", name: "Portland International", city: "Portland", country: "United States", airportLat: 45.5898, airportLon: -122.5951, cityLat: 45.5152, cityLon: -122.6784 },
+    "atlanta": { code: "ATL", name: "Hartsfield-Jackson Atlanta International", city: "Atlanta", country: "United States", airportLat: 33.6407, airportLon: -84.4277, cityLat: 33.7490, cityLon: -84.3880 },
+    "nashville": { code: "BNA", name: "Nashville International", city: "Nashville", country: "United States", airportLat: 36.1263, airportLon: -86.6774, cityLat: 36.1627, cityLon: -86.7816 },
+    "vienna": { code: "VIE", name: "Vienna International", city: "Vienna", country: "Austria", airportLat: 48.1103, airportLon: 16.5697, cityLat: 48.2082, cityLon: 16.3738 },
+    "austria": { code: "VIE", name: "Vienna International", city: "Vienna", country: "Austria", airportLat: 48.1103, airportLon: 16.5697, cityLat: 48.2082, cityLon: 16.3738 },
+    "prague": { code: "PRG", name: "Václav Havel Airport Prague", city: "Prague", country: "Czech Republic", airportLat: 50.1008, airportLon: 14.2600, cityLat: 50.0755, cityLon: 14.4378 },
+    "czechia": { code: "PRG", name: "Václav Havel Airport Prague", city: "Prague", country: "Czech Republic", airportLat: 50.1008, airportLon: 14.2600, cityLat: 50.0755, cityLon: 14.4378 },
+    "berlin": { code: "BER", name: "Berlin Brandenburg Airport", city: "Berlin", country: "Germany", airportLat: 52.3667, airportLon: 13.5033, cityLat: 52.5200, cityLon: 13.4050 },
+    "germany": { code: "BER", name: "Berlin Brandenburg Airport", city: "Berlin", country: "Germany", airportLat: 52.3667, airportLon: 13.5033, cityLat: 52.5200, cityLon: 13.4050 },
+    "edinburgh": { code: "EDI", name: "Edinburgh Airport", city: "Edinburgh", country: "United Kingdom", airportLat: 55.9500, airportLon: -3.3725, cityLat: 55.9533, cityLon: -3.1883 },
+    "scotland": { code: "EDI", name: "Edinburgh Airport", city: "Edinburgh", country: "United Kingdom", airportLat: 55.9500, airportLon: -3.3725, cityLat: 55.9533, cityLon: -3.1883 },
+    "fukuoka": { code: "FUK", name: "Fukuoka Airport", city: "Fukuoka", country: "Japan", airportLat: 33.5859, airportLon: 130.4507, cityLat: 33.5904, cityLon: 130.4017 },
+    "busan": { code: "PUS", name: "Gimhae International (Busan)", city: "Busan", country: "South Korea", airportLat: 35.1795, airportLon: 128.9382, cityLat: 35.1796, cityLon: 129.0756 },
+    "melbourne": { code: "MEL", name: "Melbourne Airport", city: "Melbourne", country: "Australia", airportLat: -37.6690, airportLon: 144.8410, cityLat: -37.8136, cityLon: 144.9631 },
+    "kuala lumpur": { code: "KUL", name: "Kuala Lumpur International", city: "Kuala Lumpur", country: "Malaysia", airportLat: 2.7456, airportLon: 101.7072, cityLat: 3.1390, cityLon: 101.6869 },
+    "malaysia": { code: "KUL", name: "Kuala Lumpur International", city: "Kuala Lumpur", country: "Malaysia", airportLat: 2.7456, airportLon: 101.7072, cityLat: 3.1390, cityLon: 101.6869 }
   };
 
   if (regionalAliases[lowerInput]) {
@@ -360,7 +390,8 @@ const exchangeRates = {
   JPY: { rate: 155.0, symbol: "¥" },
   GBP: { rate: 0.78, symbol: "£" },
   TWD: { rate: 32.2, symbol: "NT$" },
-  CNY: { rate: 7.25, symbol: "¥" }
+  CNY: { rate: 7.25, symbol: "¥" },
+  AUD: { rate: 1.52, symbol: "A$" }
 };
 let currentCurrency = "USD";
 
@@ -371,9 +402,61 @@ function formatCurrency(amountInUSD) {
 }
 
 // ========================================================
-// 3. PUBLIC TRANSIT GUIDES
+// 3. PUBLIC TRANSIT GUIDES (EXPANDED TO 51 METROS)
 // ========================================================
 const cityTransitGuidesMaster = {
+  DENVER: [
+    { title: "RTD A Line (University of Colorado A Line)", badge: "Airport Express Rail", desc: "Fast electric commuter rail connecting Denver Airport (DEN) directly to historic Denver Union Station downtown in 37 minutes.", route: "Airport ➔ Union Station (37 mins, $10.50 Regional Day Pass)" },
+    { title: "Free MallRide & RTD Light Rail Network", badge: "Downtown Transit", desc: "Zero-fare electric shuttles along the 16th Street Mall corridor, plus citywide light rail to Ball Arena and Mile High Stadium.", route: "Free along 16th St Mall / $2.75 standard local ride" }
+  ],
+  SAN_JUAN: [
+    { title: "Tren Urbano & AMA Metro Express", badge: "Metro & Rapid Bus", desc: "Rapid transit rail connecting Bayamón through central San Juan (Sagrado Corazón), paired with T5 express buses to Old San Juan.", route: "Single Ride $1.50 (Contactless or Metro Card)" },
+    { title: "Old San Juan Free Trolleys & Cataño Ferry", badge: "Heritage Transit", desc: "Open-air hop-on trolleys connecting El Morro and San Cristóbal, plus the scenic 50-cent harbor ferry to Casa Bacardí.", route: "Trolleys Free / Ferry $0.50 each way" }
+  ],
+  PORTLAND: [
+    { title: "TriMet MAX Light Rail (Red Line)", badge: "Airport Direct", desc: "MAX Red Line connects Portland International Airport (PDX) directly to Pioneer Courthouse Square downtown in 38 minutes.", route: "Airport ➔ Downtown ($2.80 / 2.5 hr or $5.60 Day Cap via Hop Fastpass)" },
+    { title: "Portland Streetcar & Biketown", badge: "Urban Circulator", desc: "Streetcar loops connecting Pearl District, South Waterfront, and Central Eastside with contactless tap.", route: "Single Fare $2.00 / Free transfers with Hop card" }
+  ],
+  ATLANTA: [
+    { title: "MARTA Red & Gold Airport Lines", badge: "Direct Terminal Rail", desc: "Heavy rail station inside Domestic Terminal connecting directly to Downtown (Five Points), Midtown, and Buckhead.", route: "Airport ➔ Downtown (20 mins, $2.50 via Breeze Card or Tap-to-Pay)" },
+    { title: "Atlanta Streetcar & Atlanta BeltLine", badge: "Urban Circulator", desc: "Modern streetcar connecting Centennial Olympic Park to MLK Jr. Historic District, plus the scenic paved BeltLine loop.", route: "Streetcar $1.00 / BeltLine walking trail Free" }
+  ],
+  NASHVILLE: [
+    { title: "WeGo Route 18 Airport Express", badge: "Express Airport Bus", desc: "Direct commuter express bus linking Nashville Airport (BNA) to downtown Music City Central and Broadway in 25 minutes.", route: "Airport ➔ Downtown ($2.00 single fare via QuickTicket)" },
+    { title: "Music City Circuit & WeGo Transit", badge: "Downtown Bus", desc: "Free and low-cost bus routes serving The Gulch, Country Music Hall of Fame, and East Nashville.", route: "Local rides $2.00 / 2-hour transfer" }
+  ],
+  VIENNA: [
+    { title: "City Airport Train (CAT) & S-Bahn S7", badge: "Airport Express", desc: "Non-stop CAT express connects VIE Airport to Wien Mitte in 16 minutes (€14.90), or economical S-Bahn S7 in 25 minutes (€4.40).", route: "Airport ➔ Wien Mitte (16-25 mins, valid with Wiener Linien passes)" },
+    { title: "Wiener Linien U-Bahn & Ringstrasse Trams", badge: "World-Class Transit", desc: "5 subway lines (U1-U6) and historic Ringstrasse trams (1 & 2) circling imperial palaces with tap-and-go passes.", route: "Single Ticket €2.40 / 24-hr Pass €8.00" }
+  ],
+  PRAGUE: [
+    { title: "Airport Express (AE) & Metro Line A", badge: "Airport Link", desc: "AE express bus connects Václav Havel Airport directly to Prague Main Station (Hlavní Nádraží) in 30 minutes (100 CZK).", route: "Airport ➔ City Center (30 mins / Bus 119 to Nádraží Veleslavín Metro)" },
+    { title: "Prague Metro & Historic Tram 22", badge: "Subway & Tram", desc: "Three metro lines (A, B, C) and Tram 22 climbing past Charles Bridge to Prague Castle with contactless card tap.", route: "30-min Ticket 30 CZK / 24-hr Pass 120 CZK" }
+  ],
+  BERLIN: [
+    { title: "Flughafen-Express (FEX) & S-Bahn S9", badge: "Airport Express", desc: "FEX trains connect Berlin Brandenburg Airport (BER) to Central Station (Hauptbahnhof) in 30 minutes.", route: "Airport ➔ Hauptbahnhof (30 mins, VBB ABC Ticket €4.40)" },
+    { title: "BVG U-Bahn, S-Bahn & Tram M10", badge: "Integrated Transit", desc: "24/7 weekend subway and tram network covering Museum Island, Alexanderplatz, and Kreuzberg.", route: "Berlin AB Single €3.50 / 24-hr Pass €9.90" }
+  ],
+  EDINBURGH: [
+    { title: "Edinburgh Trams (Airport to Newhaven)", badge: "Airport Tram", desc: "Direct tram from Edinburgh Airport right along Princes Street and the Royal Mile to the waterfront in 35 minutes.", route: "Airport ➔ Princes Street (35 mins, £7.50 single / £9.50 open return)" },
+    { title: "Lothian Buses & Tap-to-Pay Cap", badge: "City Bus Network", desc: "Double-decker bus fleet with automatic contactless daily fare capping covering Old Town, Leith, and Arthur's Seat.", route: "Single Fare £2.00 / Daily Cap £4.80" }
+  ],
+  FUKUOKA: [
+    { title: "Fukuoka City Subway Kūkō Line (Airport Line)", badge: "5-Minute Airport Link", desc: "Japan's most convenient airport transit: subway station located directly beneath the domestic terminal, reaching Hakata Station in 5 minutes.", route: "Airport ➔ Hakata Station (5 mins, ¥260 / IC Card tap)" },
+    { title: "Nishitetsu Bus & Yatai Evening Loops", badge: "City Transit", desc: "Downtown ¥150 flat-fare bus zone serving Tenjin, Nakasu food stalls, and Canal City Hakata.", route: "Subway 1-Day Pass ¥640 / IC Card accepted" }
+  ],
+  BUSAN: [
+    { title: "Busan-Gimhae Light Rail & Metro Line 2", badge: "Airport Rail", desc: "Light rail connects Gimhae Airport to Sasang Station with instant transfer to Metro Line 2 into Seomyeon and Haeundae.", route: "Airport ➔ Seomyeon (35 mins, ₩1,600 / T-Money tap)" },
+    { title: "Busan Metro & Coastal Sightseeing Train", badge: "Subway & Coastal Rail", desc: "Four clean subway lines covering Jagalchi Market, Gwangan Bridge beach, and Blue Line coastal park train.", route: "Single Fare ₩1,450 / 1-Day Metro Pass ₩5,000" }
+  ],
+  MELBOURNE: [
+    { title: "SkyBus Melbourne City Express", badge: "Airport Express Coach", desc: "High-frequency express coach connecting Tullamarine Airport (MEL) directly to Southern Cross Station in 20-30 minutes with free Wi-Fi.", route: "Airport ➔ Southern Cross (25 mins, A$23.90)" },
+    { title: "Free City Tram Zone & Yarra Trams", badge: "World's Largest Tram Grid", desc: "Hop on and off all trams in central Melbourne completely free within the Free Tram Zone, including historic Route 35.", route: "Free within CBD Grid / myki card for outer zones" }
+  ],
+  KUALA_LUMPUR: [
+    { title: "KLIA Ekspres Non-Stop Airport Train", badge: "Non-Stop Airport Rail", desc: "Non-stop high-speed train connecting KLIA Terminal 1 & 2 directly to KL Sentral transportation hub in 28 minutes.", route: "KLIA ➔ KL Sentral (28 mins, RM55 / Contactless 10% discount)" },
+    { title: "RapidKL LRT, MRT & Monorail Network", badge: "Integrated Rapid Transit", desc: "Elevated and underground rail lines connecting Petronas Towers (KLCC), Bukit Bintang, and Batu Caves with Touch 'n Go cards.", route: "Token / Touch 'n Go (RM1.50 – RM4.50 per trip)" }
+  ],
   VANCOUVER: [
     { title: "TransLink SkyTrain (Canada Line)", badge: "Airport Express", desc: "Canada Line rapid transit connects YVR Airport directly to Downtown Vancouver (Waterfront Station) in 25 minutes.", route: "YVR ➔ Downtown (25 mins, CA$4.55 + $5 YVR AddFare)" },
     { title: "Compass Card & SeaBus Harbor Link", badge: "Transit Card", desc: "Contactless tap on all SkyTrain lines, city buses, and the scenic 12-minute SeaBus crossing to Lonsdale Quay North Vancouver.", route: "1-Day All-Zone Pass (CA$11.25)" }
@@ -423,7 +506,20 @@ function renderTransitGuide(airportCode, cityName) {
   const normCity = (cityName || "").toLowerCase();
   
   let key = normCode;
-  if (normCity.includes("vancouver") || normCode === "YVR") key = "VANCOUVER";
+  if (normCity.includes("denver") || normCode === "DEN") key = "DENVER";
+  else if (normCity.includes("san juan") || normCode === "SJU") key = "SAN_JUAN";
+  else if (normCity.includes("portland") || normCode === "PDX") key = "PORTLAND";
+  else if (normCity.includes("atlanta") || normCode === "ATL") key = "ATLANTA";
+  else if (normCity.includes("nashville") || normCode === "BNA") key = "NASHVILLE";
+  else if (normCity.includes("vienna") || normCode === "VIE") key = "VIENNA";
+  else if (normCity.includes("prague") || normCode === "PRG") key = "PRAGUE";
+  else if (normCity.includes("berlin") || normCode === "BER") key = "BERLIN";
+  else if (normCity.includes("edinburgh") || normCode === "EDI") key = "EDINBURGH";
+  else if (normCity.includes("fukuoka") || normCode === "FUK") key = "FUKUOKA";
+  else if (normCity.includes("busan") || normCode === "PUS") key = "BUSAN";
+  else if (normCity.includes("melbourne") || normCode === "MEL") key = "MELBOURNE";
+  else if (normCity.includes("kuala lumpur") || normCode === "KUL") key = "KUALA_LUMPUR";
+  else if (normCity.includes("vancouver") || normCode === "YVR") key = "VANCOUVER";
   else if (normCity.includes("toronto") || normCode === "YYZ" || normCode === "YTZ") key = "TORONTO";
   else if (normCity.includes("montreal") || normCode === "YUL") key = "MONTREAL";
   else if (normCity.includes("rome") || normCode === "FCO") key = "ROME";
@@ -506,26 +602,30 @@ window.handleTravelerPassportChange = function(index, newCode) {
 
 function normalizeDestinationCountry(destCountryStr, destCityStr) {
   const norm = `${destCountryStr || ''} ${destCityStr || ''}`.toLowerCase();
-  if (norm.includes("united states") || norm.includes("usa") || norm.includes("america") || norm.includes("hawaii")) return "USA";
+  if (norm.includes("united states") || norm.includes("usa") || norm.includes("america") || norm.includes("hawaii") || norm.includes("puerto rico") || norm.includes("san juan")) return "USA";
   if (norm.includes("canada") || norm.includes("vancouver") || norm.includes("toronto") || norm.includes("montreal")) return "CAN";
   if (norm.includes("taiwan") || norm.includes("taipei") || norm.includes("taichung") || norm.includes("tainan") || norm.includes("kaohsiung")) return "TWN";
-  if (norm.includes("japan") || norm.includes("tokyo") || norm.includes("kyoto") || norm.includes("osaka")) return "JPN";
-  if (norm.includes("united kingdom") || norm.includes("uk") || norm.includes("london") || norm.includes("england")) return "GBR";
+  if (norm.includes("japan") || norm.includes("tokyo") || norm.includes("kyoto") || norm.includes("osaka") || norm.includes("fukuoka")) return "JPN";
+  if (norm.includes("united kingdom") || norm.includes("uk") || norm.includes("london") || norm.includes("england") || norm.includes("edinburgh") || norm.includes("scotland")) return "GBR";
   if (norm.includes("france") || norm.includes("paris")) return "FRA";
   if (norm.includes("italy") || norm.includes("rome") || norm.includes("florence")) return "ITA";
   if (norm.includes("spain") || norm.includes("barcelona") || norm.includes("madrid")) return "ESP";
   if (norm.includes("portugal") || norm.includes("lisbon")) return "PRT";
   if (norm.includes("netherlands") || norm.includes("holland") || norm.includes("amsterdam")) return "NLD";
+  if (norm.includes("austria") || norm.includes("vienna")) return "AUT";
+  if (norm.includes("czech") || norm.includes("prague")) return "CZE";
+  if (norm.includes("germany") || norm.includes("berlin")) return "DEU";
+  if (norm.includes("malaysia") || norm.includes("kuala lumpur")) return "MYS";
   if (norm.includes("hong kong")) return "HKG";
   if (norm.includes("singapore")) return "SGP";
   if (norm.includes("thailand") || norm.includes("bangkok")) return "THA";
-  if (norm.includes("australia") || norm.includes("sydney")) return "AUS";
-  if (norm.includes("south korea") || norm.includes("korea") || norm.includes("seoul")) return "KOR";
+  if (norm.includes("australia") || norm.includes("sydney") || norm.includes("melbourne")) return "AUS";
+  if (norm.includes("south korea") || norm.includes("korea") || norm.includes("seoul") || norm.includes("busan")) return "KOR";
   return "OTHER";
 }
 
 function getVisaRequirementDetails(passportCode, destCountryCode, destCityName) {
-  const isSchengen = ["FRA", "ITA", "ESP", "PRT", "NLD"].includes(destCountryCode);
+  const isSchengen = ["FRA", "ITA", "ESP", "PRT", "NLD", "AUT", "CZE", "DEU"].includes(destCountryCode);
 
   if (passportCode === destCountryCode || (passportCode === "EU" && isSchengen)) {
     return {
@@ -572,9 +672,21 @@ function getVisaRequirementDetails(passportCode, destCountryCode, destCityName) 
         headline: "Visa-Free (UK ETA Required)",
         stayLimit: "Up to 6 months per entry",
         validity: "Valid for entire duration of stay",
-        desc: "US citizens require a valid UK Electronic Travel Authorisation (ETA) before boarding flights to London/UK.",
+        desc: "US citizens require a valid UK Electronic Travel Authorisation (ETA) before boarding flights to London/Edinburgh.",
         portalUrl: "https://www.gov.uk/electronic-travel-authorisation",
         portalLabel: "UK GOV ETA Portal ↗"
+      };
+    }
+    if (destCountryCode === "MYS") {
+      return {
+        status: "Visa-Free",
+        statusClass: "visa-status-free",
+        headline: "Visa-Free Entry (90 Days)",
+        stayLimit: "Up to 90 days (MDAC digital arrival card required)",
+        validity: "Must be valid for at least 6 months",
+        desc: "US citizens enter Malaysia visa-free. Complete the Malaysia Digital Arrival Card (MDAC) online 3 days prior to landing.",
+        portalUrl: "https://imigresen-online.imi.gov.my/mdac/main",
+        portalLabel: "Malaysia MDAC Portal ↗"
       };
     }
     if (destCountryCode === "TWN") {
@@ -712,6 +824,18 @@ function getVisaRequirementDetails(passportCode, destCountryCode, destCityName) 
         portalLabel: "UK Visa Check Official ↗"
       };
     }
+    if (destCountryCode === "MYS") {
+      return {
+        status: "Visa-Free",
+        statusClass: "visa-status-free",
+        headline: "Visa-Free Entry (30 Days)",
+        stayLimit: "Up to 30 days (Submit MDAC online)",
+        validity: "Valid passport for at least 6 months",
+        desc: "Taiwan passport holders enjoy visa-free entry to Malaysia up to 30 days. Complete the MDAC card 3 days prior.",
+        portalUrl: "https://imigresen-online.imi.gov.my/mdac/main",
+        portalLabel: "Malaysia MDAC Portal ↗"
+      };
+    }
     if (destCountryCode === "JPN") {
       return {
         status: "Visa-Free",
@@ -799,7 +923,7 @@ function getVisaRequirementDetails(passportCode, destCountryCode, destCityName) 
         portalLabel: "US CBP Travel ↗"
       };
     }
-    if (isSchengen || destCountryCode === "GBR" || destCountryCode === "TWN" || destCountryCode === "JPN" || destCountryCode === "HKG" || destCountryCode === "SGP" || destCountryCode === "THA" || destCountryCode === "KOR") {
+    if (isSchengen || destCountryCode === "GBR" || destCountryCode === "TWN" || destCountryCode === "JPN" || destCountryCode === "HKG" || destCountryCode === "SGP" || destCountryCode === "THA" || destCountryCode === "KOR" || destCountryCode === "MYS") {
       return {
         status: "Visa-Free",
         statusClass: "visa-status-free",
@@ -809,18 +933,6 @@ function getVisaRequirementDetails(passportCode, destCountryCode, destCityName) 
         desc: "Canadian passport holders enjoy reciprocal visa-free entry for tourism.",
         portalUrl: "https://travel.gc.ca/travelling/advisories",
         portalLabel: "Travel.gc.ca Advisory ↗"
-      };
-    }
-    if (destCountryCode === "AUS") {
-      return {
-        status: "ETA Required",
-        statusClass: "visa-status-eta",
-        headline: "Australian ETA (Subclass 601)",
-        stayLimit: "Up to 3 months",
-        validity: "Valid for duration of stay",
-        desc: "Canadian citizens must apply for an ETA via the AustralianETA smartphone app before travel.",
-        portalUrl: "https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/electronic-travel-authority-601",
-        portalLabel: "Australia ETA Official ↗"
       };
     }
   }
@@ -836,18 +948,6 @@ function getVisaRequirementDetails(passportCode, destCountryCode, destCityName) 
         desc: "Must hold an approved ESTA before boarding flight to the US.",
         portalUrl: "https://esta.cbp.dhs.gov/",
         portalLabel: "US CBP ESTA ↗"
-      };
-    }
-    if (destCountryCode === "CAN") {
-      return {
-        status: "eTA Required",
-        statusClass: "visa-status-eta",
-        headline: "Canada Electronic Travel Authorization (eTA)",
-        stayLimit: "Up to 6 months",
-        validity: "Valid passport",
-        desc: "Must obtain an approved eTA online prior to flying to Canada.",
-        portalUrl: "https://www.canada.ca/en/immigration-refugees-citizenship/services/visit-canada/eta.html",
-        portalLabel: "Canada eTA ↗"
       };
     }
     return {
@@ -971,7 +1071,20 @@ async function fetchTargetCitySights(cityName, airportCode, centerLat, centerLon
   const normCode = (airportCode || "").toUpperCase();
 
   let matchedKey = null;
-  if (normCity.includes("vancouver") || normCode === "YVR") matchedKey = "VANCOUVER";
+  if (normCity.includes("denver") || normCode === "DEN") matchedKey = "DEN";
+  else if (normCity.includes("san juan") || normCode === "SJU") matchedKey = "SJU";
+  else if (normCity.includes("portland") || normCode === "PDX") matchedKey = "PDX";
+  else if (normCity.includes("atlanta") || normCode === "ATL") matchedKey = "ATL";
+  else if (normCity.includes("nashville") || normCode === "BNA") matchedKey = "BNA";
+  else if (normCity.includes("vienna") || normCode === "VIE") matchedKey = "VIE";
+  else if (normCity.includes("prague") || normCode === "PRG") matchedKey = "PRG";
+  else if (normCity.includes("berlin") || normCode === "BER") matchedKey = "BER";
+  else if (normCity.includes("edinburgh") || normCode === "EDI") matchedKey = "EDI";
+  else if (normCity.includes("fukuoka") || normCode === "FUK") matchedKey = "FUK";
+  else if (normCity.includes("busan") || normCode === "PUS") matchedKey = "PUS";
+  else if (normCity.includes("melbourne") || normCode === "MEL") matchedKey = "MEL";
+  else if (normCity.includes("kuala lumpur") || normCode === "KUL") matchedKey = "KUL";
+  else if (normCity.includes("vancouver") || normCode === "YVR") matchedKey = "VANCOUVER";
   else if (normCity.includes("toronto") || normCode === "YYZ" || normCode === "YTZ") matchedKey = "TORONTO";
   else if (normCity.includes("montreal") || normCode === "YUL") matchedKey = "MONTREAL";
   else if (normCity.includes("chicago") || normCode === "ORD" || normCode === "MDW") matchedKey = "CHI";
@@ -1062,33 +1175,6 @@ function getBrandPortalUrl(brand, city, checkIn, checkOut) {
 
 async function fetchLiveTargetHotels(centerLat, centerLon, cityName, airportCode, selectedBrands, checkIn, checkOut) {
   const norm = cityName.toLowerCase();
-
-  if (norm.includes("rome") || airportCode === "FCO") {
-    const list = [
-      { id: "rom_h1", name: "The St. Regis Rome", brand: "Marriott Bonvoy", rating: 4.9, priceUSD: 720, lat: 41.9035, lon: 12.4950, area: "Piazza della Repubblica", badge: "Iconic Grandeur", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
-      { id: "rom_h2", name: "Tribune Hotel Rome, part of JdV by Hyatt", brand: "World of Hyatt", rating: 4.8, priceUSD: 310, lat: 41.9102, lon: 12.4910, area: "Via Veneto District", badge: "Boutique Rooftop", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) },
-      { id: "rom_h3", name: "InterContinental Rome Ambasciatori Palace", brand: "IHG", rating: 4.9, priceUSD: 560, lat: 41.9060, lon: 12.4905, area: "Via Veneto / Central", badge: "Palace Landmark", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) }
-    ];
-    return list.map(h => ({ ...h, distanceKm: parseFloat(haversineDistance(centerLat, centerLon, h.lat, h.lon).toFixed(1)) })).filter(h => selectedBrands.includes(h.brand));
-  }
-
-  if (norm.includes("chicago") || airportCode === "ORD" || airportCode === "MDW") {
-    const list = [
-      { id: "chi_h1", name: "The Ritz-Carlton, Chicago", brand: "Marriott Bonvoy", rating: 4.8, priceUSD: 460, lat: 41.8976, lon: -87.6231, area: "Magnificent Mile", badge: "Iconic Luxury", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
-      { id: "chi_h2", name: "Park Hyatt Chicago", brand: "World of Hyatt", rating: 4.9, priceUSD: 510, lat: 41.8980, lon: -87.6255, area: "Water Tower", badge: "Palace Luxury", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) },
-      { id: "chi_h3", name: "InterContinental Chicago Magnificent Mile", brand: "IHG", rating: 4.7, priceUSD: 310, lat: 41.8912, lon: -87.6244, area: "Magnificent Mile", badge: "Historic Landmark", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) }
-    ];
-    return list.map(h => ({ ...h, distanceKm: parseFloat(haversineDistance(centerLat, centerLon, h.lat, h.lon).toFixed(1)) })).filter(h => selectedBrands.includes(h.brand));
-  }
-
-  if (norm.includes("taipei") || airportCode === "TPE" || airportCode === "TSA") {
-    const list = [
-      { id: "tpe_h1", name: "W Taipei", brand: "Marriott Bonvoy", rating: 4.8, priceUSD: 310, lat: 25.0407, lon: 121.5658, area: "Xinyi District / Taipei 101", badge: "Iconic Luxury", brandUrl: getBrandPortalUrl("Marriott Bonvoy", cityName, checkIn, checkOut) },
-      { id: "tpe_h2", name: "Grand Hyatt Taipei", brand: "World of Hyatt", rating: 4.8, priceUSD: 260, lat: 25.0354, lon: 121.5623, area: "Xinyi District", badge: "Prime Landmark", brandUrl: getBrandPortalUrl("World of Hyatt", cityName, checkIn, checkOut) },
-      { id: "tpe_h3", name: "Kimpton Da An Hotel", brand: "IHG", rating: 4.8, priceUSD: 230, lat: 25.0416, lon: 121.5469, area: "Daan District", badge: "Design Boutique", brandUrl: getBrandPortalUrl("IHG", cityName, checkIn, checkOut) }
-    ];
-    return list.map(h => ({ ...h, distanceKm: parseFloat(haversineDistance(centerLat, centerLon, h.lat, h.lon).toFixed(1)) })).filter(h => selectedBrands.includes(h.brand));
-  }
 
   return selectedBrands.map((b, i) => ({
     id: `hotel_${b.replace(/\s+/g, '')}_${i}`,
@@ -1269,7 +1355,31 @@ const etiquetteGuideCatalog = {
     tipping: "10%–12.5% in restaurants (often added as an optional 'Service Charge'); tipping at pubs is not standard.",
     power: "Type G 3-rectangular-pin plugs (230V, 50Hz). Requires standard UK adapter.",
     emergency: "999 or 112 (Police, Fire, Ambulance)",
-    etiquette: "Stand on the right on London Underground escalators; avoid loud phone calls in tube carriages."
+    etiquette: "Stand on the right on London Underground & Edinburgh escalators; queueing is strictly respected."
+  },
+  AUT: {
+    tipping: "5%–10% standard in restaurants by rounding up the bill when paying the server directly.",
+    power: "Type C & F Europlug (230V, 50Hz).",
+    emergency: "112 (Universal Emergency), 133 (Police), 144 (Ambulance)",
+    etiquette: "Quiet hours (Ruhezeit) on Sundays; greeting shopkeepers with 'Grüß Gott' is polite."
+  },
+  CZE: {
+    tipping: "10% standard in restaurants; round up and state the total amount including tip to the server.",
+    power: "Type C & E European round plugs (230V, 50Hz).",
+    emergency: "112 (General Emergency), 158 (Police), 155 (Ambulance)",
+    etiquette: "Validate public transit tickets upon entering stations; always remove shoes when entering homes."
+  },
+  DEU: {
+    tipping: "5%–10% standard; round up the bill directly with the server (Trinkgeld).",
+    power: "Type C & F Europlug (230V, 50Hz).",
+    emergency: "112 (Fire & Medical), 110 (Police)",
+    etiquette: "Never walk in designated bike lanes; Jaywalking is strictly discouraged; carry cash as some venues are cash-only."
+  },
+  MYS: {
+    tipping: "Not customary. 10% service charge is included in upscale venues. Rounding up change in taxis is appreciated.",
+    power: "Type G 3-rectangular-pin UK plugs (240V, 50Hz).",
+    emergency: "999 (Universal Emergency), 112 (Mobile)",
+    etiquette: "Remove shoes before entering homes and places of worship; eat and pass items with the right hand."
   },
   FRA: {
     tipping: "Service is included by law ('Service Compris'); rounding up or leaving 5%–10% in coins for exceptional service is customary.",
@@ -2972,7 +3082,6 @@ async function restoreTripStateFromUrlHash() {
 async function startInteractiveTour() {
   closeHowItWorksModal();
 
-  // If no corridor search has been conducted yet, pre-populate demo inputs and trigger search preview
   const resultsSection = document.getElementById("resultsSection");
   if (!resultsSection || resultsSection.classList.contains("hidden")) {
     document.getElementById("origin").value = "San Francisco (SFO)";
