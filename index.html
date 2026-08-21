@@ -50,6 +50,11 @@
           📑 Saved Trips <span id="savedTripsCountBadge" class="mini-count-badge">0</span>
         </button>
 
+        <!-- Application Reset Button -->
+        <button id="resetAppBtn" class="btn-secondary-nav btn-nav-reset" title="Reset all inputs and clear page">
+          🔄 Reset
+        </button>
+
         <!-- Light/Dark Mode Switcher -->
         <button id="themeToggleBtn" class="btn-theme-toggle" title="Toggle Light/Dark Theme">
           <span id="themeToggleIcon">☀️</span>
@@ -132,9 +137,7 @@
           <div class="form-section-title" style="font-size: 0.78rem; color: var(--primary);">
             🛂 Traveler Passport Nationalities (For Visa & Entry Requirements)
           </div>
-          <div id="travelerNationalitiesList" class="traveler-nationalities-grid">
-            <!-- Dynamically populated in app.js based on traveler count -->
-          </div>
+          <div id="travelerNationalitiesList" class="traveler-nationalities-grid"></div>
         </div>
 
         <!-- Multi-City Segment 2 (Hidden by Default) -->
@@ -327,6 +330,8 @@
               <button class="sight-filter-btn" data-filter="sight">🏛️ Sights</button>
               <button class="sight-filter-btn" data-filter="food">🍜 Food</button>
             </div>
+            <!-- Tag All / Untag All Action Button -->
+            <button id="tagAllSightsBtn" class="btn-tag-all" title="Select or clear all spots">⭐ Tag All</button>
             <button id="openAddPlaceListBtn" class="btn-add-place-sm">+ Add Place</button>
           </div>
         </div>
@@ -497,9 +502,7 @@
       </div>
       <button id="closeJetLagModalBtn" class="close-btn">✕</button>
     </div>
-    <div id="jetLagBody" class="modal-body">
-      <!-- Populated dynamically in app.js -->
-    </div>
+    <div id="jetLagBody" class="modal-body"></div>
   </div>
 
   <!-- ========================================== -->

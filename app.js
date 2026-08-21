@@ -1553,7 +1553,6 @@ let qrcodeInstance = null;
 function encodeTripStateToUrlHash() {
   if (!resolvedOriginObj || !resolvedDestAirportObj || !resolvedVisitCityObj) return "";
 
-  // Highly compact schema to keep QR code footprint lightweight (<350 chars)
   const compactPayload = {
     o: resolvedOriginObj.code,
     d: resolvedDestAirportObj.code,
@@ -1606,7 +1605,6 @@ function openShareTripModal() {
   urlInput.value = shareUrl;
   if (copyMsg) copyMsg.classList.add("hidden");
 
-  // Render Crisp High-Contrast QR Code
   qrContainer.innerHTML = "";
   if (typeof QRCode !== 'undefined') {
     qrcodeInstance = new QRCode(qrContainer, {
@@ -1650,9 +1648,54 @@ function copyShareTripUrl() {
   }
 }
 // ========================================================
-// 10. TAGGING & DAY ASSIGNMENT STATE & MAP CONTROLS
+// 10. TAGGING, DAY ASSIGNMENT & TAG-ALL SIGHTS ENGINE
 // ========================================================
 let taggedPlaces = [];
+
+function updateTagAllButtonState() {
+  const btn = document.getElementById("tagAllSightsBtn");
+  if (!btn || currentSights.length === 0) return;
+
+  const allFilteredTagged = currentSights.every(s => isItemTagged(s.id));
+  if (allFilteredTagged) {
+    btn.classList.add("active-all");
+    btn.innerHTML = "✕ Untag All";
+    btn.setAttribute("title", "Remove all filtered spots from tagged tray");
+  } else {
+    btn.classList.remove("active-all");
+    btn.innerHTML = "⭐ Tag All";
+    btn.setAttribute("title", "Star and select all filtered highlights");
+  }
+}
+
+window.handleToggleTagAllSights = function() {
+  if (currentSights.length === 0) return;
+
+  const allFilteredTagged = currentSights.every(s => isItemTagged(s.id));
+
+  if (allFilteredTagged) {
+    // Untag all currently filtered sights
+    const currentIds = new Set(currentSights.map(s => s.id));
+    taggedPlaces = taggedPlaces.filter(p => !currentIds.has(p.id));
+  } else {
+    // Tag all currently filtered sights that aren't yet tagged
+    currentSights.forEach(s => {
+      if (!isItemTagged(s.id)) {
+        taggedPlaces.push({
+          ...s,
+          itemType: s.type || 'sight',
+          assignedDay: 0
+        });
+      }
+    });
+  }
+
+  applyRadiusFilterAndRender(currentRadiusKm, false);
+  updateItineraryDrawer();
+  renderCustomPlannerModal();
+  updateTagAllButtonState();
+  syncUrlHashLive();
+};
 
 window.handleToggleTag = function(id, itemType) {
   const existingIdx = taggedPlaces.findIndex(p => p.id === id);
@@ -1672,6 +1715,7 @@ window.handleToggleTag = function(id, itemType) {
   applyRadiusFilterAndRender(currentRadiusKm, false);
   updateItineraryDrawer();
   renderCustomPlannerModal();
+  updateTagAllButtonState();
   syncUrlHashLive();
 };
 
@@ -1692,6 +1736,7 @@ window.handleAssignDay = function(id, itemType, dayValue) {
   applyRadiusFilterAndRender(currentRadiusKm, false);
   updateItineraryDrawer();
   renderCustomPlannerModal();
+  updateTagAllButtonState();
   syncUrlHashLive();
 };
 
@@ -1848,6 +1893,7 @@ function applyRadiusFilterAndRender(radiusKm, shouldFitBounds = true) {
   currentHotels = filteredHotels;
   renderDestinationSights(currentSights, resolvedVisitCityObj ? resolvedVisitCityObj.cityName : "");
   sortAndRenderHotels();
+  updateTagAllButtonState();
 }
 
 window.handleDeleteItem = function(id, itemType) {
@@ -1863,6 +1909,7 @@ window.handleDeleteItem = function(id, itemType) {
   taggedPlaces = taggedPlaces.filter(p => p.id !== id);
   applyRadiusFilterAndRender(currentRadiusKm, false);
   renderCustomPlannerModal();
+  updateTagAllButtonState();
   syncUrlHashLive();
 };
 
@@ -2202,6 +2249,7 @@ function renderDestinationSights(sights, cityName) {
 
   if (filtered.length === 0) {
     sightsListEl.innerHTML = `<p style="color: var(--text-muted); font-size: 0.9rem; padding: 1.5rem 0;">No verified places found within ${currentRadiusKm} km. Try increasing the exploration radius or clicking "+ Add Place".</p>`;
+    updateTagAllButtonState();
     return;
   }
 
@@ -2238,6 +2286,8 @@ function renderDestinationSights(sights, cityName) {
       </div>
     `;
   }).join('');
+
+  updateTagAllButtonState();
 }
 
 window.handleSelectFlight = function(flightId) {
@@ -2791,7 +2841,6 @@ async function executeTravelSearch(preserveState = false, restoreConfig = {}) {
   fetchDestinationWeather(resolvedVisitCityObj.lat, resolvedVisitCityObj.lon, resolvedVisitCityObj.cityName, currentDepartDate, currentReturnDate);
   renderEtiquetteGuide(destCountryCode, resolvedVisitCityObj.cityName);
 
-  // Restore Flight, Hotel & Tagged Places if requested by URL hash or saved loader
   if (preserveState && restoreConfig) {
     if (restoreConfig.flId) {
       const flMatch = currentFlights.find(f => f.id === restoreConfig.flId);
@@ -2920,27 +2969,110 @@ async function restoreTripStateFromUrlHash() {
 }
 
 // ========================================================
-// 17. DOM INITIALIZATION & EVENT LISTENERS
+// 17. APPLICATION RESET & DOM INITIALIZATION
 // ========================================================
+function resetApplicationState() {
+  const form = document.getElementById("travelSearchForm");
+  if (form) form.reset();
+
+  document.getElementById("origin").value = "";
+  document.getElementById("destination").value = "";
+  if (document.getElementById("visitCity")) document.getElementById("visitCity").value = "";
+  if (document.getElementById("departDate")) document.getElementById("departDate").value = "";
+  if (document.getElementById("returnDate")) document.getElementById("returnDate").value = "";
+  if (document.getElementById("leg2Origin")) document.getElementById("leg2Origin").value = "";
+  if (document.getElementById("leg2Dest")) document.getElementById("leg2Dest").value = "";
+  if (document.getElementById("leg2Date")) document.getElementById("leg2Date").value = "";
+  if (document.getElementById("travelersCount")) document.getElementById("travelersCount").value = 1;
+  if (document.getElementById("radiusSelect")) document.getElementById("radiusSelect").value = "10";
+  if (document.getElementById("mapRadiusSelect")) document.getElementById("mapRadiusSelect").value = "10";
+
+  // Re-enable all loyalty hotel checkboxes
+  document.querySelectorAll('input[name="hotelBrand"]').forEach(cb => {
+    cb.checked = true;
+  });
+
+  // Reset tab to Round-Trip
+  currentTripType = "roundtrip";
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.getAttribute("data-type") === "roundtrip");
+  });
+  document.getElementById("returnDateGroup")?.classList.remove("hidden");
+  document.getElementById("multiCityFields")?.classList.add("hidden");
+
+  // Reset travelers & passport nationalities
+  travelersCount = 1;
+  travelerPassports = ["USA"];
+  renderTravelerNationalityDropdowns(1);
+
+  // Clear all itinerary selections & data stacks
+  selectedFlight = null;
+  selectedHotel = null;
+  taggedPlaces = [];
+  currentFlights = [];
+  currentHotels = [];
+  currentSights = [];
+  allRawSights = [];
+  allRawHotels = [];
+  resolvedOriginObj = null;
+  resolvedDestAirportObj = null;
+  resolvedVisitCityObj = null;
+  resolvedLeg2OriginObj = null;
+  resolvedLeg2DestObj = null;
+
+  // Clear map markers and layers
+  if (mapMarkersLayer) mapMarkersLayer.clearLayers();
+  if (mapRadiusCircle && leafletMapInstance) {
+    leafletMapInstance.removeLayer(mapRadiusCircle);
+    mapRadiusCircle = null;
+  }
+
+  // Hide results, loading spinners, and floating badge
+  document.getElementById("resultsSection")?.classList.add("hidden");
+  document.getElementById("loadingState")?.classList.add("hidden");
+  document.getElementById("tripBadge")?.classList.add("hidden");
+  toggleDrawer(false);
+
+  // Clear URL hash
+  const cleanUrl = window.location.origin + window.location.pathname;
+  window.history.replaceState(null, '', cleanUrl);
+
+  updateItineraryDrawer();
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
   initGitHubVersionBadge();
   document.getElementById("themeToggleBtn")?.addEventListener("click", toggleTheme);
 
+  // Navbar Reset Button Trigger
+  document.getElementById("resetAppBtn")?.addEventListener("click", () => {
+    if (confirm("Reset and clear all inputs, routes, and selections?")) {
+      resetApplicationState();
+    }
+  });
+
+  // Key Sights Tag All / Untag All Trigger
+  document.getElementById("tagAllSightsBtn")?.addEventListener("click", handleToggleTagAllSights);
+
+  // Weather Unit Toggles
   document.getElementById("tempUnitFBtn")?.addEventListener("click", () => handleSetTempUnit("F"));
   document.getElementById("tempUnitCBtn")?.addEventListener("click", () => handleSetTempUnit("C"));
 
+  // Share & QR Modal Triggers
   document.getElementById("openShareModalBtn")?.addEventListener("click", openShareTripModal);
   document.getElementById("drawerShareBtn")?.addEventListener("click", openShareTripModal);
   document.getElementById("closeShareTripModalBtn")?.addEventListener("click", closeShareTripModal);
   document.getElementById("shareTripModalOverlay")?.addEventListener("click", closeShareTripModal);
   document.getElementById("copyShareTripUrlBtn")?.addEventListener("click", copyShareTripUrl);
 
+  // Circadian Jet Lag Modal Triggers
   document.getElementById("openJetLagBtn")?.addEventListener("click", openJetLagModal);
   document.getElementById("drawerJetLagBtn")?.addEventListener("click", openJetLagModal);
   document.getElementById("closeJetLagModalBtn")?.addEventListener("click", closeJetLagModal);
   document.getElementById("jetLagModalOverlay")?.addEventListener("click", closeJetLagModal);
 
+  // Window Resize Debounce for Map
   let resizeDebounceTimer = null;
   window.addEventListener("resize", () => {
     clearTimeout(resizeDebounceTimer);
@@ -3076,6 +3208,7 @@ document.addEventListener("DOMContentLoaded", () => {
     applyRadiusFilterAndRender(currentRadiusKm, false);
     updateItineraryDrawer();
     renderCustomPlannerModal();
+    updateTagAllButtonState();
     syncUrlHashLive();
   });
 
@@ -3208,6 +3341,7 @@ document.addEventListener("DOMContentLoaded", () => {
       e.target.classList.add("active");
       activeSightFilter = e.target.getAttribute("data-filter");
       renderDestinationSights(currentSights, resolvedVisitCityObj ? resolvedVisitCityObj.cityName : "");
+      updateTagAllButtonState();
     });
   });
 

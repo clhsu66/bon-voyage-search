@@ -220,6 +220,19 @@ body {
   border-color: var(--primary);
 }
 
+/* Application Navbar Reset Button Styling */
+.btn-nav-reset {
+  color: var(--accent-rose);
+  border-color: rgba(244, 63, 94, 0.3);
+  background-color: rgba(244, 63, 94, 0.08);
+}
+
+.btn-nav-reset:hover {
+  background-color: rgba(244, 63, 94, 0.18);
+  border-color: var(--accent-rose);
+  color: var(--accent-rose);
+}
+
 .mini-count-badge {
   background-color: var(--primary);
   color: #fff;
@@ -896,10 +909,10 @@ input[type="number"]:focus,
 .dot-sight { background-color: var(--primary); }
 .dot-food { background-color: var(--accent-rose); }
 
-/* Dynamic Viewport Scaled Map Container */
+/* Enlarged Vertical Viewport Map Container */
 .leaflet-map-container {
-  height: min(580px, 60vh);
-  min-height: 420px;
+  height: min(780px, 75vh);
+  min-height: 620px;
   width: 100%;
   border-radius: 8px;
   border: 1px solid var(--border);
@@ -1343,6 +1356,33 @@ input[type="number"]:focus,
   background-color: var(--primary);
   color: #ffffff;
   border-color: var(--primary);
+}
+
+/* Tag All / Untag All Button */
+.btn-tag-all {
+  background-color: var(--pill-bg);
+  border: 1px solid var(--border);
+  color: var(--accent-amber);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.3rem 0.75rem;
+  border-radius: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.15s ease;
+}
+
+.btn-tag-all:hover {
+  background-color: rgba(245, 158, 11, 0.18);
+  border-color: var(--accent-amber);
+}
+
+.btn-tag-all.active-all {
+  background-color: var(--accent-amber);
+  color: #0b0f19;
+  border-color: var(--accent-amber);
 }
 
 .sights-grid {
@@ -2541,6 +2581,9 @@ input[type="number"]:focus,
   .flight-card, .hotel-card {
     flex-direction: row;
   }
+  .leaflet-map-container {
+    height: 520px;
+  }
 }
 
 /* Mobile & Narrow Window Resizing (<768px) */
@@ -2598,6 +2641,7 @@ input[type="number"]:focus,
     grid-template-columns: 1fr;
   }
   .leaflet-map-container {
-    height: 380px;
+    height: 480px;
+    min-height: 440px;
   }
 }
