@@ -220,7 +220,21 @@ body {
   border-color: var(--primary);
 }
 
-/* Application Navbar Reset Button Styling */
+/* Tour Button Highlight */
+.btn-nav-tour {
+  color: var(--accent-purple);
+  border-color: rgba(168, 85, 247, 0.4);
+  background-color: rgba(168, 85, 247, 0.1);
+  font-weight: 700;
+}
+
+.btn-nav-tour:hover {
+  background-color: rgba(168, 85, 247, 0.22);
+  border-color: var(--accent-purple);
+  color: var(--accent-purple);
+}
+
+/* Application Navbar Reset Button */
 .btn-nav-reset {
   color: var(--accent-rose);
   border-color: rgba(244, 63, 94, 0.3);
@@ -2533,6 +2547,92 @@ input[type="number"]:focus,
 .drawer-btn {
   padding: 0.75rem;
   font-size: 0.9rem;
+}
+
+/* ========================================================
+   DRIVER.JS GUIDED TOUR THEME OVERRIDES
+   ======================================================== */
+.driver-popover {
+  background-color: var(--card-bg) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  box-shadow: var(--shadow-lg) !important;
+  font-family: var(--font-family) !important;
+  padding: 1.25rem !important;
+  max-width: 380px !important;
+}
+
+.driver-popover-title {
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  color: var(--primary) !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.driver-popover-description {
+  font-size: 0.85rem !important;
+  line-height: 1.45 !important;
+  color: var(--text-main) !important;
+  margin-bottom: 1rem !important;
+}
+
+.driver-popover-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-top: 0.75rem !important;
+  border-top: 1px solid var(--border) !important;
+  padding-top: 0.75rem !important;
+}
+
+.driver-popover-progress-text {
+  font-size: 0.75rem !important;
+  color: var(--text-muted) !important;
+  font-weight: 600 !important;
+}
+
+.driver-popover-btn {
+  padding: 0.35rem 0.85rem !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  border: 1px solid var(--border) !important;
+  transition: all 0.15s ease !important;
+}
+
+.driver-popover-prev-btn {
+  background-color: var(--pill-bg) !important;
+  color: var(--text-main) !important;
+}
+
+.driver-popover-prev-btn:hover {
+  background-color: var(--card-hover) !important;
+  border-color: var(--primary) !important;
+}
+
+.driver-popover-next-btn {
+  background-color: var(--primary) !important;
+  color: #ffffff !important;
+  border-color: var(--primary) !important;
+}
+
+.driver-popover-next-btn:hover {
+  background-color: var(--primary-hover) !important;
+}
+
+.driver-popover-close-btn {
+  color: var(--text-muted) !important;
+  font-size: 1.1rem !important;
+}
+
+.driver-popover-close-btn:hover {
+  color: var(--accent-rose) !important;
+}
+
+.driver-popover-arrow {
+  border-color: var(--border) transparent transparent transparent !important;
 }
 
 /* ========================================================

@@ -1674,11 +1674,9 @@ window.handleToggleTagAllSights = function() {
   const allFilteredTagged = currentSights.every(s => isItemTagged(s.id));
 
   if (allFilteredTagged) {
-    // Untag all currently filtered sights
     const currentIds = new Set(currentSights.map(s => s.id));
     taggedPlaces = taggedPlaces.filter(p => !currentIds.has(p.id));
   } else {
-    // Tag all currently filtered sights that aren't yet tagged
     currentSights.forEach(s => {
       if (!isItemTagged(s.id)) {
         taggedPlaces.push({
@@ -2969,7 +2967,127 @@ async function restoreTripStateFromUrlHash() {
 }
 
 // ========================================================
-// 17. APPLICATION RESET & DOM INITIALIZATION
+// 17. DRIVER.JS INTERACTIVE STEP-BY-STEP TOUR ENGINE
+// ========================================================
+async function startInteractiveTour() {
+  closeHowItWorksModal();
+
+  // If no corridor search has been conducted yet, pre-populate demo inputs and trigger search preview
+  const resultsSection = document.getElementById("resultsSection");
+  if (!resultsSection || resultsSection.classList.contains("hidden")) {
+    document.getElementById("origin").value = "San Francisco (SFO)";
+    document.getElementById("destination").value = "Taipei (TPE)";
+    document.getElementById("visitCity").value = "Taipei";
+    
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 14);
+    const returnDay = new Date(tomorrow);
+    returnDay.setDate(returnDay.getDate() + 7);
+
+    document.getElementById("departDate").value = tomorrow.toISOString().split("T")[0];
+    document.getElementById("returnDate").value = returnDay.toISOString().split("T")[0];
+    document.getElementById("travelersCount").value = 2;
+    travelersCount = 2;
+    travelerPassports = ["USA", "TWN"];
+    renderTravelerNationalityDropdowns(2);
+
+    await executeTravelSearch(false);
+  }
+
+  if (typeof window.driver === "undefined" || !window.driver.js || !window.driver.js.driver) {
+    alert("Interactive tour engine is loading. Please try again in a moment.");
+    return;
+  }
+
+  const driverObj = window.driver.js.driver({
+    showProgress: true,
+    animate: true,
+    allowClose: true,
+    overlayColor: 'rgba(0, 0, 0, 0.75)',
+    nextBtnText: 'Next ➔',
+    prevBtnText: '⬅ Back',
+    doneBtnText: 'Finish Tour 🚀',
+    steps: [
+      {
+        element: '#searchCardSection',
+        popover: {
+          title: '🧭 1. Corridor & Destination Engine',
+          description: 'Search any airport hub pair worldwide (Round-trip, One-way, or Multi-city) with instant live IATA autocomplete and custom destination focus areas.',
+          side: 'bottom',
+          align: 'start'
+        }
+      },
+      {
+        element: '#passportSectionGroup',
+        popover: {
+          title: '🛂 2. Multi-Passport Visa Matrix',
+          description: 'Assign individual passport nationalities for every traveler in your party to automatically evaluate reciprocal visa exemptions, eTAs, ESTAs, and passport validity standards.',
+          side: 'bottom',
+          align: 'start'
+        }
+      },
+      {
+        element: '#radiusSelectGroup',
+        popover: {
+          title: '🎯 3. Customizable Exploration Radius',
+          description: 'Filter sights, culinary highlights, and loyalty hotels from 5 km (downtown core) up to 50 km (day trips and countryside).',
+          side: 'top',
+          align: 'start'
+        }
+      },
+      {
+        element: '#mapSection',
+        popover: {
+          title: '📍 4. Interactive Geographic Map',
+          description: 'Explore live GPS pins with radius boundaries. Click pins to see ratings, tag items, or add custom pins (+ Add Pin) anywhere on the map.',
+          side: 'top',
+          align: 'center'
+        }
+      },
+      {
+        element: '#sightsWrapperBlock',
+        popover: {
+          title: '🏛️ 5. Key Sights & ⭐ Tag All',
+          description: 'Curate landmarks and restaurants. Click "⭐ Tag All" to select all filtered spots at once, assign places to daily buckets, or launch multi-stop Google Maps routes.',
+          side: 'top',
+          align: 'center'
+        }
+      },
+      {
+        element: '#hotelsAndFlightsGrid',
+        popover: {
+          title: '🏨 6. Direct Loyalty Stays & Flights',
+          description: 'Compare scheduled flight corridors and direct booking links for Marriott Bonvoy, World of Hyatt, and IHG to retain your elite tier perks without OTA markups.',
+          side: 'top',
+          align: 'center'
+        }
+      },
+      {
+        element: '#openJetLagBtn',
+        popover: {
+          title: '⚡ 7. Circadian Jet Lag Advisor',
+          description: 'Generate a personalized 5-day circadian sleep-shifting, caffeine cut-off, and light-seeking schedule based on your flight times.',
+          side: 'left',
+          align: 'center'
+        }
+      },
+      {
+        element: '#openShareModalBtn',
+        popover: {
+          title: '🔗 8. Shareable URL & Mobile QR Code',
+          description: 'Compresses your entire itinerary, tagged spots, and selected rooms into a shareable link and a high-contrast QR code for instant smartphone camera scanning.',
+          side: 'left',
+          align: 'center'
+        }
+      }
+    ]
+  });
+
+  driverObj.drive();
+}
+
+// ========================================================
+// 18. APPLICATION RESET & DOM INITIALIZATION
 // ========================================================
 function resetApplicationState() {
   const form = document.getElementById("travelSearchForm");
@@ -2987,12 +3105,10 @@ function resetApplicationState() {
   if (document.getElementById("radiusSelect")) document.getElementById("radiusSelect").value = "10";
   if (document.getElementById("mapRadiusSelect")) document.getElementById("mapRadiusSelect").value = "10";
 
-  // Re-enable all loyalty hotel checkboxes
   document.querySelectorAll('input[name="hotelBrand"]').forEach(cb => {
     cb.checked = true;
   });
 
-  // Reset tab to Round-Trip
   currentTripType = "roundtrip";
   document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.classList.toggle("active", btn.getAttribute("data-type") === "roundtrip");
@@ -3000,12 +3116,10 @@ function resetApplicationState() {
   document.getElementById("returnDateGroup")?.classList.remove("hidden");
   document.getElementById("multiCityFields")?.classList.add("hidden");
 
-  // Reset travelers & passport nationalities
   travelersCount = 1;
   travelerPassports = ["USA"];
   renderTravelerNationalityDropdowns(1);
 
-  // Clear all itinerary selections & data stacks
   selectedFlight = null;
   selectedHotel = null;
   taggedPlaces = [];
@@ -3020,20 +3134,17 @@ function resetApplicationState() {
   resolvedLeg2OriginObj = null;
   resolvedLeg2DestObj = null;
 
-  // Clear map markers and layers
   if (mapMarkersLayer) mapMarkersLayer.clearLayers();
   if (mapRadiusCircle && leafletMapInstance) {
     leafletMapInstance.removeLayer(mapRadiusCircle);
     mapRadiusCircle = null;
   }
 
-  // Hide results, loading spinners, and floating badge
   document.getElementById("resultsSection")?.classList.add("hidden");
   document.getElementById("loadingState")?.classList.add("hidden");
   document.getElementById("tripBadge")?.classList.add("hidden");
   toggleDrawer(false);
 
-  // Clear URL hash
   const cleanUrl = window.location.origin + window.location.pathname;
   window.history.replaceState(null, '', cleanUrl);
 
@@ -3044,6 +3155,10 @@ document.addEventListener("DOMContentLoaded", () => {
   initTheme();
   initGitHubVersionBadge();
   document.getElementById("themeToggleBtn")?.addEventListener("click", toggleTheme);
+
+  // Guided Tour Triggers
+  document.getElementById("startTourBtn")?.addEventListener("click", startInteractiveTour);
+  document.getElementById("startTourFromModalBtn")?.addEventListener("click", startInteractiveTour);
 
   // Navbar Reset Button Trigger
   document.getElementById("resetAppBtn")?.addEventListener("click", () => {

@@ -7,6 +7,8 @@
   
   <!-- Leaflet CSS for Maps -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <!-- Driver.js CSS for Interactive Guided Tours -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css"/>
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -26,6 +28,11 @@
       </div>
       
       <div class="nav-controls">
+        <!-- Interactive Step-by-Step Tour Trigger -->
+        <button id="startTourBtn" class="btn-secondary-nav btn-nav-tour" title="Take an interactive guided tour of all features">
+          🎯 Tour
+        </button>
+
         <!-- How It Works Visual Guide Trigger -->
         <button id="openHowItWorksBtn" class="btn-secondary-nav" title="How It Works & Visual Guide">
           ℹ️ How It Works
@@ -68,7 +75,7 @@
     <!-- ========================================== -->
     <!-- SEARCH & DISCOVERY ENGINE PANEL           -->
     <!-- ========================================== -->
-    <section class="search-card">
+    <section class="search-card" id="searchCardSection">
       <div class="trip-type-tabs">
         <button type="button" class="tab-btn active" data-type="roundtrip">Round-Trip</button>
         <button type="button" class="tab-btn" data-type="oneway">One-Way</button>
@@ -77,7 +84,7 @@
 
       <form id="travelSearchForm" autocomplete="off">
         <div class="form-section-title">1. Route & Destination</div>
-        <div class="form-row form-row-3col">
+        <div class="form-row form-row-3col" id="routeFieldsRow">
           <!-- Segment 1 Origin -->
           <div class="input-group autocomplete-group">
             <label for="origin" id="originLabel">From (Airport Hub)</label>
@@ -100,7 +107,7 @@
         </div>
 
         <div class="form-section-title">2. Dates, Travelers & Exploration Radius</div>
-        <div class="form-row form-row-dates-radius">
+        <div class="form-row form-row-dates-radius" id="datesRadiusRow">
           <!-- Departure Date -->
           <div class="input-group">
             <label for="departDate" id="departDateLabel">Depart Date</label>
@@ -120,7 +127,7 @@
           </div>
 
           <!-- Exploration Radius Selector -->
-          <div class="input-group">
+          <div class="input-group" id="radiusSelectGroup">
             <label for="radiusSelect">Explore Radius</label>
             <select id="radiusSelect" name="radiusSelect" class="radius-select">
               <option value="5">5 km (Downtown Core)</option>
@@ -133,7 +140,7 @@
         </div>
 
         <!-- Individual Traveler Nationality Selectors -->
-        <div class="traveler-nationalities-section">
+        <div class="traveler-nationalities-section" id="passportSectionGroup">
           <div class="form-section-title" style="font-size: 0.78rem; color: var(--primary);">
             🛂 Traveler Passport Nationalities (For Visa & Entry Requirements)
           </div>
@@ -162,7 +169,7 @@
         </div>
 
         <!-- Preferred Hotel Brands -->
-        <div class="hotel-brands-section">
+        <div class="hotel-brands-section" id="hotelBrandsSection">
           <label>Preferred Hotel Loyalty Portals:</label>
           <div class="brand-checkboxes">
             <label class="checkbox-label">
@@ -200,7 +207,7 @@
     <section id="resultsSection" class="hidden">
       
       <!-- Results Overview Banner -->
-      <div class="results-header">
+      <div class="results-header" id="resultsHeaderBlock">
         <div>
           <div class="resolved-route-badge">
             <span id="resolvedOriginText">Origin</span>
@@ -212,7 +219,7 @@
           <span id="tripLengthSubtitle" class="trip-length-text"></span>
         </div>
         
-        <div class="sort-and-actions">
+        <div class="sort-and-actions" id="headerActionToolbar">
           <button id="openShareModalBtn" class="btn-planner-header" title="Share Trip Link & QR Code">
             🔗 Share & QR
           </button>
@@ -274,7 +281,7 @@
       </div>
 
       <!-- Public Transit & Rail Guide -->
-      <div class="transit-wrapper">
+      <div class="transit-wrapper" id="transitWrapperBlock">
         <div class="transit-header">
           <h3>🚆 Essential Public Transit & Airport Rail</h3>
           <span id="transitCitySubtitle" class="transit-subtitle">Subway passes, airport express lines, and regional rail connections</span>
@@ -314,7 +321,7 @@
       </div>
 
       <!-- Key Sights & Gastronomy Section -->
-      <div class="sights-wrapper">
+      <div class="sights-wrapper" id="sightsWrapperBlock">
         <div class="sights-header">
           <div class="sights-title-block">
             <div>
@@ -339,10 +346,10 @@
       </div>
 
       <!-- Main Columns: Hotels & Flights Grid -->
-      <div class="results-grid">
+      <div class="results-grid" id="hotelsAndFlightsGrid">
         
         <!-- Column 1: Branded Hotels -->
-        <div class="column-block">
+        <div class="column-block" id="hotelsColumnBlock">
           <div class="column-header">
             <div>
               <h3>🏨 Verified Loyalty Hotels</h3>
@@ -371,7 +378,7 @@
         </div>
 
         <!-- Column 2: Flight Schedules -->
-        <div class="column-block">
+        <div class="column-block" id="flightsColumnBlock">
           <div class="column-header">
             <div>
               <h3>✈️ Corridor Flight Matrix</h3>
@@ -572,8 +579,11 @@
         </div>
       </div>
 
-      <div style="margin-top: 1.5rem; text-align: center;">
-        <button id="dismissHowItWorksBtn" class="btn-primary" style="max-width: 240px; margin: 0 auto;">
+      <div style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap;">
+        <button id="startTourFromModalBtn" class="btn-primary" style="max-width: 240px; background-color: var(--accent-purple);">
+          🎯 Start Interactive Tour
+        </button>
+        <button id="dismissHowItWorksBtn" class="btn-secondary" style="max-width: 200px;">
           🚀 Got It, Let's Explore!
         </button>
       </div>
@@ -664,6 +674,9 @@
   
   <!-- Standalone QR Code Generator Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <!-- Driver.js Interactive Tour Library -->
+  <script src="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.iife.js"></script>
 
   <!-- Master Curated Database Module -->
   <script src="destinations.js?v=5.0"></script>
